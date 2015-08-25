@@ -89,6 +89,7 @@ public class InariDash extends ApplicationAdapter {
             
         Entity entity = entitySystem
             .getEntityBuilder()
+                .setAttribute( ETransform.VIEW_ID, 0 )
                 .setAttribute( ETransform.XPOSITION, 0 )
                 .setAttribute( ETransform.XPOSITION, 0 )
 //                .setAttribute( ETransform.PIVOT_X, 16 )
@@ -97,7 +98,6 @@ public class InariDash extends ApplicationAdapter {
 //                .setAttribute( ETransform.SCALE_Y, 2 )
 //                .setAttribute( ETransform.ROTATION, 45 )
                 .setAttribute( ESprite.SPRITE_ID, rockfordBlinkSpriteData.iterator().next().second.id )
-                .setAttribute( ESprite.VIEW_ID, 0 )
                 .setAttribute( ESprite.TINT_COLOR, new RGBColor( 1f, 1f, 1, 1 ) )
                 .setAttribute( EController.CONTROLLER_IDS, new int[] { rockfordSpriteController.getId() } )
             .build();
