@@ -1,6 +1,6 @@
 package com.inari.dash.unit;
 
-public enum Units {
+public enum UnitType {
     ENTRANCE,           // 0
     EXIT,               // 1
     ROCKFORD,           // 2  
