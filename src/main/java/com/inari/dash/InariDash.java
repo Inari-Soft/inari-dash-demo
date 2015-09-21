@@ -20,8 +20,8 @@ import com.inari.firefly.asset.AssetNameKey;
 import com.inari.firefly.asset.AssetSystem;
 import com.inari.firefly.asset.AssetTypeKey;
 import com.inari.firefly.asset.SpriteAssetBatch;
+import com.inari.firefly.control.ComponentControllerSystem;
 import com.inari.firefly.control.Controller;
-import com.inari.firefly.control.ControllerSystem;
 import com.inari.firefly.control.EController;
 import com.inari.firefly.controller.SpriteIdAnimationController;
 import com.inari.firefly.entity.ETransform;
@@ -32,7 +32,6 @@ import com.inari.firefly.libgdx.GDXLowerSystemImpl;
 import com.inari.firefly.renderer.TextureAsset;
 import com.inari.firefly.renderer.sprite.ESprite;
 import com.inari.firefly.system.FFContext;
-import com.inari.firefly.system.FFContext.Systems;
 import com.inari.firefly.system.FireFly;
 import com.inari.firefly.system.view.ViewSystem;
 
@@ -49,11 +48,11 @@ public class InariDash extends ApplicationAdapter {
         
         firefly = new FireFly( GDXLowerSystemImpl.class, GDXInputImpl.class );
         FFContext context = firefly.getContext();
-        AssetSystem assetSystem = context.getComponent( Systems.ASSET_SYSTEM );
-        EntitySystem entitySystem = context.getComponent( Systems.ENTITY_SYSTEM );
-        ViewSystem viewSystem = context.getComponent( Systems.VIEW_SYSTEM );
-        AnimationSystem animationSystem = context.getComponent( Systems.ANIMATION_SYSTEM );
-        ControllerSystem controllerSystem = context.getComponent( Systems.ENTITY_CONTROLLER_SYSTEM );
+        AssetSystem assetSystem = context.getComponent( AssetSystem.CONTEXT_KEY );
+        EntitySystem entitySystem = context.getComponent( EntitySystem.CONTEXT_KEY );
+        ViewSystem viewSystem = context.getComponent( ViewSystem.CONTEXT_KEY );
+        AnimationSystem animationSystem = context.getComponent( AnimationSystem.CONTEXT_KEY );
+        ComponentControllerSystem controllerSystem = context.getComponent( ComponentControllerSystem.CONTEXT_KEY );
         
         assetSystem
             .getAssetBuilder( TextureAsset.class )

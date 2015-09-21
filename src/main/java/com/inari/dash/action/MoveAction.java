@@ -9,6 +9,7 @@ import com.inari.firefly.action.Action;
 import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.renderer.tile.ETile;
 import com.inari.firefly.renderer.tile.TileGrid;
+import com.inari.firefly.renderer.tile.TileGridSystem;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FFInitException;
 
@@ -23,8 +24,8 @@ public final class MoveAction extends Action {
     
     @Override
     public final void init( FFContext context ) throws FFInitException {
-        entitySystem = context.getComponent( FFContext.Systems.ENTITY_SYSTEM );
-        tileGrid = context.getComponent( FFContext.Systems.TILE_GRID_SYSTEM )
+        entitySystem = context.getComponent( EntitySystem.CONTEXT_KEY );
+        tileGrid = context.getComponent( TileGridSystem.CONTEXT_KEY )
             .getTileGrid( Constants.GAME_VIEW_ID, 0 );
     }
 
