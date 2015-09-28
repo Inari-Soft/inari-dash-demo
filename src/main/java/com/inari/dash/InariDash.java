@@ -121,7 +121,5 @@ public class InariDash extends FireflyApplicationAdapter {
     @Override
     public void initContext( FFContext context ) {
         Gdx.app.exit();
-        
-        
     }
 }
