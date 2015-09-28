@@ -26,7 +26,7 @@ public final class MoveAction extends Action {
     public final void init( FFContext context ) throws FFInitException {
         entitySystem = context.getComponent( EntitySystem.CONTEXT_KEY );
         tileGrid = context.getComponent( TileGridSystem.CONTEXT_KEY )
-            .getTileGrid( Constants.GAME_VIEW_ID, 0 );
+            .getTileGrid( Constants.GAME_VIEW_NAME );
     }
 
     @Override

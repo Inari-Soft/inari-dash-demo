@@ -1,10 +1,10 @@
 
 package com.inari.dash;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.inari.firefly.libgdx.FireflyApplicationAdapter;
-import com.inari.firefly.state.State;
 import com.inari.firefly.system.FFContext;
 
 public class InariDash extends FireflyApplicationAdapter {
@@ -119,8 +119,7 @@ public class InariDash extends FireflyApplicationAdapter {
     }
 
     @Override
-    public void initContext( FFContext context, State gameInitState ) {
-        // TODO Auto-generated method stub
-        
+    public void initContext( FFContext context ) {
+        Gdx.app.exit();
     }
 }
