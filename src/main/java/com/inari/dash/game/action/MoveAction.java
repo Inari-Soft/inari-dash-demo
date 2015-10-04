@@ -1,10 +1,10 @@
-package com.inari.dash.action;
+package com.inari.dash.game.action;
 
 import com.inari.commons.GeomUtils;
 import com.inari.commons.geom.Direction;
 import com.inari.commons.geom.Position;
-import com.inari.dash.Constants;
-import com.inari.dash.unit.EUnit;
+import com.inari.dash.game.GameService;
+import com.inari.dash.game.unit.EUnit;
 import com.inari.firefly.action.Action;
 import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.renderer.tile.ETile;
@@ -15,8 +15,8 @@ import com.inari.firefly.system.FFInitException;
 
 public final class MoveAction extends Action {
     
-    protected MoveAction( int id ) {
-        super( id );
+    protected MoveAction() {
+        super( ActionType.MOVE.index() );
     }
 
     private TileGrid tileGrid;
@@ -26,7 +26,7 @@ public final class MoveAction extends Action {
     public final void init( FFContext context ) throws FFInitException {
         entitySystem = context.getComponent( EntitySystem.CONTEXT_KEY );
         tileGrid = context.getComponent( TileGridSystem.CONTEXT_KEY )
-            .getTileGrid( Constants.GAME_VIEW_NAME );
+            .getTileGrid( GameService.GAME_VIEW_NAME );
     }
 
     @Override

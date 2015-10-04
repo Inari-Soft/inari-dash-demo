@@ -1,10 +1,11 @@
-package com.inari.dash.unit;
+package com.inari.dash.game.unit;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
 import com.inari.commons.geom.Direction;
+import com.inari.commons.lang.aspect.IndexedAspect;
 import com.inari.commons.lang.indexed.Indexer;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
@@ -16,6 +17,7 @@ public class EUnit extends EntityComponent {
     
     public static final AttributeKey<UnitType> UNIT_TYPE = new AttributeKey<UnitType>( "unitType", UnitType.class, EUnit.class );
     public static final AttributeKey<Direction> MOVEMENT = new AttributeKey<Direction>( "movement", Direction.class, EUnit.class );
+    public static final AttributeKey<IndexedAspect> ASPECTS = new AttributeKey<IndexedAspect>( "aspects", IndexedAspect.class, EUnit.class );
     public static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] { 
         UNIT_TYPE,
         MOVEMENT
@@ -23,6 +25,7 @@ public class EUnit extends EntityComponent {
     
     private UnitType unitType;
     private Direction movement;
+    private IndexedAspect aspects;
     
     public EUnit() {
         unitType = null;
@@ -48,6 +51,22 @@ public class EUnit extends EntityComponent {
     
     public final void setMovement( Direction movement ) {
         this.movement = movement;
+    }
+
+    public final IndexedAspect getAspects() {
+        return aspects;
+    }
+
+    public final void setAspects( IndexedAspect aspects ) {
+        this.aspects = aspects;
+    }
+    
+    public final boolean is( IUnitAspect aspect ) {
+        if ( aspects == null ) {
+            return false;
+        }
+        
+        return aspects.contains( aspect.index() );
     }
 
     @Override

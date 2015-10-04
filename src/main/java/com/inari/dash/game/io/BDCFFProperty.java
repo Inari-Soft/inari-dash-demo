@@ -1,0 +1,30 @@
+package com.inari.dash.game.io;
+
+public enum BDCFFProperty {
+    GameType,
+    Fontset,
+    GraphicSet,
+    Name,
+    Description,
+    Date,
+    Author,
+    WWW,
+    Caves,
+    Lives,
+    
+    AmoebaGrowthProb,
+    AmoebaThreshold,
+    AmoebaTime,
+    BonusLife,
+    CaveDelay,
+    FrameTime,
+    CaveTime,
+    CaveSize,
+    Colors,
+    DiamondsRequired,
+    DiamondValue,
+    Intermission,
+    MagicWallTime,
+    Size,
+    TimeValue,
+}
