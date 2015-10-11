@@ -1,13 +1,10 @@
 package com.inari.dash.game;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import com.inari.commons.lang.TypedKey;
 import com.inari.dash.game.GameInfo.CodeType;
-import com.inari.dash.game.unit.IUnitType;
-import com.inari.dash.game.unit.UnitType;
 
 public class GameData {
     
@@ -21,14 +18,11 @@ public class GameData {
     private int bonusLiveScore = 500;
     private int nextLiveOnScore = 500;
     
-    private IUnitType playerTileType = UnitType.ROCKFORD;
-    private IUnitType emptyTileType = UnitType.SPACE; 
-    
     private boolean modified = false;
     
     private List<CaveData> caves = new ArrayList<CaveData>();
+    private int currentCurrentCaveIndex = -1;
     private CaveData currentCave;
-    private Iterator<CaveData> caveDataIterator = null;
     
     public GameData( GameInfo gameInfo ) {
         this.gameInfo = gameInfo;
@@ -46,19 +40,20 @@ public class GameData {
     public CaveData getCurrentCave() {
         return currentCave;
     }
+    
+    public void setCave( int index ) {
+        currentCave = caves.get( index );
+    }
 
-    public GameData setNextCave() {
-        if ( caveDataIterator == null ) {
-            caveDataIterator = caves.iterator();
+    public void nextCave() {
+        if ( hasNextCave() ) {
+            currentCurrentCaveIndex++;
+            currentCave = caves.get( currentCurrentCaveIndex );
         }
-        if ( caveDataIterator.hasNext() ) {
-            currentCave = caveDataIterator.next();
-        } 
-        return this;
     }
     
     public boolean hasNextCave() {
-        return caveDataIterator.hasNext();
+        return currentCurrentCaveIndex < caves.size();
     }
 
     public GameData collectDiamond() {
@@ -116,24 +111,6 @@ public class GameData {
     
     public CodeType getType() {
         return gameInfo.getType();
-    }
-
-    public IUnitType getPlayerTileType() {
-        return playerTileType;
-    }
-
-    public GameData setPlayerTileType( IUnitType playerTileType ) {
-        this.playerTileType = playerTileType;
-        return this;
-    }
-
-    public IUnitType getEmptyTileType() {
-        return emptyTileType;
-    }
-
-    public GameData setEmptyTileType( IUnitType emptyTileType ) {
-        this.emptyTileType = emptyTileType;
-        return this;
     }
 
 }

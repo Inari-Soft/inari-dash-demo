@@ -1,23 +1,23 @@
 package com.inari.dash.game;
 
 import com.inari.commons.event.IEventDispatcher;
-import com.inari.commons.geom.Rectangle;
+import com.inari.commons.graphics.RGBColor;
 import com.inari.commons.lang.TypedKey;
-import com.inari.commons.lang.list.DynArray;
-import com.inari.dash.GlobalData;
-import com.inari.dash.game.state.InitGameTask;
-import com.inari.dash.game.unit.IUnitType;
-import com.inari.dash.game.unit.UnitHandle;
+import com.inari.dash.Configuration;
+import com.inari.dash.game.workflow.ExitGameTask;
+import com.inari.dash.game.workflow.GameExitCondition;
+import com.inari.dash.game.workflow.InitCaveTask;
+import com.inari.dash.game.workflow.InitGameTask;
+import com.inari.dash.game.workflow.StartGameCondition;
 import com.inari.firefly.app.FFApplicationManager;
 import com.inari.firefly.asset.AssetNameKey;
 import com.inari.firefly.asset.AssetSystem;
-import com.inari.firefly.renderer.TextureAsset;
-import com.inari.firefly.renderer.sprite.SpriteAsset;
 import com.inari.firefly.sound.Sound;
 import com.inari.firefly.sound.SoundAsset;
 import com.inari.firefly.sound.SoundSystem;
 import com.inari.firefly.sound.event.SoundEvent;
 import com.inari.firefly.state.State;
+import com.inari.firefly.state.StateChange;
 import com.inari.firefly.state.StateSystem;
 import com.inari.firefly.state.Workflow;
 import com.inari.firefly.system.FFContext;
@@ -31,27 +31,39 @@ public final class GameService implements FFApplicationManager {
     
     public static final TypedKey<GameService> CONTEXT_KEY = TypedKey.create( "GameService", GameService.class );
     
+    public static final RGBColor YELLOW_FONT_COLOR = new RGBColor( .98f, .9f, .16f, 1f );
+    public static final RGBColor WHITE_FONT_COLOR = new RGBColor( 1, 1, 1, 1 );
+    
     public static final String GAME_WORKFLOW_NAME = "gameWorkflow";
-    public static final String GAME_SELECTION_STATE_NAME = "gameSelection";
-    public static final String PLAY_CAVE_STATE_NAME = "playCave";
-    public static final String GAME_OVER_STATE = "gameOver";
-    public static final String SELECT_GAME_STATE_CHANGE_NAME = "selectGame";
-    public static final String NEXT_CAVE_STATE_CHANGE_NAME = "nextCave";
-    public static final String GAME_OVER_STATE_CHANGE = "showGameOver";
-    public static final String BACK_TO_GAME_SELECTION = "backToGameSelection";
+    public enum StateName {
+        GAME_SELECTION,
+        CAVE_PLAY,
+        GAME_OVER
+    }
     
-    
-    
-    public static final String HEADER_VIEW_NAME = "HeaderView";
-    public static final String GAME_VIEW_NAME = "GameView";
+    public enum StateChangeName {
+        GAME_INIT( null, StateName.GAME_SELECTION ),
+        EXIT_GAME( StateName.GAME_SELECTION, null ),
+        PLAY_CAVE( StateName.GAME_SELECTION, StateName.CAVE_PLAY ),
+        EXIT_PLAY( StateName.CAVE_PLAY, StateName.GAME_SELECTION ),
+        DIED( StateName.CAVE_PLAY, StateName.CAVE_PLAY ),
+        NEXT_CAVE( StateName.CAVE_PLAY, StateName.CAVE_PLAY ),
+        GAME_OVER( StateName.CAVE_PLAY, StateName.GAME_OVER ),
+        GAME_OVER_TO_SELECTION( StateName.GAME_OVER, StateName.GAME_SELECTION ),
+        
+        ;
+        public final StateName from;
+        public final StateName to;
+        private StateChangeName( StateName from, StateName to ) {
+            this.from = from;
+            this.to = to;
+        }
+    }
 
-    public static final AssetNameKey ORIGINAL_FONT_TEXTURE_KEY = new AssetNameKey( "originalFont", "fontTexture" );
-    public static final AssetNameKey GAME_UNIT_TEXTURE_KEY = new AssetNameKey( "gameUnitTexturKey", "gameUnitTexturKey" );
     public static final AssetNameKey GAME_FONT_TEXTURE_KEY = new AssetNameKey( "gameFontTexturKey", "gameFontTexturKey" );
     public static final AssetNameKey INTRO_SONG_KEY = new AssetNameKey( "sounds", "INTRO_SONG" );
     
-    private FFContext context;
-    private GlobalData globalData;
+    private Configuration configuration;
     private AssetSystem assetSystem;
     private TextSystem textSystem;
     private SoundSystem soundSystem;
@@ -59,19 +71,10 @@ public final class GameService implements FFApplicationManager {
     private StateSystem stateSystem;
     private TaskSystem taskSystem;
 
-    private final GameSelection gameSelection;
-    private final DynArray<UnitHandle> unitHandler;
-
-    
-    public GameService() {
-        unitHandler = new DynArray<UnitHandle>();
-        gameSelection = new GameSelection();
-    }
     
     @Override
     public void init( FFContext context ) throws FFInitException {
-        this.context = context;
-        globalData = new GlobalData();
+        configuration = new Configuration();
         assetSystem = context.getComponent( AssetSystem.CONTEXT_KEY );
         textSystem = context.getComponent( TextSystem.CONTEXT_KEY );
         soundSystem = context.getComponent( SoundSystem.CONTEXT_KEY );
@@ -81,22 +84,51 @@ public final class GameService implements FFApplicationManager {
         context.putComponent( CONTEXT_KEY, this );
         
         
-        Task initTask = taskSystem.getTaskBuilder( InitGameTask.class )
+        taskSystem.getTaskBuilder( InitGameTask.class )
+            .set( Task.NAME, InitGameTask.NAME )
             .set( Task.REMOVE_AFTER_RUN, true )
-            .build();
-        
-        Workflow gameWorkflow = stateSystem.getWorkflowBuilder()
-            .set( Workflow.NAME, GAME_WORKFLOW_NAME )
-            .set( Workflow.START_STATE_NAME, GAME_SELECTION_STATE_NAME )
-            .set( Workflow.INIT_TASK_ID, initTask.getId() )
+        .buildAndNext( ExitGameTask.class )
+            .set( Task.NAME, ExitGameTask.NAME )
+            .set( Task.REMOVE_AFTER_RUN, true )
+        .buildAndNext( InitCaveTask.class )
+            .set( Task.NAME, InitCaveTask.NAME )
+            .set( Task.REMOVE_AFTER_RUN, false )
         .build();
+        
+        int workflowId = stateSystem.getWorkflowBuilder()
+            .set( Workflow.NAME, GAME_WORKFLOW_NAME )
+            .set( Workflow.START_STATE_NAME, StateName.GAME_SELECTION.name() )
+            .set( Workflow.INIT_TASK_ID, taskSystem.getTaskId( InitGameTask.NAME ) )
+        .build().getId();
         
         stateSystem.getStateBuilder()
-            .set( State.NAME, GAME_SELECTION_STATE_NAME )
-            .set( State.WORKFLOW_ID, gameWorkflow.getId() )
+            .set( State.NAME, StateName.GAME_SELECTION.name() )
+            .set( State.WORKFLOW_ID, workflowId )
+        .buildAndNext()
+            .set( State.NAME, StateName.CAVE_PLAY.name() )
+            .set( State.WORKFLOW_ID, workflowId )
+        .buildAndNext()
+            .set( State.NAME, StateName.GAME_OVER.name() )
+            .set( State.WORKFLOW_ID, workflowId )
         .build();
         
-        stateSystem.activateWorkflow( gameWorkflow.getId() );
+        stateSystem.getStateChangeBuilder()
+            .set( StateChange.NAME, StateChangeName.EXIT_GAME.name() )
+            .set( StateChange.WORKFLOW_ID, workflowId )
+            .set( StateChange.CONDITION_TYPE_NAME, GameExitCondition.class.getName() )
+            .set( StateChange.FORM_STATE_ID, stateSystem.getStateId( StateName.GAME_SELECTION.name() ) )
+            .set( StateChange.TASK_ID, taskSystem.getTaskId( ExitGameTask.NAME ) )
+        .buildAndNext()
+            .set( StateChange.NAME, StateChangeName.PLAY_CAVE.name() )
+            .set( StateChange.WORKFLOW_ID, workflowId )
+            .set( StateChange.CONDITION_TYPE_NAME, StartGameCondition.class.getName() )
+            .set( StateChange.FORM_STATE_ID, stateSystem.getStateId( StateName.GAME_SELECTION.name() ) )
+            .set( StateChange.TO_STATE_ID, stateSystem.getStateId( StateName.CAVE_PLAY.name() ) )
+            .set( StateChange.TASK_ID, taskSystem.getTaskId( InitCaveTask.NAME ) )
+        .build();
+            
+        
+        stateSystem.activateWorkflow( workflowId );
     }
     
     @Override
@@ -111,91 +143,54 @@ public final class GameService implements FFApplicationManager {
         
     }
     
+    public final Configuration getConfiguration() {
+        return configuration;
+    }
+    
     public final void loadGlobalAssets() {
-        createAndLoadOriginalFont();
-        // load intro music
+        // create and load font
+        textSystem.getFontBuilderWithAutoLoad()
+            .set( Font.NAME, GAME_FONT_TEXTURE_KEY.name )
+            .set( Font.FONT_TEXTURE_RESOURCE_NAME, configuration.fontTextureResource )
+            .set( Font.CHAR_TEXTURE_MAP, configuration.fontChars )
+            .set( Font.CHAR_WIDTH, configuration.charWidth )
+            .set( Font.CHAR_HEIGHT, configuration.charHeight )
+            .set( Font.CHAR_SPACE, 0 )
+            .set( Font.LINE_SPACE, 5 )
+            .set( Font.DEFAULT_CHAR, '%' )
+        .build();
+        // create and load intro music
         assetSystem.getAssetBuilder( SoundAsset.class )
             .set( SoundAsset.NAME, INTRO_SONG_KEY.name )
             .set( SoundAsset.ASSET_GROUP, INTRO_SONG_KEY.group )
             .set( SoundAsset.STREAMING, true )
-            .set( SoundAsset.RESOURCE_NAME, globalData.titleSongResource )
+            .set( SoundAsset.RESOURCE_NAME, configuration.titleSongResource )
         .build();
-    }
-    
-
-
-    public final void loadGameSelection() {
-        gameSelection.load( context );
-    }
-    
-    public final void disposeGameSelection() {
-        gameSelection.dispose( context );
-    }
-    
-    private final String titleSongSoundName = "titleSongSound";
-    public final void playIntroSong() {
         assetSystem.loadAsset( INTRO_SONG_KEY );
+    }
+
+    public final void playIntroSong() {
         Sound introSong = soundSystem.getSoundBuilder()
             .set( Sound.ASSET_ID, assetSystem.getAssetTypeKey( INTRO_SONG_KEY ).id )
-            .set( Sound.VOLUME, 100 )
+            .set( Sound.VOLUME, 10 )
             .set( Sound.LOOPING, true )
-            .set( Sound.NAME, titleSongSoundName )
+            .set( Sound.NAME, "titleSongSound" )
         .build();
         eventDispatcher.notify( new SoundEvent( introSong.index(), SoundEvent.Type.PLAY_SOUND ) );
     }
     
-    public final void disposeGlobalAssets() {
-        // TODO Auto-generated method stub
-        
-    }
-
-    public final UnitHandle getUnitHandle( IUnitType type ) {
-        return unitHandler.get( type.type() );
+    public final void stopIntroSong() {
+        eventDispatcher.notify( new SoundEvent( soundSystem.getSound( "titleSongSound" ).getId(), SoundEvent.Type.STOP_PLAYING ) );
     }
 
     @Override
     public void dispose( FFContext context ) {
-        // TODO Auto-generated method stub
-        
+        configuration = null;
+        textSystem.clear();
+        taskSystem.clear();
+        stateSystem.clear();
+        soundSystem.clear();
+        assetSystem.clear();
     }
-    
-    
-    private void createAndLoadOriginalFont() {
-        assetSystem.getAssetBuilderWithAutoLoad( TextureAsset.class )
-            .set( TextureAsset.NAME, ORIGINAL_FONT_TEXTURE_KEY.name )
-            .set( TextureAsset.ASSET_GROUP, ORIGINAL_FONT_TEXTURE_KEY.group )
-            .set( TextureAsset.RESOURCE_NAME, globalData.fontTextureResource )
-            .set( TextureAsset.TEXTURE_WIDTH, globalData.fontTextureWidth )
-            .set( TextureAsset.TEXTURE_HEIGHT, globalData.fontTextureHeight )
-        .build();
-
-    
-        Font font = textSystem.getFontBuilder()
-            .set( Font.NAME, ORIGINAL_FONT_TEXTURE_KEY.name )
-            .set( Font.CHAR_WIDTH, globalData.charWidth )
-            .set( Font.CHAR_HEIGHT, globalData.charHeight )
-            .set( Font.CHAR_SPACE, 5 )
-            .set( Font.LINE_SPACE, 5 )
-        .build();
-    
-        int textureAssetId = assetSystem.getAssetTypeKey( ORIGINAL_FONT_TEXTURE_KEY ).id;
-        Rectangle textureRegion = new Rectangle( 0, 0, globalData.charWidth, globalData.charHeight );
-        for ( int y = 0; y < globalData.fontChars.length; y++ ) {
-            for ( int x = 0; x < globalData.fontChars[ y ].length; x++ ) {
-                textureRegion.x = x * globalData.charWidth;
-                textureRegion.y = y * globalData.charHeight;
-                
-                SpriteAsset charSpriteAsset = assetSystem.getAssetBuilderWithAutoLoad( SpriteAsset.class )
-                    .set( SpriteAsset.TEXTURE_ID, textureAssetId )
-                    .set( SpriteAsset.TEXTURE_REGION, textureRegion )
-                    .set( SpriteAsset.ASSET_GROUP, ORIGINAL_FONT_TEXTURE_KEY.group )
-                    .set( SpriteAsset.NAME, ORIGINAL_FONT_TEXTURE_KEY.name + "_" + x + "_"+ y )
-                .build();
-                
-                font.setCharSpriteMapping( globalData.fontChars[ y ][ x ], charSpriteAsset.getId() );
-            }
-        }
-    }
-
 
 }

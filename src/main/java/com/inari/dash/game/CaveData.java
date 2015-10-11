@@ -1,34 +1,34 @@
 package com.inari.dash.game;
 
-import java.awt.Color;
 
+import com.inari.commons.graphics.RGBColor;
 import com.inari.firefly.filter.IColorFilter;
 
 
 public class CaveData {
     
     public static enum CaveColors {
-        Black( Color.BLACK.getRGB() ), 
-        White( Color.WHITE.getRGB() ), 
-        Red( new Color( 155, 77, 66 ).getRGB() ), 
-        Cyan( new Color( 140, 214, 223 ).getRGB() ), 
-        Purple( new Color( 157, 84, 196 ).getRGB() ), 
-        Green( new Color( 120, 191, 78 ).getRGB() ), 
-        Blue( new Color( 40, 40, 183 ).getRGB() ), 
-        Yellow( new Color( 233, 245, 130 ).getRGB() ), 
-        Orange( new Color( 153, 102, 51 ).getRGB() ), 
-        Brown( new Color( 107, 85, 0 ).getRGB() ), 
-        LightRed( new Color( 210, 136, 126 ).getRGB() ), 
-        Gray1( new Color( 124, 124, 124 ).getRGB() ), 
-        Gray2( new Color( 146, 146, 146 ).getRGB() ), 
-        LightGreen( new Color( 193, 255, 154 ).getRGB() ), 
-        LightBlue( new Color( 159, 221, 255 ).getRGB() ), 
-        Gray3( new Color( 193, 193, 193 ).getRGB() ),
+        Black( RGBColor.create( 0, 0, 0 ).getRGB8888() ), 
+        White( RGBColor.create( 255, 255, 255 ).getRGB8888() ), 
+        Red( RGBColor.create( 155, 77, 66 ).getRGB8888() ), 
+        Cyan( RGBColor.create( 140, 214, 223 ).getRGB8888() ), 
+        Purple( RGBColor.create( 157, 84, 196 ).getRGB8888() ), 
+        Green( RGBColor.create( 120, 191, 78 ).getRGB8888() ), 
+        Blue( RGBColor.create( 40, 40, 183 ).getRGB8888() ), 
+        Yellow( RGBColor.create( 233, 245, 130 ).getRGB8888() ), 
+        Orange( RGBColor.create( 153, 102, 51 ).getRGB8888() ), 
+        Brown( RGBColor.create( 107, 85, 0 ).getRGB8888() ), 
+        LightRed( RGBColor.create( 210, 136, 126 ).getRGB8888() ), 
+        Gray1( RGBColor.create( 124, 124, 124 ).getRGB8888() ), 
+        Gray2( RGBColor.create( 146, 146, 146 ).getRGB8888() ), 
+        LightGreen( RGBColor.create( 193, 255, 154 ).getRGB8888() ), 
+        LightBlue( RGBColor.create( 159, 221, 255 ).getRGB8888() ), 
+        Gray3( RGBColor.create( 193, 193, 193 ).getRGB8888() ),
         
-        BaseForegroundColor1( new Color( 165, 42, 0 ).getRGB() ),
-        BaseForegroundColor2( new Color( 63, 63, 63 ).getRGB() ),
-        BaseForegroundColor3( new Color( 255, 255, 255 ).getRGB() ),
-        BaseAmoebaColor( new Color( 0, 255, 0 ).getRGB() );
+        BaseForegroundColor1( RGBColor.create( 165, 42, 0 ).getRGB8888() ),
+        BaseForegroundColor2( RGBColor.create( 63, 63, 63 ).getRGB8888() ),
+        BaseForegroundColor3( RGBColor.create( 255, 255, 255 ).getRGB8888() ),
+        BaseAmoebaColor( RGBColor.create( 0, 255, 0 ).getRGB8888() );
         
         public final int color;
         

@@ -1,43 +1,47 @@
 package com.inari.dash.tests;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
+import com.inari.commons.geom.Position;
 import com.inari.commons.geom.Rectangle;
-import com.inari.commons.lang.TypedKey;
+import com.inari.commons.graphics.RGBColor;
 import com.inari.dash.Configuration;
-import com.inari.dash.game.CaveData;
 import com.inari.dash.game.GameService;
 import com.inari.firefly.asset.AssetSystem;
-import com.inari.firefly.component.dynattr.DynamicAttribueMapper;
 import com.inari.firefly.entity.ETransform;
-import com.inari.firefly.entity.Entity;
 import com.inari.firefly.entity.EntitySystem;
-import com.inari.firefly.filter.ColorReplaceMapFitler;
-import com.inari.firefly.filter.IColorFilter;
-import com.inari.firefly.libgdx.GDXConfiguration;
 import com.inari.firefly.libgdx.GDXFFTestAdapter;
 import com.inari.firefly.renderer.TextureAsset;
 import com.inari.firefly.renderer.sprite.ESprite;
 import com.inari.firefly.renderer.sprite.SpriteAsset;
 import com.inari.firefly.system.FFContext;
+import com.inari.firefly.system.view.View;
+import com.inari.firefly.system.view.ViewSystem;
 
-public class DisplayColorFiteredTextureTest extends GDXFFTestAdapter {
-    
+public class TwoViewTest extends GDXFFTestAdapter {
+
     @Override
     public void initTest( FFContext context ) {
-        DynamicAttribueMapper.addDynamicAttribute( GDXConfiguration.DynamicAttributes.TEXTURE_COLOR_FILTER_NAME );
+        ViewSystem viewSystem = context.getComponent( ViewSystem.CONTEXT_KEY );
+        
+        viewSystem.getViewBuilderWithAutoActivation()
+            .set( View.NAME, "HEADER_VIEW_NAME" )
+            .set( View.LAYERING_ENABLED, false )
+            .set( View.BOUNDS, new Rectangle( 0, 0, 800, 32 ) )
+            .set( View.WORLD_POSITION, new Position( 0, 0 ) )
+            .set( View.CLEAR_COLOR, new RGBColor( 0, 0, 0, 1 ) )
+        .buildAndNext()
+            .set( View.NAME, "CAVE_VIEW_NAME" )
+            .set( View.LAYERING_ENABLED, false )
+            .set( View.BOUNDS, new Rectangle( 0, 32, 800, 600 - 32 ) )
+            .set( View.WORLD_POSITION, new Position( 10, 20 ) )
+            .set( View.CLEAR_COLOR, new RGBColor( 0, 0, 0, 1 ) )
+        .build();
         
         Configuration globalAssetData = new Configuration();
         AssetSystem assetSystem = context.getComponent( AssetSystem.CONTEXT_KEY );
         EntitySystem entitySystem = context.getComponent( EntitySystem.CONTEXT_KEY );
         
-        TypedKey<IColorFilter> colorFilterKey = TypedKey.create( "colorFilterKey", IColorFilter.class );
-        ColorReplaceMapFitler colorFilter = new ColorReplaceMapFitler( createColorReplaceMap() );
-        context.putComponent( colorFilterKey, colorFilter );
-
         TextureAsset textureAsset = assetSystem
             .getAssetBuilder( TextureAsset.class )
                 .set( TextureAsset.NAME, GameService.GAME_FONT_TEXTURE_KEY.name )
@@ -45,7 +49,6 @@ public class DisplayColorFiteredTextureTest extends GDXFFTestAdapter {
                 .set( TextureAsset.RESOURCE_NAME, globalAssetData.unitTextureResource )
                 .set( TextureAsset.TEXTURE_WIDTH, globalAssetData.unitTextureWidth )
                 .set( TextureAsset.TEXTURE_HEIGHT, globalAssetData.unitTextureHeight )
-                .set( GDXConfiguration.DynamicAttributes.TEXTURE_COLOR_FILTER_NAME, colorFilterKey.id() )
             .build();
         
         SpriteAsset spriteAsset = assetSystem
@@ -58,31 +61,24 @@ public class DisplayColorFiteredTextureTest extends GDXFFTestAdapter {
         
         assetSystem.loadAssets( GameService.GAME_FONT_TEXTURE_KEY.group );
         
-        Entity entity = entitySystem
-              .getEntityBuilder()
-                  .set( ETransform.VIEW_ID, 0 )
-                  .set( ETransform.XPOSITION, 10 )
-                  .set( ETransform.YPOSITION, 10 )
-                  .set( ESprite.SPRITE_ID, spriteAsset.getId() )
-              .build();
-              
-        entitySystem.activate( entity.getId() );
+        entitySystem.getEntityBuilderWithAutoActivation()
+              .set( ETransform.VIEW_ID, viewSystem.getViewId( "HEADER_VIEW_NAME" ) )
+              .set( ETransform.XPOSITION, 0 )
+              .set( ETransform.YPOSITION, 0 )
+              .set( ESprite.SPRITE_ID, spriteAsset.getId() )
+          .buildAndNext()
+              .set( ETransform.VIEW_ID, viewSystem.getViewId( "CAVE_VIEW_NAME" ) )
+              .set( ETransform.XPOSITION, 0 )
+              .set( ETransform.YPOSITION, 0 )
+              .set( ESprite.SPRITE_ID, spriteAsset.getId() )
+          .build();
 
-    }
-
-    private Map<Integer, Integer> createColorReplaceMap() {
-        Map<Integer, Integer> result = new HashMap<Integer, Integer>();
         
-        result.put( CaveData.CaveColors.BaseForegroundColor1.color, CaveData.CaveColors.Blue.color );
-        result.put( CaveData.CaveColors.BaseForegroundColor2.color, CaveData.CaveColors.Gray1.color );
-        result.put( CaveData.CaveColors.BaseForegroundColor3.color, CaveData.CaveColors.White.color );
-        
-        return result;
     }
 
     @Override
     public String getTitle() {
-        return "TextureDisplayTest";
+        return "TwoViewTest";
     }
     
     public static void main (String[] arg) {
@@ -90,7 +86,7 @@ public class DisplayColorFiteredTextureTest extends GDXFFTestAdapter {
         config.resizable = false;
         config.width = 800;
         config.height = 600;
-        new LwjglApplication( new DisplayColorFiteredTextureTest(), config );
+        new LwjglApplication( new TwoViewTest(), config );
     }
 
 }
