@@ -1,4 +1,4 @@
-package com.inari.dash.game.cave.action;
+package com.inari.dash.game.cave.unit.action;
 
 import com.inari.commons.lang.indexed.IndexedObject;
 import com.inari.commons.lang.indexed.Indexer;
@@ -6,9 +6,9 @@ import com.inari.firefly.action.Action;
 
 public enum ActionType implements IndexedObject {
     MOVE( MoveAction.class ),
-    HIT( null ),
     EXPLODE( ExplosionAction.class ),
-    COLLECT_DIAMOND( null )
+    COLLECT( CollectAction.class ), 
+    END_CAVE( null )
     ;
     
     private final int index;

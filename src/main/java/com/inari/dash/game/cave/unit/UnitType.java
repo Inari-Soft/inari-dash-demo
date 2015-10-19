@@ -1,53 +1,48 @@
 package com.inari.dash.game.cave.unit;
 
-import com.inari.commons.lang.indexed.IndexedObject;
-import com.inari.commons.lang.indexed.Indexer;
+import com.inari.dash.game.cave.unit.enemy.ButterflyHandle;
+import com.inari.dash.game.cave.unit.enemy.FireflyHandle;
+import com.inari.dash.game.cave.unit.misc.AmoebaHandle;
+import com.inari.dash.game.cave.unit.misc.ExitHandle;
+import com.inari.dash.game.cave.unit.misc.ExplosionHandle;
+import com.inari.dash.game.cave.unit.misc.ExplosionToDiamondHandle;
 import com.inari.dash.game.cave.unit.misc.SandHandle;
 import com.inari.dash.game.cave.unit.misc.SpaceHandle;
+import com.inari.dash.game.cave.unit.rockford.RFHandle;
+import com.inari.dash.game.cave.unit.stone.DiamondHandle;
 import com.inari.dash.game.cave.unit.stone.RockHandle;
+import com.inari.dash.game.cave.unit.wall.BrickWallHandle;
 import com.inari.dash.game.cave.unit.wall.SolidWallHandle;
 
-public enum UnitType implements IndexedObject {
+public enum UnitType {
+
+    SPACE( new SpaceHandle() ),
+    SAND( new SandHandle() ),
     
-    ENTRANCE( null ),           // 0
-    EXIT( null ),               // 1
-    ROCKFORD( null ),           // 2  
+    BRICK_WALL( new BrickWallHandle() ),
+    SOLID_WALL( new SolidWallHandle() ),
+    MAGIC_WALL( null ),
+    EXPANDING_WALL( null ),
     
-    SPACE( new SpaceHandle() ),              // 3
-    SAND( new SandHandle() ),               // 4
+    ROCK( new RockHandle() ),
+    DIAMOND( new DiamondHandle() ),
     
-    BRICK_WALL( null ),         // 5
-    SOLID_WALL( new SolidWallHandle() ),         // 6
-    MAGIC_WALL( null ),         // 7
+    FIREFLY( new FireflyHandle() ),
+    BUTTERFLY( new ButterflyHandle() ),
+    AMOEBA( new AmoebaHandle() ),
     
-    ROCK( new RockHandle() ),               // 8
-    DIAMOND( null ),            // 9
+    ROCKFORD( new RFHandle() ),
+    EXIT( new ExitHandle() ),
     
-    FIREFLY( null ),            // 10
-    BUTTERFLY( null ),          // 11
-    AMOEBA( null ),             // 12
     
-    EXPLOSION1( null ),         // 13
-    EXPLOSION2( null ),         // 14
-    
-    EXPANDING_WALL( null ),     // 15
-    
+    EXPLOSION_TO_DIAMOND( new ExplosionToDiamondHandle() ),
+    EXPLOSION( new ExplosionHandle() ),
     ;
     
     public final UnitHandle handler;
     private UnitType( UnitHandle handler ) {
-        Indexer.registerIndex( indexedObjectType(), ordinal() );
         this.handler = handler;
     }
 
-    @Override
-    public final int index() {
-        return ordinal();
-    }
-
-    @Override
-    public final Class<UnitType> indexedObjectType() {
-        return UnitType.class;
-    }
        
 }

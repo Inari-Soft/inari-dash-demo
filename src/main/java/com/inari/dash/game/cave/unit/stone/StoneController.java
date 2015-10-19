@@ -2,13 +2,12 @@ package com.inari.dash.game.cave.unit.stone;
 
 import com.inari.commons.geom.Direction;
 import com.inari.commons.geom.Position;
-import com.inari.dash.game.cave.action.ActionType;
 import com.inari.dash.game.cave.unit.EUnit;
 import com.inari.dash.game.cave.unit.UnitAspect;
 import com.inari.dash.game.cave.unit.UnitController;
 import com.inari.dash.game.cave.unit.UnitType;
+import com.inari.dash.game.cave.unit.action.ActionType;
 import com.inari.firefly.action.event.ActionEvent;
-import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.renderer.tile.ETile;
 import com.inari.firefly.sound.event.SoundEvent;
 import com.inari.firefly.system.FFContext;
@@ -23,16 +22,8 @@ public abstract class StoneController extends UnitController {
     }
 
     @Override
-    public final AttributeKey<?>[] getControlledAttribute() {
-        return null;
-    }
-
-    @Override
     protected void update( FFTimer timer, int entityId ) {
-        if ( !caveService.update() ) {
-            return;
-        }
-        
+        long update = timer.getTime();
         EUnit unit = entitySystem.getComponent( entityId, EUnit.class );
         ETile tile = entitySystem.getComponent( entityId, ETile.class );
         
@@ -42,51 +33,59 @@ public abstract class StoneController extends UnitController {
         // if we have a falling stone...
         if ( unit.getMovement() == Direction.SOUTH ) {
             // ... and below is empty
-            if ( isOfType( tmpPos.x, tmpPos.y, Direction.SOUTH, UnitType.SPACE ) ) {
+            if ( caveService.isOfType( tmpPos.x, tmpPos.y, Direction.SOUTH, UnitType.SPACE ) ) {
                 // ... keep falling
                 eventDispatcher.notify( new ActionEvent( ActionType.MOVE.type(),  entityId ) );
                 return;
             }
             
             // roll off if possible
-            if ( rollOff( entityId, unit ) ) {
+            if ( rollOff( entityId, unit, update ) ) {
                 return;
             }
             
             // stop falling and hit the object below
             unit.setMovement( Direction.NONE );
-            eventDispatcher.notify( 
-                new ActionEvent( 
-                    ActionType.HIT.type(), 
-                    getEntityId( tmpPos.x, tmpPos.y, Direction.SOUTH ) 
-                ) 
+            EUnit unitBelow = entitySystem.getComponent( 
+                caveService.getEntityId( tmpPos.x, tmpPos.y, Direction.SOUTH ), 
+                EUnit.class 
             );
-            playSample();
+            unitBelow.setHit( true );
+
+            playSample( update );
             return;
         }
         
         // we have a stationary stone, check space below...
-        if ( isOfType( tmpPos.x, tmpPos.y, Direction.SOUTH, UnitType.SPACE ) ) {
-            // start falling
+        if ( caveService.isOfType( tmpPos.x, tmpPos.y, Direction.SOUTH, UnitType.SPACE ) ) {
+            // start falling... or wait for next update
             unit.setMovement( Direction.SOUTH );
-            playSample();
+            playSample( update );
             eventDispatcher.notify( new ActionEvent( ActionType.MOVE.type(),  entityId ) );
+//            if ( unit.getAnimationCount() >= 1 ) {
+//                unit.setMovement( Direction.SOUTH );
+//                playSample( update );
+//                eventDispatcher.notify( new ActionEvent( ActionType.MOVE.type(),  entityId ) );
+//                unit.resetAnimationCount();
+//            } else {
+//                unit.incrementAnimationCount();
+//            }
             return;
         }
         
         // roll of if possible
-        rollOff( entityId, unit );
+        rollOff( entityId, unit, update );
     }
 
-    private boolean rollOff( int entityId, EUnit unit ) {
+    private boolean rollOff( int entityId, EUnit unit, long update ) {
         // only roll of if the ground is aslope
-        if ( !hasAspect( tmpPos.x, tmpPos.y, Direction.SOUTH, UnitAspect.ASLOPE ) ) {
+        if ( !caveService.hasAspect( tmpPos.x, tmpPos.y, Direction.SOUTH, UnitAspect.ASLOPE ) ) {
             return false;
         }
         
-        if ( isOfType( tmpPos.x, tmpPos.y, Direction.SOUTH_EAST, UnitType.SPACE ) && 
-             isOfType( tmpPos.x, tmpPos.y, Direction.EAST, UnitType.SPACE ) && 
-             !isMoving( tmpPos.x, tmpPos.y, Direction.NORTH_EAST, Direction.SOUTH ) ) {
+        if ( caveService.isOfType( tmpPos.x, tmpPos.y, Direction.SOUTH_EAST, UnitType.SPACE ) && 
+             caveService.isOfType( tmpPos.x, tmpPos.y, Direction.EAST, UnitType.SPACE ) && 
+             !caveService.isMoving( tmpPos.x, tmpPos.y, Direction.NORTH_EAST, Direction.SOUTH ) ) {
             
             // fall to the right
             unit.setMovement( Direction.EAST );
@@ -94,13 +93,13 @@ public abstract class StoneController extends UnitController {
                 new ActionEvent( ActionType.MOVE.type(), entityId ) 
             );
             unit.setMovement( Direction.SOUTH );
-            playSample();
+            playSample( update );
             return true;
         } 
         
-        if ( isOfType( tmpPos.x, tmpPos.y, Direction.SOUTH_WEST, UnitType.SPACE ) && 
-             isOfType( tmpPos.x, tmpPos.y, Direction.WEST, UnitType.SPACE ) &&
-             !isMoving( tmpPos.x, tmpPos.y, Direction.NORTH_WEST, Direction.SOUTH ) ) {
+        if ( caveService.isOfType( tmpPos.x, tmpPos.y, Direction.SOUTH_WEST, UnitType.SPACE ) && 
+             caveService.isOfType( tmpPos.x, tmpPos.y, Direction.WEST, UnitType.SPACE ) &&
+             !caveService.isMoving( tmpPos.x, tmpPos.y, Direction.NORTH_WEST, Direction.SOUTH ) ) {
             
             // fall to the left
             unit.setMovement( Direction.WEST );
@@ -108,18 +107,22 @@ public abstract class StoneController extends UnitController {
                 new ActionEvent( ActionType.MOVE.type(), entityId ) 
             );
             unit.setMovement( Direction.SOUTH );
-            playSample();
+            playSample( update );
             return true;
         }
         return false;
     }
     
-    private final void playSample() {
-        int soundId = getSoundId();
-        if ( soundId < 0 ) {
-            return;
+    private long currentUpdate = 0;
+    private final void playSample( long update ) {
+        if ( currentUpdate != update ) {
+            int soundId = getSoundId();
+            if ( soundId < 0 ) {
+                return;
+            }
+            eventDispatcher.notify( new SoundEvent( soundId, SoundEvent.Type.PLAY_SOUND ) );
+            currentUpdate = update;
         }
-        eventDispatcher.notify( new SoundEvent( soundId, SoundEvent.Type.PLAY_SOUND ) );
     }
 
     protected abstract int getSoundId();

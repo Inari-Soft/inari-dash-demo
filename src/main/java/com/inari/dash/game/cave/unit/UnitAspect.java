@@ -8,6 +8,7 @@ public enum UnitAspect implements Aspect {
     ENEMY,
     STONE,
 
+    ALIVE,
     MASSIVE,
     CONSUMABLE,
     DESTRUCTIBLE,

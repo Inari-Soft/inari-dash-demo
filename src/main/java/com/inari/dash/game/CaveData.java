@@ -87,7 +87,7 @@ public class CaveData {
     }
 
     public int getCaveWidth() {
-        if ( caveWidth < 0 ) {            
+        if ( caveWidth < 0 ) {
             if ( intermission ) {
                 return DEFAULT_INTERMISSION_WIDTH;
             } else {
@@ -155,14 +155,14 @@ public class CaveData {
 
     public CaveData setCaveDataString( String caveDataString ) {
         this.caveDataString = caveDataString;
+        this.caveDataString = this.caveDataString.trim();
+        this.caveDataString = this.caveDataString.replaceAll( "\n", "" );
         return this;
     }
 
     public int getDiamondsCollected() {
         return diamondsCollected;
     }
-    
-    
 
     public float getAmoebaSlowGrowthProb() {
         return amoebaSlowGrowthProb;

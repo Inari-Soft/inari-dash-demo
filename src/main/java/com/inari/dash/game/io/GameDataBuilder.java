@@ -125,7 +125,7 @@ public class GameDataBuilder {
                     break;
                 }
                 case CaveDelay:
-                    currentCaveData.setUpdateRate( 15 - Integer.parseInt( value ) );
+                    currentCaveData.setUpdateRate( 12 - Integer.parseInt( value ) );
                     break;
                 case FrameTime: {
                     currentCaveData.setUpdateRate( Integer.parseInt( value ) );

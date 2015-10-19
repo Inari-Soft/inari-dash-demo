@@ -19,71 +19,76 @@ import com.inari.firefly.renderer.tile.ETile;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FFInitException;
 
-public final class SolidWallHandle extends UnitHandle {
+public class BrickWallHandle extends UnitHandle {
     
-    public static final String SOLID_WALL_NAME = "solidWall";
-    public static final AssetNameKey SOLID_WALL_SPRITE_ASSET_KEY = new AssetNameKey( CaveService.GAME_UNIT_TEXTURE_KEY.group, SOLID_WALL_NAME );
+    public static final String BRICK_WALL_NAME = "brickWall";
+    public static final AssetNameKey BRICK_WALL_SPRITE_ASSET_KEY = new AssetNameKey( CaveService.GAME_UNIT_TEXTURE_KEY.group, BRICK_WALL_NAME );
     
 
-    private int solidWallEntityId;
+    private int brickWallEntityId;
 
+    
     @Override
-    public final void init( FFContext context ) throws FFInitException {
+    public void init( FFContext context ) throws FFInitException {
         super.init( context );
         
         assetSystem.getAssetBuilder( SpriteAsset.class )
-            .set( SpriteAsset.NAME, SOLID_WALL_NAME )
-            .set( SpriteAsset.ASSET_GROUP, SOLID_WALL_SPRITE_ASSET_KEY.group )
+            .set( SpriteAsset.NAME, BRICK_WALL_SPRITE_ASSET_KEY.name )
+            .set( SpriteAsset.ASSET_GROUP, BRICK_WALL_SPRITE_ASSET_KEY.group )
             .set( SpriteAsset.TEXTURE_ID, assetSystem.getAssetId( CaveService.GAME_UNIT_TEXTURE_KEY ) )
-            .set( SpriteAsset.TEXTURE_REGION, new Rectangle( 32, 6 * 32, 32, 32 ) )
+            .set( SpriteAsset.TEXTURE_REGION, new Rectangle( 3 * 32, 6 * 32, 32, 32 ) )
         .build();
-        super.caveAssetsToReload.add( assetSystem.getAssetTypeKey( SOLID_WALL_SPRITE_ASSET_KEY ) );
+        super.caveAssetsToReload.add( assetSystem.getAssetTypeKey( BRICK_WALL_SPRITE_ASSET_KEY ) );
 
         initialized = true;
     }
-
+    
     @Override
     public void loadCaveData( FFContext context ) {
         super.loadCaveData( context );
         
-        solidWallEntityId = entitySystem.getEntityBuilderWithAutoActivation()
-            .set( EntityPrefab.NAME, SOLID_WALL_NAME )
+        brickWallEntityId = entitySystem.getEntityBuilderWithAutoActivation()
+            .set( EntityPrefab.NAME, BRICK_WALL_NAME )
             .set( ETransform.VIEW_ID, viewSystem.getViewId( CaveService.CAVE_VIEW_NAME ) )
             .set( ETile.MULTI_POSITION, true )
-            .set( ESprite.SPRITE_ID, assetSystem.getAssetId( SOLID_WALL_SPRITE_ASSET_KEY ) )
+            .set( ESprite.SPRITE_ID, assetSystem.getAssetId( BRICK_WALL_SPRITE_ASSET_KEY ) )
             .set( EUnit.UNIT_TYPE, type() )
-            .set( EUnit.ASPECTS, AspectSetBuilder.create( UnitAspect.MASSIVE ) )
+            .set( EUnit.ASPECTS, AspectSetBuilder.create( 
+                UnitAspect.ASLOPE, 
+                UnitAspect.DESTRUCTIBLE, 
+                UnitAspect.MASSIVE 
+            ) )
         .build().getId();
     }
 
     @Override
     public void disposeCaveData( FFContext context ) {
         super.disposeCaveData( context );
-        entitySystem.delete( solidWallEntityId );
-        solidWallEntityId = -1;
+        entitySystem.delete( brickWallEntityId );
+        brickWallEntityId = -1;
     }
 
     @Override
-    public final UnitType type() {
-        return UnitType.SOLID_WALL;
+    public UnitType type() {
+        return UnitType.BRICK_WALL;
     }
 
     @Override
-    public final void initBDCFFTypesMap( Map<String, UnitType> bdcffMap ) {
-        bdcffMap.put( "W", type() );
+    public void initBDCFFTypesMap( Map<String, UnitType> bdcffMap ) {
+        bdcffMap.put( "w", type() );
     }
 
     @Override
-    public final int createOne( int xGridPos, int yGridPos ) {
-        ETile tile = entitySystem.getComponent( solidWallEntityId, ETile.class );
+    public int createOne( int xGridPos, int yGridPos ) {
+        ETile tile = entitySystem.getComponent( brickWallEntityId, ETile.class );
         tile.getGridPositions().add( new Position( xGridPos, yGridPos ) );
-        caveService.setEntityId( solidWallEntityId, xGridPos, yGridPos );
-        return solidWallEntityId;
+        caveService.setEntityId( brickWallEntityId, xGridPos, yGridPos );
+        return brickWallEntityId;
     }
     
     @Override
     public final void dispose( FFContext context ) {
-        assetSystem.disposeAsset( SOLID_WALL_SPRITE_ASSET_KEY );
+        assetSystem.disposeAsset( BRICK_WALL_SPRITE_ASSET_KEY );
     }
 
 }
