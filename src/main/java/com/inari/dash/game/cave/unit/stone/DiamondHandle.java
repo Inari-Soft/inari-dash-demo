@@ -34,6 +34,7 @@ public final class DiamondHandle extends UnitHandle {
     private SpriteAnimationHandler spriteAnimationHandler;
     private int[] soundIds;
     private int soundIndex = 0;
+    private int firstSpriteId;
     
     @Override
     public final void init( FFContext context ) throws FFInitException {
@@ -66,36 +67,48 @@ public final class DiamondHandle extends UnitHandle {
         
         Collection<AssetTypeKey> allSpriteAssetKeys = spriteAnimationHandler.getAllSpriteAssetKeys();
         caveAssetsToReload.addAll( allSpriteAssetKeys );
+        firstSpriteId = allSpriteAssetKeys.iterator().next().id;
+
+        initialized = true;
+    }
+
+    @Override
+    public final void loadCaveData( FFContext context ) {
         
-        controllerId = controllerSystem.getComponentBuilder( DiamondController.class )
+        super.loadCaveData( context );
+        
+        DiamondController controller = controllerSystem.getComponentBuilder( DiamondController.class )
             .set( EntityController.NAME, DIAMOND_NAME )
-        .build().getId();
+        .build();
+        controllerId = controller.getId();
         
         prefabId = prefabSystem.getEntityPrefabBuilder()
             .set( EController.CONTROLLER_IDS, new int[] { controllerId, spriteAnimationHandler.getControllerId() } )
             .set( EntityPrefab.NAME, DIAMOND_NAME )
             .set( ETransform.VIEW_ID, viewSystem.getViewId( CaveService.CAVE_VIEW_NAME ) )
-            .set( ESprite.SPRITE_ID, allSpriteAssetKeys.iterator().next().id )
+            .set( ESprite.SPRITE_ID, firstSpriteId )
             .set( ETile.MULTI_POSITION, false )
             .set( EUnit.UNIT_TYPE, type() )
             .set( EUnit.ASPECTS, AspectSetBuilder.create( 
                 UnitAspect.DESTRUCTIBLE, 
                 UnitAspect.STONE, 
                 UnitAspect.ASLOPE, 
-                UnitAspect.MASSIVE ) 
-            )
+                UnitAspect.WALKABLE
+            ) )
         .build().getId();
         prefabSystem.cacheComponents( prefabId, 200 );
-        
-        initialized = true;
+            
+        float updateRate = caveService.getUpdateRate();
+        controller.setUpdateResolution( updateRate );
+        spriteAnimationHandler.setFrameTime( 80 - (int) updateRate * 4 );
     }
 
     @Override
-    public final void loadCaveData( FFContext context ) {
-        super.loadCaveData( context );
-        float updateRate = caveService.getUpdateRate();
-        controllerSystem.getController( controllerId ).setUpdateResolution( updateRate );
-        spriteAnimationHandler.setFrameTime( 80 - (int) updateRate * 4 );
+    public void disposeCaveData( FFContext context ) {
+        super.disposeCaveData( context );
+        
+        controllerSystem.deleteController( controllerId );
+        prefabSystem.deletePrefab( prefabId );
     }
 
     @Override

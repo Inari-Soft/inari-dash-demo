@@ -58,10 +58,17 @@ public final class RockHandle extends UnitHandle {
             .set( Sound.CHANNEL, 1 )
             .set( Sound.LOOPING, false )
         .build().getId();
-        
-        controllerId = controllerSystem.getComponentBuilder( RockController.class )
+
+        initialized = true;
+    }
+
+    @Override
+    public final void loadCaveData( FFContext context ) {
+        super.loadCaveData( context );
+        RockController controller = controllerSystem.getComponentBuilder( RockController.class )
             .set( EntityController.NAME, "RockController" )
-        .build().getId();
+        .build();
+        controllerId = controller.getId();
         
         prefabId = prefabSystem.getEntityPrefabBuilder()
             .set( EController.CONTROLLER_IDS, new int[] { controllerId } )
@@ -73,21 +80,21 @@ public final class RockHandle extends UnitHandle {
             .set( EUnit.ASPECTS, AspectSetBuilder.create( 
                 UnitAspect.DESTRUCTIBLE, 
                 UnitAspect.STONE, 
-                UnitAspect.ASLOPE, 
-                UnitAspect.MASSIVE ) 
-            )
+                UnitAspect.ASLOPE
+            ) )
         .build().getId();
         prefabSystem.cacheComponents( prefabId, 200 );
         
-        initialized = true;
+        float updateRate = caveService.getUpdateRate();
+        controller.setUpdateResolution( updateRate );
     }
 
     @Override
-    public final void loadCaveData( FFContext context ) {
-        super.loadCaveData( context );
-        controllerSystem.getController( controllerId ).setUpdateResolution( 
-            caveService.getUpdateRate() 
-        );
+    public void disposeCaveData( FFContext context ) {
+        super.disposeCaveData( context );
+        
+        controllerSystem.deleteController( controllerId );
+        prefabSystem.deletePrefab( prefabId );
     }
 
     @Override

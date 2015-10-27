@@ -7,11 +7,8 @@ import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.aspect.AspectSetBuilder;
 import com.inari.dash.game.cave.CaveService;
 import com.inari.dash.game.cave.unit.EUnit;
-import com.inari.dash.game.cave.unit.UnitAspect;
 import com.inari.dash.game.cave.unit.UnitHandle;
 import com.inari.dash.game.cave.unit.UnitType;
-import com.inari.dash.game.cave.unit.rockford.RFUnit;
-import com.inari.dash.game.cave.unit.rockford.RFUnit.RFState;
 import com.inari.firefly.animation.sprite.SpriteAnimationBuilder;
 import com.inari.firefly.animation.sprite.SpriteAnimationBuilder.SpriteAnimationHandler;
 import com.inari.firefly.asset.AssetNameKey;
@@ -34,6 +31,7 @@ public final class ExitHandle extends UnitHandle {
     public static final AssetNameKey ROCKFORD_SPRITE_ASSET_KEY = new AssetNameKey( CaveService.GAME_UNIT_TEXTURE_KEY.group, EXIT_NAME );
     
     private SpriteAnimationHandler spriteAnimationHandler;
+    private int exitEntityId;
     private int firstSpriteId;
 
     @Override
@@ -69,6 +67,13 @@ public final class ExitHandle extends UnitHandle {
     }
 
     @Override
+    public void disposeCaveData( FFContext context ) {
+        super.disposeCaveData( context );
+        
+        entitySystem.delete( exitEntityId );
+    }
+
+    @Override
     public final UnitType type() {
         return UnitType.EXIT;
     }
@@ -81,21 +86,25 @@ public final class ExitHandle extends UnitHandle {
 
     @Override
     public final int createOne( int xGridPos, int yGridPos ) {
-        return entitySystem.getEntityBuilderWithAutoActivation()
+        exitEntityId = entitySystem.getEntityBuilderWithAutoActivation()
             .set( EController.CONTROLLER_IDS, new int[] { spriteAnimationHandler.getControllerId() } )
             .set( ETransform.VIEW_ID, viewSystem.getViewId( CaveService.CAVE_VIEW_NAME ) )
             .set( ESprite.SPRITE_ID, firstSpriteId )
             .set( ETile.GRID_X_POSITION, xGridPos )
             .set( ETile.GRID_Y_POSITION, yGridPos )
             .set( EUnit.UNIT_TYPE, type() )
-            .set( EUnit.ASPECTS, AspectSetBuilder.create( UnitAspect.MASSIVE ) )
-            .set( RFUnit.STATE, RFState.ENTERING )
+            .set( EUnit.ASPECTS, AspectSetBuilder.create() )
         .build().getId();
+        return exitEntityId;
     }
     
+    @Override
+    public final int getEntityId() {
+        return exitEntityId;
+    }
+
     @Override
     public final void dispose( FFContext context ) {
         spriteAnimationHandler.dispose( context );
     }
-
 }

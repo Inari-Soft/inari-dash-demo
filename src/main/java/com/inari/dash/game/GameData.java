@@ -21,7 +21,7 @@ public class GameData {
     private boolean modified = false;
     
     private List<CaveData> caves = new ArrayList<CaveData>();
-    private int currentCurrentCaveIndex = -1;
+    private int currentCurrentCaveIndex = 0;
     private CaveData currentCave;
     
     public GameData( GameInfo gameInfo ) {
@@ -43,6 +43,7 @@ public class GameData {
     
     public void setCave( int index ) {
         currentCave = caves.get( index );
+        currentCurrentCaveIndex = index;
     }
 
     public void nextCave() {

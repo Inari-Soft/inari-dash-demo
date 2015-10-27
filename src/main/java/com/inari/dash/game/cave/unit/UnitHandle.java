@@ -77,6 +77,10 @@ public abstract class UnitHandle implements FFContextInitiable, Disposable {
         return createOne( xGridPos, yGridPos );
     }
     
+    public int getEntityId() {
+        throw new UnsupportedOperationException( "Not supported for type: " + this.getClass() );
+    }
+    
     public abstract int createOne( int xGridPos, int yGridPos );
 
 }

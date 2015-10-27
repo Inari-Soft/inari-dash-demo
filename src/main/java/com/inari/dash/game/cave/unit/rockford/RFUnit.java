@@ -32,6 +32,11 @@ public final class RFUnit extends EntityComponent {
     
     public RFUnit() {
         super();
+        resetAttributes();
+    }
+
+    @Override
+    public final void resetAttributes() {
         state = RFState.ENTERING;
     }
     

@@ -2,6 +2,7 @@ package com.inari.dash.game.cave.unit.misc;
 
 import com.inari.dash.game.cave.unit.EUnit;
 import com.inari.dash.game.cave.unit.UnitController;
+import com.inari.dash.game.cave.unit.UnitType;
 import com.inari.firefly.renderer.tile.ETile;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FFTimer;
@@ -23,9 +24,9 @@ public final class ExplosionController extends UnitController {
             ETile tile = entitySystem.getComponent( entityId, ETile.class );
             int xpos = tile.getGridXPos();
             int ypos = tile.getGridYPos();
+            UnitType explodeToType = unit.getExplodeTo();
             entitySystem.delete( entityId );
-            unit.getExplodeTo().handler.createOne( xpos, ypos );
-            unit.resetAnimationCount();
+            explodeToType.handler.createOne( xpos, ypos );
         }
     }
 

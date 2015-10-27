@@ -4,7 +4,7 @@ import com.inari.commons.geom.Direction;
 import com.inari.dash.game.cave.unit.EUnit;
 import com.inari.dash.game.cave.unit.UnitController;
 import com.inari.dash.game.cave.unit.UnitType;
-import com.inari.dash.game.cave.unit.action.ActionType;
+import com.inari.dash.game.cave.unit.action.UnitActionType;
 import com.inari.firefly.action.event.ActionEvent;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FFTimer;
@@ -24,7 +24,7 @@ public abstract class FlyController extends UnitController {
              unit.isHit() 
          ) {
             
-            eventDispatcher.notify( new ActionEvent( ActionType.EXPLODE.index(), entityId ) );
+            eventDispatcher.notify( new ActionEvent( UnitActionType.EXPLODE.index(), entityId ) );
             return;
         }
         
@@ -34,13 +34,13 @@ public abstract class FlyController extends UnitController {
         if ( caveService.isOfType( entityId, newDirection, UnitType.SPACE ) ) {
             
             unit.setMovement( newDirection );
-            eventDispatcher.notify( new ActionEvent( ActionType.MOVE.index(), entityId ) );
+            eventDispatcher.notify( new ActionEvent( UnitActionType.MOVE.index(), entityId ) );
             return;
         }
         
         // if we have space on the way, move along
         if ( caveService.isOfType( entityId, currentDirection, UnitType.SPACE ) ) {
-            eventDispatcher.notify( new ActionEvent( ActionType.MOVE.index(), entityId ) );
+            eventDispatcher.notify( new ActionEvent( UnitActionType.MOVE.index(), entityId ) );
             return;
         }
         

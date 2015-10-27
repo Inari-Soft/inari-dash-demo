@@ -6,7 +6,7 @@ import com.inari.dash.game.cave.unit.EUnit;
 import com.inari.dash.game.cave.unit.UnitAspect;
 import com.inari.dash.game.cave.unit.UnitController;
 import com.inari.dash.game.cave.unit.UnitType;
-import com.inari.dash.game.cave.unit.action.ActionType;
+import com.inari.dash.game.cave.unit.action.UnitActionType;
 import com.inari.firefly.action.event.ActionEvent;
 import com.inari.firefly.renderer.tile.ETile;
 import com.inari.firefly.sound.event.SoundEvent;
@@ -35,7 +35,7 @@ public abstract class StoneController extends UnitController {
             // ... and below is empty
             if ( caveService.isOfType( tmpPos.x, tmpPos.y, Direction.SOUTH, UnitType.SPACE ) ) {
                 // ... keep falling
-                eventDispatcher.notify( new ActionEvent( ActionType.MOVE.type(),  entityId ) );
+                eventDispatcher.notify( new ActionEvent( UnitActionType.MOVE.type(),  entityId ) );
                 return;
             }
             
@@ -61,7 +61,7 @@ public abstract class StoneController extends UnitController {
             // start falling... or wait for next update
             unit.setMovement( Direction.SOUTH );
             playSample( update );
-            eventDispatcher.notify( new ActionEvent( ActionType.MOVE.type(),  entityId ) );
+            eventDispatcher.notify( new ActionEvent( UnitActionType.MOVE.type(),  entityId ) );
 //            if ( unit.getAnimationCount() >= 1 ) {
 //                unit.setMovement( Direction.SOUTH );
 //                playSample( update );
@@ -90,7 +90,7 @@ public abstract class StoneController extends UnitController {
             // fall to the right
             unit.setMovement( Direction.EAST );
             eventDispatcher.notify( 
-                new ActionEvent( ActionType.MOVE.type(), entityId ) 
+                new ActionEvent( UnitActionType.MOVE.type(), entityId ) 
             );
             unit.setMovement( Direction.SOUTH );
             playSample( update );
@@ -104,7 +104,7 @@ public abstract class StoneController extends UnitController {
             // fall to the left
             unit.setMovement( Direction.WEST );
             eventDispatcher.notify( 
-                new ActionEvent( ActionType.MOVE.type(), entityId ) 
+                new ActionEvent( UnitActionType.MOVE.type(), entityId ) 
             );
             unit.setMovement( Direction.SOUTH );
             playSample( update );

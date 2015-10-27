@@ -68,10 +68,7 @@ public final class AmoebaHandle extends UnitHandle {
         caveAssetsToReload.addAll( allSpriteAssetKeys );
         firstSpriteId = allSpriteAssetKeys.iterator().next().id;
         
-        // controller
-        controllerId = controllerSystem.getComponentBuilder( AmoebaController.class )
-            .set( EntityController.NAME, AMOEBA_NAME )
-        .build().getId();
+        
         
         initialized = true;
     }
@@ -80,8 +77,13 @@ public final class AmoebaHandle extends UnitHandle {
     public final void loadCaveData( FFContext context ) {
         super.loadCaveData( context );
         
+        // controller
+        AmoebaController controller = controllerSystem.getComponentBuilder( AmoebaController.class )
+            .set( EntityController.NAME, AMOEBA_NAME )
+        .build();
+        controllerId = controller.getId();
+        
         float updateRate = caveService.getUpdateRate();
-        AmoebaController controller = (AmoebaController) controllerSystem.getController( controllerId );
         controller.setUpdateResolution( UPDATE_TIME_FACTOR );
         spriteAnimationHandler.setFrameTime( 60 - (int) updateRate * 4 );
         
@@ -95,6 +97,15 @@ public final class AmoebaHandle extends UnitHandle {
                 UnitAspect.DESTRUCTIBLE
             ) )
         .build().getId();
+    }
+    
+    
+
+    @Override
+    public final void disposeCaveData( FFContext context ) {
+        super.disposeCaveData( context );
+        controllerSystem.deleteController( controllerId );
+        entitySystem.delete( amoebaEntityId );
     }
 
     @Override

@@ -7,12 +7,10 @@ import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.aspect.AspectSetBuilder;
 import com.inari.dash.game.cave.CaveService;
 import com.inari.dash.game.cave.unit.EUnit;
-import com.inari.dash.game.cave.unit.UnitAspect;
 import com.inari.dash.game.cave.unit.UnitHandle;
 import com.inari.dash.game.cave.unit.UnitType;
 import com.inari.firefly.asset.AssetNameKey;
 import com.inari.firefly.entity.ETransform;
-import com.inari.firefly.entity.EntityPrefab;
 import com.inari.firefly.renderer.sprite.ESprite;
 import com.inari.firefly.renderer.sprite.SpriteAsset;
 import com.inari.firefly.renderer.tile.ETile;
@@ -47,12 +45,11 @@ public final class SolidWallHandle extends UnitHandle {
         super.loadCaveData( context );
         
         solidWallEntityId = entitySystem.getEntityBuilderWithAutoActivation()
-            .set( EntityPrefab.NAME, SOLID_WALL_NAME )
             .set( ETransform.VIEW_ID, viewSystem.getViewId( CaveService.CAVE_VIEW_NAME ) )
             .set( ETile.MULTI_POSITION, true )
             .set( ESprite.SPRITE_ID, assetSystem.getAssetId( SOLID_WALL_SPRITE_ASSET_KEY ) )
             .set( EUnit.UNIT_TYPE, type() )
-            .set( EUnit.ASPECTS, AspectSetBuilder.create( UnitAspect.MASSIVE ) )
+            .set( EUnit.ASPECTS, AspectSetBuilder.create() )
         .build().getId();
     }
 

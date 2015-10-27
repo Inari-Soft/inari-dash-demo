@@ -12,7 +12,6 @@ import com.inari.dash.game.cave.unit.UnitHandle;
 import com.inari.dash.game.cave.unit.UnitType;
 import com.inari.firefly.asset.AssetNameKey;
 import com.inari.firefly.entity.ETransform;
-import com.inari.firefly.entity.EntityPrefab;
 import com.inari.firefly.renderer.sprite.ESprite;
 import com.inari.firefly.renderer.sprite.SpriteAsset;
 import com.inari.firefly.renderer.tile.ETile;
@@ -48,15 +47,13 @@ public class BrickWallHandle extends UnitHandle {
         super.loadCaveData( context );
         
         brickWallEntityId = entitySystem.getEntityBuilderWithAutoActivation()
-            .set( EntityPrefab.NAME, BRICK_WALL_NAME )
             .set( ETransform.VIEW_ID, viewSystem.getViewId( CaveService.CAVE_VIEW_NAME ) )
             .set( ETile.MULTI_POSITION, true )
             .set( ESprite.SPRITE_ID, assetSystem.getAssetId( BRICK_WALL_SPRITE_ASSET_KEY ) )
             .set( EUnit.UNIT_TYPE, type() )
             .set( EUnit.ASPECTS, AspectSetBuilder.create( 
                 UnitAspect.ASLOPE, 
-                UnitAspect.DESTRUCTIBLE, 
-                UnitAspect.MASSIVE 
+                UnitAspect.DESTRUCTIBLE
             ) )
         .build().getId();
     }

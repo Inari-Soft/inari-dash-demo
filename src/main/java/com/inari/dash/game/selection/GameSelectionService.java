@@ -9,15 +9,14 @@ import com.inari.dash.game.io.GameInfos;
 import com.inari.firefly.Disposable;
 import com.inari.firefly.Loadable;
 import com.inari.firefly.asset.AssetSystem;
-import com.inari.firefly.control.ControllerSystem;
 import com.inari.firefly.control.Controller;
+import com.inari.firefly.control.ControllerSystem;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.renderer.sprite.ESprite;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FFContextInitiable;
 import com.inari.firefly.system.FFInitException;
-import com.inari.firefly.system.view.ViewSystem;
 import com.inari.firefly.text.EText;
 import com.inari.firefly.text.TextSystem;
 
@@ -37,7 +36,6 @@ public final class GameSelectionService implements FFContextInitiable, Loadable,
     private EntitySystem entitySystem;
     private TextSystem textSystem;
     private ControllerSystem controllerSystem;
-    private ViewSystem viewSystem;
     private GameInfos gameInfosLoader;
     
     private Mode mode = Mode.GAME_SELECTION;
@@ -61,7 +59,6 @@ public final class GameSelectionService implements FFContextInitiable, Loadable,
         entitySystem = context.getComponent( EntitySystem.CONTEXT_KEY );
         textSystem = context.getComponent( TextSystem.CONTEXT_KEY );
         controllerSystem = context.getComponent( ControllerSystem.CONTEXT_KEY );
-        viewSystem = context.getComponent( ViewSystem.CONTEXT_KEY );
         
         gameInfosLoader = new GameInfos();
         gameInfosLoader.load( context );
@@ -86,13 +83,13 @@ public final class GameSelectionService implements FFContextInitiable, Loadable,
             .set( ETransform.XPOSITION, 30 )
             .set( ETransform.YPOSITION, 120 )
             .set( EText.FONT_ID, textSystem.getFontId( GameService.GAME_FONT_TEXTURE_KEY.name ) )
-            .set( EText.TEXT, "%%%%%%%%%%%%%%%%%%%%%%%" )
+            .set( EText.TEXT_STRING, "%%%%%%%%%%%%%%%%%%%%%%%" )
         .buildAndNext()
             .set( ETransform.VIEW_ID, 0 )
             .set( ETransform.XPOSITION, 30 )
             .set( ETransform.YPOSITION, 500 )
             .set( EText.FONT_ID, textSystem.getFontId( GameService.GAME_FONT_TEXTURE_KEY.name ) )
-            .set( EText.TEXT, "%%%%%%%%%%%%%%%%%%%%%%%" )
+            .set( EText.TEXT_STRING, "%%%%%%%%%%%%%%%%%%%%%%%" )
         .build();
         
         gameSelectionTitle = entitySystem.getComponent( 
@@ -101,7 +98,7 @@ public final class GameSelectionService implements FFContextInitiable, Loadable,
                 .set( ETransform.XPOSITION, 50 )
                 .set( ETransform.YPOSITION, 200 )
                 .set( EText.FONT_ID, textSystem.getFontId( GameService.GAME_FONT_TEXTURE_KEY.name ) )
-                .set( EText.TEXT, "GAME:" )
+                .set( EText.TEXT_STRING, "GAME:" )
             .build().getId(),
             EText.class
         );
@@ -111,7 +108,7 @@ public final class GameSelectionService implements FFContextInitiable, Loadable,
                 .set( ETransform.XPOSITION, 220 )
                 .set( ETransform.YPOSITION, 200 )
                 .set( EText.FONT_ID, textSystem.getFontId( GameService.GAME_FONT_TEXTURE_KEY.name ) )
-                .set( EText.TEXT, "XXX" )
+                .set( EText.TEXT_STRING, "XXX" )
             .build().getId(),
             EText.class
         );
@@ -121,7 +118,7 @@ public final class GameSelectionService implements FFContextInitiable, Loadable,
                 .set( ETransform.XPOSITION, 50 )
                 .set( ETransform.YPOSITION, 300 )
                 .set( EText.FONT_ID, textSystem.getFontId( GameService.GAME_FONT_TEXTURE_KEY.name ) )
-                .set( EText.TEXT, "CAVE:" )
+                .set( EText.TEXT_STRING, "CAVE:" )
             .build().getId(),
             EText.class
         );
@@ -131,7 +128,7 @@ public final class GameSelectionService implements FFContextInitiable, Loadable,
                 .set( ETransform.XPOSITION, 220 )
                 .set( ETransform.YPOSITION, 300 )
                 .set( EText.FONT_ID, textSystem.getFontId( GameService.GAME_FONT_TEXTURE_KEY.name ) )
-                .set( EText.TEXT, "1" )
+                .set( EText.TEXT_STRING, "1" )
             .build().getId(),
             EText.class
         );
@@ -141,15 +138,14 @@ public final class GameSelectionService implements FFContextInitiable, Loadable,
                 .set( ETransform.XPOSITION, 50 )
                 .set( ETransform.YPOSITION, 400 )
                 .set( EText.FONT_ID, textSystem.getFontId( GameService.GAME_FONT_TEXTURE_KEY.name ) )
-                .set( EText.TEXT, "EXIT" )
+                .set( EText.TEXT_STRING, "EXIT" )
             .build().getId(),
             EText.class
         );
         
-        GameSelectionController controller = controllerSystem.getControllerBuilder( GameSelectionController.class )
+        controllerSystem.getControllerBuilder( GameSelectionController.class )
             .set( Controller.NAME, GAME_SELECTION_CONTROLLER_NAME )
         .build();
-        viewSystem.getView( 0 ).setControllerId( controller.getId() );
         
         update();
         
@@ -182,8 +178,8 @@ public final class GameSelectionService implements FFContextInitiable, Loadable,
         caveSelectionTitle.setTintColor( ( mode == Mode.CAVE_SELECTION )? GameService.YELLOW_FONT_COLOR : GameService.WHITE_FONT_COLOR );
         exit.setTintColor( ( mode == Mode.EXIT )? GameService.YELLOW_FONT_COLOR : GameService.WHITE_FONT_COLOR );
         
-        gameSelection.setText( getSelectedGame().getName() );
-        caveSelection.setText( String.valueOf( getSelectedCave() ) );
+        gameSelection.setText( getSelectedGame().getName().toCharArray() );
+        caveSelection.setText( String.valueOf( getSelectedCave() ).toCharArray() );
     }
 
     final void select() {

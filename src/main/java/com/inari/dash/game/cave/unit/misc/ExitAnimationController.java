@@ -1,33 +1,24 @@
 package com.inari.dash.game.cave.unit.misc;
 
-import com.inari.dash.game.cave.CaveService;
-import com.inari.dash.game.cave.CaveService.CaveState;
+import com.inari.dash.game.cave.unit.EUnit;
+import com.inari.dash.game.cave.unit.UnitAspect;
 import com.inari.firefly.animation.sprite.StatedSpriteAnimation;
+import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.system.FFContext;
-import com.inari.firefly.system.FFTimer;
 
-public final class ExitAnimationController extends StatedSpriteAnimation{
+public final class ExitAnimationController extends StatedSpriteAnimation {
     
-    private final CaveService caveService;
+    private final EntitySystem entitySystem;
 
     public ExitAnimationController( int id, FFContext context ) {
         super( id, context );
-        caveService = context.getComponent( CaveService.CONTEXT_KEY );
+        entitySystem = context.getComponent( EntitySystem.CONTEXT_KEY );
     }
-    
-    
-
-    @Override
-    public void update( FFTimer timer ) {
-        // TODO Auto-generated method stub
-        super.update( timer );
-    }
-
-
 
     @Override
     public final int getState( int entityId ) {
-        return ( caveService.getCaveState() == CaveState.EXIT_OPEN )? 
+        EUnit exitUnit = entitySystem.getComponent( entityId, EUnit.class );
+        return ( exitUnit.has( UnitAspect.ACTIVE ) )? 
             ExitHandle.State.OPEN.ordinal() : ExitHandle.State.CLOSED.ordinal();
     }
 

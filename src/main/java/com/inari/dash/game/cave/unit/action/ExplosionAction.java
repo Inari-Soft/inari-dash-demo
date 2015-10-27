@@ -55,7 +55,7 @@ public final class ExplosionAction extends UnitAction {
     }
 
     private void createExplosion( UnitType explodeTo ) {
-        int entityId = caveService.getEntityId( tmpPos.x, tmpPos.y, Direction.NONE );
+        int entityId = caveService.getEntityId( tmpPos.x, tmpPos.y );
         if ( caveService.hasAspect( entityId, UnitAspect.DESTRUCTIBLE ) ) {
             caveService.deleteUnit( entityId, tmpPos.x, tmpPos.y );
             int newEntityId = explosionType.handler.createOne( tmpPos.x, tmpPos.y );

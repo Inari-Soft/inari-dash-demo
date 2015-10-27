@@ -44,5 +44,8 @@ public enum UnitType {
         this.handler = handler;
     }
 
-       
+    @SuppressWarnings( "unchecked" )
+    public <T extends UnitHandle> T getHandle() {
+        return (T) handler;
+    }
 }

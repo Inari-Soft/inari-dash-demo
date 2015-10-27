@@ -42,6 +42,12 @@ public final class EUnit extends EntityComponent {
     private UnitType explodeTo;
     
     public EUnit() {
+        super();
+        resetAttributes();
+    }
+
+    @Override
+    public final void resetAttributes() {
         unitType = null;
         movement = Direction.NONE;
         animationCount = 0;

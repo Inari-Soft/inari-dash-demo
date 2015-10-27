@@ -12,7 +12,6 @@ import com.inari.dash.game.cave.unit.UnitHandle;
 import com.inari.dash.game.cave.unit.UnitType;
 import com.inari.firefly.asset.AssetNameKey;
 import com.inari.firefly.entity.ETransform;
-import com.inari.firefly.entity.EntityPrefab;
 import com.inari.firefly.renderer.sprite.ESprite;
 import com.inari.firefly.renderer.sprite.SpriteAsset;
 import com.inari.firefly.renderer.tile.ETile;
@@ -23,7 +22,6 @@ public final class SpaceHandle extends UnitHandle {
     
     public static final String SPACE_NAME = "space";
     public static final AssetNameKey SPACE_SPRITE_ASSET_KEY = new AssetNameKey( CaveService.GAME_UNIT_TEXTURE_KEY.group, SPACE_NAME );
-    
     
     private int spaceEntityId;
 
@@ -47,12 +45,15 @@ public final class SpaceHandle extends UnitHandle {
         super.loadCaveData( context );
 
         spaceEntityId = entitySystem.getEntityBuilderWithAutoActivation()
-            .set( EntityPrefab.NAME, SPACE_NAME )
             .set( ETransform.VIEW_ID, viewSystem.getViewId( CaveService.CAVE_VIEW_NAME ) )
             .set( ETile.MULTI_POSITION, true )
             .set( ESprite.SPRITE_ID, assetSystem.getAssetId( SPACE_SPRITE_ASSET_KEY ) )
             .set( EUnit.UNIT_TYPE, type() )
-            .set( EUnit.ASPECTS, AspectSetBuilder.create( UnitAspect.DESTRUCTIBLE, UnitAspect.CONSUMABLE ) )
+            .set( EUnit.ASPECTS, AspectSetBuilder.create( 
+                UnitAspect.DESTRUCTIBLE, 
+                UnitAspect.CONSUMABLE, 
+                UnitAspect.WALKABLE 
+            ) )
         .build().getId();
     }
 
@@ -83,6 +84,11 @@ public final class SpaceHandle extends UnitHandle {
         ETile tile = entitySystem.getComponent( spaceEntityId, ETile.class );
         tile.getGridPositions().add( new Position( xGridPos, yGridPos ) );
         caveService.setEntityId( spaceEntityId, xGridPos, yGridPos );
+        return spaceEntityId;
+    }
+
+    @Override
+    public final int getEntityId() {
         return spaceEntityId;
     }
 

@@ -4,12 +4,11 @@ import com.inari.commons.lang.aspect.Aspect;
 
 public enum UnitAspect implements Aspect {
     ACTIVE,
+    ALIVE,
     
     ENEMY,
     STONE,
-
-    ALIVE,
-    MASSIVE,
+    WALKABLE,
     CONSUMABLE,
     DESTRUCTIBLE,
     ASLOPE,

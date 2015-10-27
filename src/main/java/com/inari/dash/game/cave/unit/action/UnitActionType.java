@@ -4,16 +4,17 @@ import com.inari.commons.lang.indexed.IndexedObject;
 import com.inari.commons.lang.indexed.Indexer;
 import com.inari.firefly.action.Action;
 
-public enum ActionType implements IndexedObject {
+public enum UnitActionType implements IndexedObject {
     MOVE( MoveAction.class ),
     EXPLODE( ExplosionAction.class ),
     COLLECT( CollectAction.class ), 
-    END_CAVE( null )
+    FLASH( FlashAction.class ),
+    END_CAVE( null ), 
     ;
     
     private final int index;
     private final Class<? extends Action> actionTypeClass;
-    private ActionType( Class<? extends Action> actionTypeClass ) {
+    private UnitActionType( Class<? extends Action> actionTypeClass ) {
         index = Indexer.getIndexedObjectSize( Action.class ) + ordinal();
         this.actionTypeClass = actionTypeClass;
     }
@@ -32,7 +33,7 @@ public enum ActionType implements IndexedObject {
     }
 
     @Override
-    public final Class<ActionType> indexedObjectType() {
-        return ActionType.class;
+    public final Class<UnitActionType> indexedObjectType() {
+        return UnitActionType.class;
     } 
 }

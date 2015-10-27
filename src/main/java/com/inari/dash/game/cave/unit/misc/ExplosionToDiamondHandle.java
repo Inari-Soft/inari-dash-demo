@@ -4,10 +4,8 @@ import java.util.Collection;
 import java.util.Map;
 
 import com.inari.commons.geom.Rectangle;
-import com.inari.commons.lang.aspect.AspectSetBuilder;
 import com.inari.dash.game.cave.CaveService;
 import com.inari.dash.game.cave.unit.EUnit;
-import com.inari.dash.game.cave.unit.UnitAspect;
 import com.inari.dash.game.cave.unit.UnitType;
 import com.inari.firefly.animation.sprite.SpriteAnimationBuilder;
 import com.inari.firefly.animation.sprite.SpriteAnimationBuilder.SpriteAnimationHandler;
@@ -52,7 +50,6 @@ public class ExplosionToDiamondHandle extends AbstractExplosionHandle {
             .set( ESprite.SPRITE_ID, allSpriteAssetKeys.iterator().next().id )
             .set( ETile.MULTI_POSITION, false )
             .set( EUnit.UNIT_TYPE, type() )
-            .set( EUnit.ASPECTS, AspectSetBuilder.create( UnitAspect.MASSIVE ) )
         .build().getId();
         prefabSystem.cacheComponents( prefabId, 100 );
         
