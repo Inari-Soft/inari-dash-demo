@@ -155,7 +155,6 @@ public class CaveData {
 
     public CaveData setCaveDataString( String caveDataString ) {
         this.caveDataString = caveDataString;
-        this.caveDataString = this.caveDataString.trim();
         this.caveDataString = this.caveDataString.replaceAll( "\n", "" );
         return this;
     }

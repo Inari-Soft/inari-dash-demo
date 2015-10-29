@@ -148,8 +148,10 @@ public final class RFController extends UnitController {
            }
            
            if ( grabbing ) {
-               caveService.deleteUnit( nextPos.x, nextPos.y, move );
-               caveService.createOne( nextPos.x, nextPos.y, UnitType.SPACE );
+               if ( nextType != UnitType.SPACE ) {
+                   caveService.deleteUnit( nextPos.x, nextPos.y );
+                   caveService.createOne( nextPos.x, nextPos.y, UnitType.SPACE );
+               }
            } else {
                eventDispatcher.notify( new ActionEvent( UnitActionType.MOVE.index(), entityId ) );
            }

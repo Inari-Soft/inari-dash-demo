@@ -33,8 +33,7 @@ public enum UnitType {
     
     ROCKFORD( new RFHandle() ),
     EXIT( new ExitHandle() ),
-    
-    
+
     EXPLOSION_TO_DIAMOND( new ExplosionToDiamondHandle() ),
     EXPLOSION( new ExplosionHandle() ),
     ;

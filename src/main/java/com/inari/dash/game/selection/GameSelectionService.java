@@ -45,11 +45,11 @@ public final class GameSelectionService implements FFContextInitiable, Loadable,
     
     private boolean loaded = false;
     
-    private EText gameSelectionTitle;
-    private EText gameSelection;
-    private EText caveSelectionTitle;
-    private EText caveSelection;
-    private EText exit;
+    private int gameSelectionTitle;
+    private int gameSelection;
+    private int caveSelectionTitle;
+    private int caveSelection;
+    private int exit;
     
     GameSelectionService() {}
     
@@ -92,56 +92,41 @@ public final class GameSelectionService implements FFContextInitiable, Loadable,
             .set( EText.TEXT_STRING, "%%%%%%%%%%%%%%%%%%%%%%%" )
         .build();
         
-        gameSelectionTitle = entitySystem.getComponent( 
-            entitySystem.getEntityBuilderWithAutoActivation()
-                .set( ETransform.VIEW_ID, 0 )
-                .set( ETransform.XPOSITION, 50 )
-                .set( ETransform.YPOSITION, 200 )
-                .set( EText.FONT_ID, textSystem.getFontId( GameService.GAME_FONT_TEXTURE_KEY.name ) )
-                .set( EText.TEXT_STRING, "GAME:" )
-            .build().getId(),
-            EText.class
-        );
-        gameSelection = entitySystem.getComponent( 
-            entitySystem.getEntityBuilderWithAutoActivation()
-                .set( ETransform.VIEW_ID, 0 )
-                .set( ETransform.XPOSITION, 220 )
-                .set( ETransform.YPOSITION, 200 )
-                .set( EText.FONT_ID, textSystem.getFontId( GameService.GAME_FONT_TEXTURE_KEY.name ) )
-                .set( EText.TEXT_STRING, "XXX" )
-            .build().getId(),
-            EText.class
-        );
-        caveSelectionTitle = entitySystem.getComponent( 
-            entitySystem.getEntityBuilderWithAutoActivation()
-                .set( ETransform.VIEW_ID, 0 )
-                .set( ETransform.XPOSITION, 50 )
-                .set( ETransform.YPOSITION, 300 )
-                .set( EText.FONT_ID, textSystem.getFontId( GameService.GAME_FONT_TEXTURE_KEY.name ) )
-                .set( EText.TEXT_STRING, "CAVE:" )
-            .build().getId(),
-            EText.class
-        );
-        caveSelection = entitySystem.getComponent( 
-            entitySystem.getEntityBuilderWithAutoActivation()
-                .set( ETransform.VIEW_ID, 0 )
-                .set( ETransform.XPOSITION, 220 )
-                .set( ETransform.YPOSITION, 300 )
-                .set( EText.FONT_ID, textSystem.getFontId( GameService.GAME_FONT_TEXTURE_KEY.name ) )
-                .set( EText.TEXT_STRING, "1" )
-            .build().getId(),
-            EText.class
-        );
-        exit = entitySystem.getComponent( 
-            entitySystem.getEntityBuilderWithAutoActivation()
-                .set( ETransform.VIEW_ID, 0 )
-                .set( ETransform.XPOSITION, 50 )
-                .set( ETransform.YPOSITION, 400 )
-                .set( EText.FONT_ID, textSystem.getFontId( GameService.GAME_FONT_TEXTURE_KEY.name ) )
-                .set( EText.TEXT_STRING, "EXIT" )
-            .build().getId(),
-            EText.class
-        );
+        gameSelectionTitle = entitySystem.getEntityBuilderWithAutoActivation()
+            .set( ETransform.VIEW_ID, 0 )
+            .set( ETransform.XPOSITION, 50 )
+            .set( ETransform.YPOSITION, 200 )
+            .set( EText.FONT_ID, textSystem.getFontId( GameService.GAME_FONT_TEXTURE_KEY.name ) )
+            .set( EText.TEXT_STRING, "GAME:" )
+        .build().getId();
+        gameSelection = entitySystem.getEntityBuilderWithAutoActivation()
+            .set( ETransform.VIEW_ID, 0 )
+            .set( ETransform.XPOSITION, 220 )
+            .set( ETransform.YPOSITION, 200 )
+            .set( EText.FONT_ID, textSystem.getFontId( GameService.GAME_FONT_TEXTURE_KEY.name ) )
+            .set( EText.TEXT_STRING, "XXX" )
+        .build().getId();
+        caveSelectionTitle = entitySystem.getEntityBuilderWithAutoActivation()
+            .set( ETransform.VIEW_ID, 0 )
+            .set( ETransform.XPOSITION, 50 )
+            .set( ETransform.YPOSITION, 300 )
+            .set( EText.FONT_ID, textSystem.getFontId( GameService.GAME_FONT_TEXTURE_KEY.name ) )
+            .set( EText.TEXT_STRING, "CAVE:" )
+        .build().getId();
+        caveSelection = entitySystem.getEntityBuilderWithAutoActivation()
+            .set( ETransform.VIEW_ID, 0 )
+            .set( ETransform.XPOSITION, 220 )
+            .set( ETransform.YPOSITION, 300 )
+            .set( EText.FONT_ID, textSystem.getFontId( GameService.GAME_FONT_TEXTURE_KEY.name ) )
+            .set( EText.TEXT_STRING, "1" )
+        .build().getId();
+        exit = entitySystem.getEntityBuilderWithAutoActivation()
+            .set( ETransform.VIEW_ID, 0 )
+            .set( ETransform.XPOSITION, 50 )
+            .set( ETransform.YPOSITION, 400 )
+            .set( EText.FONT_ID, textSystem.getFontId( GameService.GAME_FONT_TEXTURE_KEY.name ) )
+            .set( EText.TEXT_STRING, "EXIT" )
+        .build().getId();
         
         controllerSystem.getControllerBuilder( GameSelectionController.class )
             .set( Controller.NAME, GAME_SELECTION_CONTROLLER_NAME )
@@ -174,12 +159,17 @@ public final class GameSelectionService implements FFContextInitiable, Loadable,
     }
     
     final void update() {
-        gameSelectionTitle.setTintColor( ( mode == Mode.GAME_SELECTION )? GameService.YELLOW_FONT_COLOR : GameService.WHITE_FONT_COLOR );
-        caveSelectionTitle.setTintColor( ( mode == Mode.CAVE_SELECTION )? GameService.YELLOW_FONT_COLOR : GameService.WHITE_FONT_COLOR );
-        exit.setTintColor( ( mode == Mode.EXIT )? GameService.YELLOW_FONT_COLOR : GameService.WHITE_FONT_COLOR );
+        entitySystem.getComponent( gameSelectionTitle, EText.class )
+            .setTintColor( ( mode == Mode.GAME_SELECTION )? GameService.YELLOW_FONT_COLOR : GameService.WHITE_FONT_COLOR );
+        entitySystem.getComponent( caveSelectionTitle, EText.class )
+            .setTintColor( ( mode == Mode.CAVE_SELECTION )? GameService.YELLOW_FONT_COLOR : GameService.WHITE_FONT_COLOR );
+        entitySystem.getComponent( exit, EText.class )
+            .setTintColor( ( mode == Mode.EXIT )? GameService.YELLOW_FONT_COLOR : GameService.WHITE_FONT_COLOR );
         
-        gameSelection.setText( getSelectedGame().getName().toCharArray() );
-        caveSelection.setText( String.valueOf( getSelectedCave() ).toCharArray() );
+        entitySystem.getComponent( gameSelection, EText.class )
+            .setText( getSelectedGame().getName().toCharArray() );
+        entitySystem.getComponent( caveSelection, EText.class )
+            .setText( String.valueOf( getSelectedCave() ).toCharArray() );
     }
 
     final void select() {
@@ -257,15 +247,13 @@ public final class GameSelectionService implements FFContextInitiable, Loadable,
             return;
         }
         
-        entitySystem.deleteAll();
         controllerSystem.deleteController( GAME_SELECTION_CONTROLLER_NAME );
 
-        gameSelectionTitle = null;
-        gameSelection = null;
-        caveSelectionTitle = null;
-        caveSelection = null;
-        exit = null;
-        textSystem.clear();
+        entitySystem.delete( gameSelectionTitle );
+        entitySystem.delete( gameSelection );
+        entitySystem.delete( caveSelectionTitle );
+        entitySystem.delete( caveSelection );
+        entitySystem.delete( exit );
         
         mode = Mode.GAME_SELECTION;
         selectedGameIndex = 0;

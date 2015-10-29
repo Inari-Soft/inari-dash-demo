@@ -106,6 +106,17 @@ public final class CaveController extends Controller {
             initSeconds = 0;
             if ( secondTimer.needsUpdate() ) {
                 caveService.caveData.tick();
+                int caveTime = caveService.caveData.getTime();
+                if ( caveTime < 10 && caveTime > 0 ) {
+                    String soundName = "TIMEOUT" + caveTime;
+                    eventDispatcher.notify( new SoundEvent( CaveSoundKey.valueOf( soundName ).id, Type.PLAY_SOUND ) );
+                }
+                
+                if ( caveTime == 0 ) {
+                    caveService.caveState = CaveState.LOOSE;
+                    initSeconds = 0;
+                    return;
+                }
             }
             
             EUnit exitUnit = entitySystem.getComponent( exitEntityId, EUnit.class );
@@ -152,17 +163,9 @@ public final class CaveController extends Controller {
                 if ( lives >= 1 ) {
                     caveService.replay( context );
                 } else {
-                    caveService.caveState = CaveState.GAME_OVER;
-                    TextSystem textSystem = context.getComponent( TextSystem.CONTEXT_KEY );
-                    entitySystem.getEntityBuilderWithAutoActivation()
-                        .set( ETransform.VIEW_ID, caveService.caveViewId )
-                        .set( ETransform.XPOSITION, 8 )
-                        .set( ETransform.YPOSITION, 8 )
-                        .set( EText.FONT_ID, textSystem.getFontId( GameService.GAME_FONT_TEXTURE_KEY.name ) )
-                        .set( EText.TEXT_STRING, "GAME OVER" )
-                        .set( EText.TINT_COLOR, GameService.YELLOW_FONT_COLOR )
-                    .build();
+                    gameOverHeader();
                 }
+                initSeconds = 0;
                 return;
             }
             if ( secondTimer.needsUpdate() ) {
@@ -199,6 +202,20 @@ public final class CaveController extends Controller {
     private void playHeader() {
         clearHeader();
         updatePlayHeader();
+    }
+    
+    private void gameOverHeader() {
+        clearHeader();
+        caveService.caveState = CaveState.GAME_OVER;
+        TextSystem textSystem = context.getComponent( TextSystem.CONTEXT_KEY );
+        entitySystem.getEntityBuilderWithAutoActivation()
+            .set( ETransform.VIEW_ID, caveService.headerViewId )
+            .set( ETransform.XPOSITION, 100 )
+            .set( ETransform.YPOSITION, 8 )
+            .set( EText.FONT_ID, textSystem.getFontId( GameService.GAME_FONT_TEXTURE_KEY.name ) )
+            .set( EText.TEXT_STRING, "%%% GAME OVER %%%" )
+            .set( EText.TINT_COLOR, GameService.YELLOW_FONT_COLOR )
+        .build();
     }
     
     private void updatePlayHeader() {

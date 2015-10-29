@@ -32,6 +32,8 @@ public final class InitCaveTask extends Task {
         GameData gameData = ( new BDCFFGameDataLoader() ).load( selectedGame.getGameConfigResource() );
         gameData.setCave( selectedCave );
         
+        selection.dispose( context );
+        
         caveService.loadCave( context, gameData );
     }
 

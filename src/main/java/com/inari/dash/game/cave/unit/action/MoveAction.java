@@ -36,7 +36,6 @@ public final class MoveAction extends UnitAction {
         tile.setGridXPos( tmpPos.x );
         tile.setGridYPos( tmpPos.y );
         caveService.setEntityId( entityId, tmpPos.x, tmpPos.y );
-        
     }
 
 }

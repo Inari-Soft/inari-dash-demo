@@ -389,9 +389,13 @@ public class CaveService implements FFContextInitiable, Disposable {
     public final int getEntityId( int x, int y ) {
         return tileGrid.get( x, y );
     }
-    
+
     public final void deleteUnit( int x, int y, Direction tileOnDirection ) {
         deleteUnit( getEntityId( x, y, tileOnDirection ), x, y );
+    }
+    
+    public final void deleteUnit( int x, int y ) {
+        deleteUnit( getEntityId( x, y ), x, y );
     }
     
     public final void deleteUnit( int entityId, int x, int y ) {
@@ -435,7 +439,11 @@ public class CaveService implements FFContextInitiable, Disposable {
     }
     
     public final boolean isOfType( int x, int y, Direction tileOnDirection, UnitType type ) {
-        return isOfType( getEntityId( x, y, tileOnDirection ), type );
+        int entityId = getEntityId( x, y, tileOnDirection );
+        if ( entityId < 0 ) {
+            System.out.println("*");
+        }
+        return isOfType( entityId, type );
     }
     
     public final boolean hasTypeInSurrounding( int entityId, UnitType type ) {

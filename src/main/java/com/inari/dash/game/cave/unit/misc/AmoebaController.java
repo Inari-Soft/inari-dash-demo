@@ -2,11 +2,11 @@ package com.inari.dash.game.cave.unit.misc;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Set;
 
 import com.inari.commons.GeomUtils;
 import com.inari.commons.geom.Direction;
 import com.inari.commons.geom.Position;
-import com.inari.commons.lang.list.DynArray;
 import com.inari.dash.game.cave.CaveService.AmoebaData;
 import com.inari.dash.game.cave.unit.EUnit;
 import com.inari.dash.game.cave.unit.UnitAspect;
@@ -56,7 +56,7 @@ public final class AmoebaController extends UnitController {
             growthFaktor = amoebaData.amoebaFastGrowthProb;
         }
         
-        DynArray<Position> gridPositions = tile.getGridPositions();
+        Set<Position> gridPositions = tile.getGridPositions();
         
         if ( gridPositions.size() > amoebaData.growthLimit ) {
             transformTo( UnitType.ROCK, entityId, gridPositions );
@@ -109,11 +109,12 @@ public final class AmoebaController extends UnitController {
         return false;
     }
 
-    private void transformTo( UnitType type, int entityId, DynArray<Position> gridPositions ) {
-        entitySystem.delete( entityId );
+    private void transformTo( UnitType type, int entityId, Set<Position> gridPositions ) {
+        entitySystem.deactivate( entityId );
         for ( Position pos : gridPositions ) {
             type.handler.createOne( pos.x, pos.y );
         }
+        entitySystem.delete( entityId );
         eventDispatcher.notify( new SoundEvent( UnitType.AMOEBA.handler.getSoundId(), Type.STOP_PLAYING ) );
     }
 
