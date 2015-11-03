@@ -5,11 +5,11 @@ import com.inari.firefly.system.FFContext;
 
 public class DiamondController extends StoneController {
     
-    private final DiamondHandle diamondHandle;
+    private final Diamond diamondHandle;
 
     protected DiamondController( int id, FFContext context ) {
         super( id, context );
-        diamondHandle = (DiamondHandle) UnitType.DIAMOND.handler;
+        diamondHandle = (Diamond) UnitType.DIAMOND.handler;
     }
 
     @Override

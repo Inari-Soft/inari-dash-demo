@@ -7,14 +7,11 @@ import java.util.Set;
 import com.inari.commons.geom.Direction;
 import com.inari.commons.lang.aspect.Aspect;
 import com.inari.commons.lang.aspect.AspectBitSet;
-import com.inari.commons.lang.indexed.Indexer;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.entity.EntityComponent;
 
 public final class EUnit extends EntityComponent {
-    
-    public static final int COMPONENT_TYPE = Indexer.getIndexForType( EUnit.class, EntityComponent.class );
     
     public static final AttributeKey<UnitType> UNIT_TYPE = new AttributeKey<UnitType>( "unitType", UnitType.class, EUnit.class );
     public static final AttributeKey<Direction> MOVEMENT = new AttributeKey<Direction>( "movement", Direction.class, EUnit.class );
@@ -22,7 +19,7 @@ public final class EUnit extends EntityComponent {
     public static final AttributeKey<Integer> ANIMATION_COUNT = new AttributeKey<Integer>( "animationCount", Integer.class, EUnit.class );
     public static final AttributeKey<Boolean> HIT = new AttributeKey<Boolean>( "hit", Boolean.class, EUnit.class );
     public static final AttributeKey<UnitType> EXPLOSION_TYPE = new AttributeKey<UnitType>( "explosionType", UnitType.class, EUnit.class );
-    public static final AttributeKey<UnitType> EXPLODE_TO = new AttributeKey<UnitType>( "explodeTo", UnitType.class, EUnit.class );
+    public static final AttributeKey<UnitType> CHANGE_TO = new AttributeKey<UnitType>( "changeTo", UnitType.class, EUnit.class );
     public static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] { 
         UNIT_TYPE,
         MOVEMENT,
@@ -30,7 +27,7 @@ public final class EUnit extends EntityComponent {
         ANIMATION_COUNT,
         HIT,
         EXPLOSION_TYPE,
-        EXPLODE_TO
+        CHANGE_TO
     };
     
     private UnitType unitType;
@@ -39,7 +36,7 @@ public final class EUnit extends EntityComponent {
     private int animationCount;
     private boolean hit;
     private UnitType explosionType;
-    private UnitType explodeTo;
+    private UnitType changeTo;
     
     public EUnit() {
         super();
@@ -52,8 +49,8 @@ public final class EUnit extends EntityComponent {
         movement = Direction.NONE;
         animationCount = 0;
         hit = false;
-        explosionType = UnitType.EXPLOSION;
-        explodeTo = UnitType.SPACE;
+        explosionType = null;
+        changeTo = null;
     }
     
     @Override
@@ -83,6 +80,10 @@ public final class EUnit extends EntityComponent {
     
     public final void setAspect( Aspect aspect ) {
         aspects.set( aspect );
+    }
+    
+    public final void resetAspect( Aspect aspect ) {
+        aspects.reset( aspect );
     }
 
     public final void setAspects( AspectBitSet aspects ) {
@@ -129,12 +130,12 @@ public final class EUnit extends EntityComponent {
         this.explosionType = explosionType;
     }
 
-    public final UnitType getExplodeTo() {
-        return explodeTo;
+    public final UnitType getChangeTo() {
+        return changeTo;
     }
 
-    public final void setExplodeTo( UnitType explodeTo ) {
-        this.explodeTo = explodeTo;
+    public final void setChangeTo( UnitType changeTo ) {
+        this.changeTo = changeTo;
     }
 
     @Override
@@ -150,7 +151,7 @@ public final class EUnit extends EntityComponent {
         animationCount = attributes.getValue( ANIMATION_COUNT, animationCount );
         hit = attributes.getValue( HIT, hit );
         explosionType = attributes.getValue( EXPLOSION_TYPE, explosionType );
-        explodeTo = attributes.getValue( EXPLODE_TO, explodeTo );
+        changeTo = attributes.getValue( CHANGE_TO, changeTo );
     } 
 
     @Override
@@ -161,7 +162,7 @@ public final class EUnit extends EntityComponent {
         attributes.put( ANIMATION_COUNT, animationCount );
         attributes.put( HIT, hit );
         attributes.put( EXPLOSION_TYPE, explosionType );
-        attributes.put( EXPLODE_TO, explodeTo );
+        attributes.put( CHANGE_TO, changeTo );
     }
 
 }

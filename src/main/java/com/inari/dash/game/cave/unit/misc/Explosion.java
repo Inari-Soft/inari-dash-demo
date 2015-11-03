@@ -20,7 +20,7 @@ import com.inari.firefly.renderer.tile.ETile;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FFInitException;
 
-public final class ExplosionHandle extends AbstractExplosionHandle {
+public final class Explosion extends AbstractExplosionHandle {
 
     public static final String EXPLOSION_NAME = "explosion";
     

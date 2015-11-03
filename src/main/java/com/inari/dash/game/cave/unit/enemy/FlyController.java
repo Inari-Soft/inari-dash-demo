@@ -2,6 +2,7 @@ package com.inari.dash.game.cave.unit.enemy;
 
 import com.inari.commons.geom.Direction;
 import com.inari.dash.game.cave.unit.EUnit;
+import com.inari.dash.game.cave.unit.UnitAspect;
 import com.inari.dash.game.cave.unit.UnitController;
 import com.inari.dash.game.cave.unit.UnitType;
 import com.inari.dash.game.cave.unit.action.UnitActionType;
@@ -19,8 +20,8 @@ public abstract class FlyController extends UnitController {
     protected final void update( FFTimer timer, int entityId ) {
         EUnit unit = entitySystem.getComponent( entityId, EUnit.class );
         
-        if ( caveService.hasTypeInSurrounding( entityId, UnitType.AMOEBA ) || 
-             caveService.hasTypeInSurrounding( entityId, UnitType.ROCKFORD ) ||
+        if ( caveService.hasInSurrounding( entityId, UnitType.AMOEBA ) || 
+             caveService.hasInSurrounding( entityId, UnitType.ROCKFORD, UnitAspect.ALIVE ) ||
              unit.isHit() 
          ) {
             

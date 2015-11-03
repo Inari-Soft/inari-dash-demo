@@ -23,7 +23,7 @@ import com.inari.firefly.sound.SoundAsset;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FFInitException;
 
-public final class RockHandle extends UnitHandle {
+public final class Rock extends UnitHandle {
     
     public static final String ROCK_NAME = "rock";
     public static final AssetNameKey ROCK_SPRITE_ASSET_KEY = new AssetNameKey( CaveService.GAME_UNIT_TEXTURE_KEY.group, ROCK_NAME );
@@ -55,7 +55,6 @@ public final class RockHandle extends UnitHandle {
         soundId = soundSystem.getSoundBuilder()
             .set( Sound.NAME, ROCK_SOUND_ASSEET_KEY.name )
             .set( Sound.ASSET_ID, assetSystem.getAssetId( ROCK_SOUND_ASSEET_KEY ) )
-            .set( Sound.CHANNEL, 1 )
             .set( Sound.LOOPING, false )
         .build().getId();
 
@@ -77,6 +76,7 @@ public final class RockHandle extends UnitHandle {
             .set( ESprite.SPRITE_ID, assetSystem.getAssetId( ROCK_SPRITE_ASSET_KEY ) )
             .set( ETile.MULTI_POSITION, false )
             .set( EUnit.UNIT_TYPE, type() )
+            .set( EUnit.CHANGE_TO, UnitType.DIAMOND )
             .set( EUnit.ASPECTS, AspectSetBuilder.create( 
                 UnitAspect.DESTRUCTIBLE, 
                 UnitAspect.STONE, 

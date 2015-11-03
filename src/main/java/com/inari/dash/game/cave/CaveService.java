@@ -15,6 +15,7 @@ import com.inari.dash.game.CaveData;
 import com.inari.dash.game.GameData;
 import com.inari.dash.game.GameService;
 import com.inari.dash.game.cave.unit.EUnit;
+import com.inari.dash.game.cave.unit.UnitAspect;
 import com.inari.dash.game.cave.unit.UnitType;
 import com.inari.dash.game.cave.unit.action.UnitActionType;
 import com.inari.firefly.Disposable;
@@ -363,8 +364,12 @@ public class CaveService implements FFContextInitiable, Disposable {
     public final AmoebaData getAmoebaData() {
         return amoebaData;
     }
+    
+    public final int getMagicWallTime() {
+        return caveData.getMagicWallActivTime();
+    }
 
-    public float getUpdateRate() {
+    public final float getUpdateRate() {
         return caveData.getUpdateRate() + 2;
     }
     
@@ -446,7 +451,7 @@ public class CaveService implements FFContextInitiable, Disposable {
         return isOfType( entityId, type );
     }
     
-    public final boolean hasTypeInSurrounding( int entityId, UnitType type ) {
+    public final boolean hasInSurrounding( int entityId, UnitType type ) {
         ETile tile = entitySystem.getComponent( entityId, ETile.class );
         int x = tile.getGridXPos();
         int y = tile.getGridYPos();
@@ -455,6 +460,17 @@ public class CaveService implements FFContextInitiable, Disposable {
             isOfType( x, y, Direction.EAST, type ) ||
             isOfType( x, y, Direction.SOUTH, type ) ||
             isOfType( x, y, Direction.WEST, type );
+    }
+    
+    public boolean hasInSurrounding( int entityId, UnitType type, UnitAspect aspect ) {
+        ETile tile = entitySystem.getComponent( entityId, ETile.class );
+        int x = tile.getGridXPos();
+        int y = tile.getGridYPos();
+        return 
+            ( isOfType( x, y, Direction.NORTH, type ) && hasAspect( x, y, Direction.NORTH, aspect ) ) ||
+            ( isOfType( x, y, Direction.EAST, type ) && hasAspect( x, y, Direction.EAST, aspect ) ) ||
+            ( isOfType( x, y, Direction.SOUTH, type ) && hasAspect( x, y, Direction.SOUTH, aspect ) ) ||
+            ( isOfType( x, y, Direction.WEST, type ) && hasAspect( x, y, Direction.WEST, aspect ) );
     }
 
     public final boolean hasAspect( int entityId, Aspect aspect ) {
@@ -490,12 +506,43 @@ public class CaveService implements FFContextInitiable, Disposable {
     
     @Override
     public final void dispose( FFContext context ) {
-        // load all units
+        ViewSystem viewSystem = context.getComponent( ViewSystem.CONTEXT_KEY );
+        SoundSystem soundSystem = context.getComponent( SoundSystem.CONTEXT_KEY );
+        ControllerSystem controllerSystem = context.getComponent( ControllerSystem.CONTEXT_KEY );
+        AssetSystem assetSystem = context.getComponent( AssetSystem.CONTEXT_KEY );
+        ActionSystem actionSystem = context.getComponent( ActionSystem.CONTEXT_KEY );
+        
+        System.out.println( assetSystem.getNameKeys() );
+        
+        // dispose all units
         for ( UnitType unitType : UnitType.values() ) {
             if ( unitType.handler != null ) {
                 unitType.handler.dispose( context );
             }
         }
+        
+        System.out.println( assetSystem.getNameKeys() );
+        
+        entitySystem.deleteAll();
+        
+        viewSystem.deleteView( HEADER_VIEW_NAME );
+        viewSystem.deleteView( CAVE_VIEW_NAME );
+        
+        for ( CaveSoundKey caveSoundKey : CaveSoundKey.values() ) {
+            soundSystem.deleteSound( caveSoundKey.id );
+        }
+        
+        System.out.println( assetSystem.getNameKeys() );
+        
+        assetSystem.deleteAssets( CAVE_SOUND_GROUP_NAME );
+        
+        controllerSystem.deleteController( CAVE_VIEW_CAMERA_NAME );
+        assetSystem.deleteAsset( GAME_UNIT_TEXTURE_KEY );
+        
+        for ( UnitActionType actionType : UnitActionType.values() ) {
+            actionSystem.deleteAction( actionType.index() );
+        }
+        
         initialized = false;
     }
     

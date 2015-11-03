@@ -25,7 +25,7 @@ import com.inari.firefly.sound.SoundAsset;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FFInitException;
 
-public final class DiamondHandle extends UnitHandle {
+public final class Diamond extends UnitHandle {
     
     public static final String DIAMOND_NAME = "diamond";
     
@@ -54,6 +54,7 @@ public final class DiamondHandle extends UnitHandle {
                 .set( Sound.NAME, name )
                 .set( Sound.ASSET_ID, soundAssetId )
                 .set( Sound.LOOPING, false )
+                .set( Sound.CHANNEL, 1 )
             .build().getId();
         }
         
@@ -89,6 +90,7 @@ public final class DiamondHandle extends UnitHandle {
             .set( ESprite.SPRITE_ID, firstSpriteId )
             .set( ETile.MULTI_POSITION, false )
             .set( EUnit.UNIT_TYPE, type() )
+            .set( EUnit.CHANGE_TO, UnitType.ROCK )
             .set( EUnit.ASPECTS, AspectSetBuilder.create( 
                 UnitAspect.DESTRUCTIBLE, 
                 UnitAspect.STONE, 

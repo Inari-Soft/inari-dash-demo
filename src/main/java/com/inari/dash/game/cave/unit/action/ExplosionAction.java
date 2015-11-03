@@ -30,7 +30,7 @@ public final class ExplosionAction extends UnitAction {
         if ( explosionType != null ) {
             this.explosionType = explosionType;
         }
-        UnitType explodeTo = unit.getExplodeTo();
+        UnitType explodeTo = unit.getChangeTo();
         
         createExplosion( explodeTo );
         GeomUtils.movePositionOnDirection( tmpPos, Direction.NORTH, 1, true );
@@ -60,7 +60,7 @@ public final class ExplosionAction extends UnitAction {
             caveService.deleteUnit( entityId, tmpPos.x, tmpPos.y );
             int newEntityId = explosionType.handler.createOne( tmpPos.x, tmpPos.y );
             EUnit unit = entitySystem.getComponent( newEntityId, EUnit.class );
-            unit.setExplodeTo( explodeTo );
+            unit.setChangeTo( explodeTo );
         }
     }
 

@@ -1,41 +1,43 @@
 package com.inari.dash.game.cave.unit;
 
-import com.inari.dash.game.cave.unit.enemy.ButterflyHandle;
-import com.inari.dash.game.cave.unit.enemy.FireflyHandle;
-import com.inari.dash.game.cave.unit.misc.AmoebaHandle;
-import com.inari.dash.game.cave.unit.misc.ExitHandle;
-import com.inari.dash.game.cave.unit.misc.ExplosionHandle;
-import com.inari.dash.game.cave.unit.misc.ExplosionToDiamondHandle;
-import com.inari.dash.game.cave.unit.misc.SandHandle;
-import com.inari.dash.game.cave.unit.misc.SpaceHandle;
-import com.inari.dash.game.cave.unit.rockford.RFHandle;
-import com.inari.dash.game.cave.unit.stone.DiamondHandle;
-import com.inari.dash.game.cave.unit.stone.RockHandle;
-import com.inari.dash.game.cave.unit.wall.BrickWallHandle;
-import com.inari.dash.game.cave.unit.wall.SolidWallHandle;
+import com.inari.dash.game.cave.unit.enemy.Butterfly;
+import com.inari.dash.game.cave.unit.enemy.Firefly;
+import com.inari.dash.game.cave.unit.misc.Amoeba;
+import com.inari.dash.game.cave.unit.misc.Exit;
+import com.inari.dash.game.cave.unit.misc.Explosion;
+import com.inari.dash.game.cave.unit.misc.ExplosionToDiamond;
+import com.inari.dash.game.cave.unit.misc.Sand;
+import com.inari.dash.game.cave.unit.misc.Space;
+import com.inari.dash.game.cave.unit.rockford.Rockford;
+import com.inari.dash.game.cave.unit.stone.Diamond;
+import com.inari.dash.game.cave.unit.stone.Rock;
+import com.inari.dash.game.cave.unit.wall.BrickWall;
+import com.inari.dash.game.cave.unit.wall.ExpandingWall;
+import com.inari.dash.game.cave.unit.wall.MagicWall;
+import com.inari.dash.game.cave.unit.wall.SolidWall;
 
 public enum UnitType {
 
-    SPACE( new SpaceHandle() ),
-    SAND( new SandHandle() ),
+    SPACE( new Space() ),
+    SAND( new Sand() ),
     
-    BRICK_WALL( new BrickWallHandle() ),
-    SOLID_WALL( new SolidWallHandle() ),
-    MAGIC_WALL( null ),
-    EXPANDING_WALL( null ),
+    ROCK( new Rock() ),
+    DIAMOND( new Diamond() ),
     
-    ROCK( new RockHandle() ),
-    DIAMOND( new DiamondHandle() ),
+    FIREFLY( new Firefly() ),
+    BUTTERFLY( new Butterfly() ),
+    AMOEBA( new Amoeba() ),
     
-    FIREFLY( new FireflyHandle() ),
-    BUTTERFLY( new ButterflyHandle() ),
-    AMOEBA( new AmoebaHandle() ),
-    
-    ROCKFORD( new RFHandle() ),
-    EXIT( new ExitHandle() ),
+    BRICK_WALL( new BrickWall() ),
+    SOLID_WALL( new SolidWall() ),
+    MAGIC_WALL( new MagicWall() ),
+    EXPANDING_WALL( new ExpandingWall() ),
 
-    EXPLOSION_TO_DIAMOND( new ExplosionToDiamondHandle() ),
-    EXPLOSION( new ExplosionHandle() ),
+    ROCKFORD( new Rockford() ),
+    EXIT( new Exit() ),
+
+    EXPLOSION_TO_DIAMOND( new ExplosionToDiamond() ),
+    EXPLOSION( new Explosion() ),
     ;
     
     public final UnitHandle handler;

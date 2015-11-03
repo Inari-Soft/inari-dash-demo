@@ -20,7 +20,7 @@ import com.inari.firefly.renderer.tile.ETile;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FFInitException;
 
-public final class ExitHandle extends UnitHandle {
+public final class Exit extends UnitHandle {
     
     public enum State {
         CLOSED,

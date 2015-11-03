@@ -15,7 +15,6 @@ import com.inari.dash.game.cave.unit.EUnit;
 import com.inari.dash.game.cave.unit.UnitAspect;
 import com.inari.dash.game.cave.unit.UnitType;
 import com.inari.dash.game.cave.unit.action.UnitActionType;
-import com.inari.dash.game.workflow.ExitCaveTask;
 import com.inari.firefly.Disposable;
 import com.inari.firefly.action.event.ActionEvent;
 import com.inari.firefly.asset.AssetSystem;
@@ -27,6 +26,7 @@ import com.inari.firefly.renderer.sprite.ESprite;
 import com.inari.firefly.renderer.sprite.SpriteAsset;
 import com.inari.firefly.sound.event.SoundEvent;
 import com.inari.firefly.sound.event.SoundEvent.Type;
+import com.inari.firefly.state.event.WorkflowEvent;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FFTimer;
 import com.inari.firefly.system.FFTimer.UpdateScheduler;
@@ -38,7 +38,6 @@ import com.inari.firefly.system.UpdateEvent;
 import com.inari.firefly.system.UpdateEventListener;
 import com.inari.firefly.system.view.View;
 import com.inari.firefly.system.view.ViewSystem;
-import com.inari.firefly.task.event.TaskEvent;
 import com.inari.firefly.text.EText;
 import com.inari.firefly.text.TextSystem;
 
@@ -114,6 +113,7 @@ public final class CaveController extends Controller {
                 
                 if ( caveTime == 0 ) {
                     caveService.caveState = CaveState.LOOSE;
+                    caveService.playerPivot.playerUnit.resetAspect( UnitAspect.ALIVE );
                     initSeconds = 0;
                     return;
                 }
@@ -138,6 +138,7 @@ public final class CaveController extends Controller {
         
         if ( caveService.caveState == CaveState.WON ) {
             if ( initSeconds <= 0 ) {
+                caveService.playerPivot.playerUnit.resetAspect( UnitAspect.ALIVE );
                 eventDispatcher.notify( new SoundEvent( CaveService.CaveSoundKey.FINISHED.id, Type.PLAY_SOUND ) );
                 initSeconds++;
             }
@@ -150,7 +151,7 @@ public final class CaveController extends Controller {
                 if ( caveService.gameData.hasNextCave() ) {
                     caveService.nextCave( context );
                 } else {
-                    eventDispatcher.notify( new TaskEvent( TaskEvent.Type.RUN_TASK, ExitCaveTask.NAME ) );
+                    exitPlay();
                 }
                 return;
             }
@@ -176,10 +177,18 @@ public final class CaveController extends Controller {
         
         if ( caveService.caveState == CaveState.GAME_OVER ) {
             if ( Gdx.input.isKeyPressed( Input.Keys.ENTER ) || Gdx.input.isKeyPressed( Input.Keys.SPACE ) ) {
-                eventDispatcher.notify( new TaskEvent( TaskEvent.Type.RUN_TASK, ExitCaveTask.NAME ) );
+                exitPlay();
             }
             return;
         }
+    }
+
+    private void exitPlay() {
+        eventDispatcher.notify( new WorkflowEvent( 
+            GameService.GAME_WORKFLOW_NAME, 
+            GameService.StateChangeName.EXIT_PLAY.name(), 
+            WorkflowEvent.Type.STATE_CHANGE ) 
+        );
     }
 
     

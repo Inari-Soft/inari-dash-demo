@@ -39,6 +39,8 @@ public abstract class UnitHandle implements FFContextInitiable, Disposable {
         prefabSystem = context.getComponent( EntityPrefabSystem.CONTEXT_KEY );
         soundSystem = context.getComponent( SoundSystem.CONTEXT_KEY );
         controllerSystem = context.getComponent( ControllerSystem.CONTEXT_KEY );
+        
+        initialized = true;
     }
     
     public abstract UnitType type();

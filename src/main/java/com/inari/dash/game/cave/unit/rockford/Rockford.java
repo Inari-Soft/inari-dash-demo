@@ -24,7 +24,7 @@ import com.inari.firefly.sound.SoundAsset;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FFInitException;
 
-public final class RFHandle extends UnitHandle {
+public final class Rockford extends UnitHandle {
     
     public static final String ROCKFORD_NAME = "rockford";
     public static final AssetNameKey ROCKFORD_SPRITE_ASSET_KEY = new AssetNameKey( CaveService.GAME_UNIT_TEXTURE_KEY.group, ROCKFORD_NAME );

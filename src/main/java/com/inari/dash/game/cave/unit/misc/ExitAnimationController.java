@@ -19,7 +19,7 @@ public final class ExitAnimationController extends StatedSpriteAnimation {
     public final int getState( int entityId ) {
         EUnit exitUnit = entitySystem.getComponent( entityId, EUnit.class );
         return ( exitUnit.has( UnitAspect.ACTIVE ) )? 
-            ExitHandle.State.OPEN.ordinal() : ExitHandle.State.CLOSED.ordinal();
+            Exit.State.OPEN.ordinal() : Exit.State.CLOSED.ordinal();
     }
 
 }

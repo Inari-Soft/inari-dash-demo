@@ -23,11 +23,15 @@ public class InariDash extends GDXFFApplicationAdapter {
     }
     
     public static void main (String[] arg) {
-        LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-        config.resizable = false;
-        config.width = 800;
-        config.height = 600;
-        new LwjglApplication( new InariDash(), config );
+        try {
+            LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
+            config.resizable = false;
+            config.width = 800;
+            config.height = 600;
+            new LwjglApplication( new InariDash(), config );
+        } catch ( Throwable t ) {
+            t.printStackTrace();
+        }
     }
 
     @Override

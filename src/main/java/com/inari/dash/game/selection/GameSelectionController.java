@@ -11,7 +11,7 @@ public final class GameSelectionController extends Controller {
 
     private final GameSelectionService gameSelectionService;
     
-    private int delay = 10;
+    private final int delay = 5;
     private int changed = 0;
 
     protected GameSelectionController( int id, FFContext context ) {

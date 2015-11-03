@@ -54,7 +54,7 @@ public class GameData {
     }
     
     public boolean hasNextCave() {
-        return currentCurrentCaveIndex < caves.size();
+        return currentCurrentCaveIndex < caves.size() - 1;
     }
 
     public GameData collectDiamond() {

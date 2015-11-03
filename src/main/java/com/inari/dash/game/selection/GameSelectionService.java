@@ -134,6 +134,7 @@ public final class GameSelectionService implements FFContextInitiable, Loadable,
         
         update();
         
+        selected = false;
         loaded = true;
         return this;
     }
@@ -259,6 +260,7 @@ public final class GameSelectionService implements FFContextInitiable, Loadable,
         selectedGameIndex = 0;
         selectedCave = 0;
         selected = false;
+        loaded = false;
     }
 
 }

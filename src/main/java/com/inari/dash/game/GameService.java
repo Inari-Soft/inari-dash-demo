@@ -4,6 +4,7 @@ import com.inari.commons.event.IEventDispatcher;
 import com.inari.commons.graphics.RGBColor;
 import com.inari.commons.lang.TypedKey;
 import com.inari.dash.Configuration;
+import com.inari.dash.game.workflow.ExitCaveTask;
 import com.inari.dash.game.workflow.ExitGameTask;
 import com.inari.dash.game.workflow.GameExitCondition;
 import com.inari.dash.game.workflow.InitCaveTask;
@@ -37,20 +38,14 @@ public final class GameService implements FFApplicationManager {
     public static final String GAME_WORKFLOW_NAME = "gameWorkflow";
     public enum StateName {
         GAME_SELECTION,
-        CAVE_PLAY,
-        GAME_OVER
+        CAVE_PLAY
     }
     
     public enum StateChangeName {
         GAME_INIT( null, StateName.GAME_SELECTION ),
         EXIT_GAME( StateName.GAME_SELECTION, null ),
         PLAY_CAVE( StateName.GAME_SELECTION, StateName.CAVE_PLAY ),
-        EXIT_PLAY( StateName.CAVE_PLAY, StateName.GAME_SELECTION ),
-        DIED( StateName.CAVE_PLAY, StateName.CAVE_PLAY ),
-        NEXT_CAVE( StateName.CAVE_PLAY, StateName.CAVE_PLAY ),
-        GAME_OVER( StateName.CAVE_PLAY, StateName.GAME_OVER ),
-        GAME_OVER_TO_SELECTION( StateName.GAME_OVER, StateName.GAME_SELECTION ),
-        
+        EXIT_PLAY( StateName.CAVE_PLAY, StateName.GAME_SELECTION )
         ;
         public final StateName from;
         public final StateName to;
@@ -70,6 +65,8 @@ public final class GameService implements FFApplicationManager {
     private IEventDispatcher eventDispatcher;
     private StateSystem stateSystem;
     private TaskSystem taskSystem;
+    
+    private int introSongId;
 
     
     @Override
@@ -83,7 +80,6 @@ public final class GameService implements FFApplicationManager {
         taskSystem = context.getComponent( TaskSystem.CONTEXT_KEY );
         context.putComponent( CONTEXT_KEY, this );
         
-        
         taskSystem.getTaskBuilder( InitGameTask.class )
             .set( Task.NAME, InitGameTask.NAME )
             .set( Task.REMOVE_AFTER_RUN, true )
@@ -92,6 +88,9 @@ public final class GameService implements FFApplicationManager {
             .set( Task.REMOVE_AFTER_RUN, true )
         .buildAndNext( InitCaveTask.class )
             .set( Task.NAME, InitCaveTask.NAME )
+            .set( Task.REMOVE_AFTER_RUN, false )
+        .buildAndNext( ExitCaveTask.class )
+            .set( Task.NAME, ExitCaveTask.NAME )
             .set( Task.REMOVE_AFTER_RUN, false )
         .build();
         
@@ -106,9 +105,6 @@ public final class GameService implements FFApplicationManager {
             .set( State.WORKFLOW_ID, workflowId )
         .buildAndNext()
             .set( State.NAME, StateName.CAVE_PLAY.name() )
-            .set( State.WORKFLOW_ID, workflowId )
-        .buildAndNext()
-            .set( State.NAME, StateName.GAME_OVER.name() )
             .set( State.WORKFLOW_ID, workflowId )
         .build();
         
@@ -125,6 +121,12 @@ public final class GameService implements FFApplicationManager {
             .set( StateChange.FORM_STATE_ID, stateSystem.getStateId( StateName.GAME_SELECTION.name() ) )
             .set( StateChange.TO_STATE_ID, stateSystem.getStateId( StateName.CAVE_PLAY.name() ) )
             .set( StateChange.TASK_ID, taskSystem.getTaskId( InitCaveTask.NAME ) )
+        .buildAndNext()
+            .set( StateChange.NAME, StateChangeName.EXIT_PLAY.name() )
+            .set( StateChange.WORKFLOW_ID, workflowId )
+            .set( StateChange.FORM_STATE_ID, stateSystem.getStateId( StateName.CAVE_PLAY.name() ) )
+            .set( StateChange.TO_STATE_ID, stateSystem.getStateId( StateName.GAME_SELECTION.name() ) )
+            .set( StateChange.TASK_ID, taskSystem.getTaskId( ExitCaveTask.NAME ) )
         .build();
             
         
@@ -163,24 +165,25 @@ public final class GameService implements FFApplicationManager {
         assetSystem.getAssetBuilder( SoundAsset.class )
             .set( SoundAsset.NAME, INTRO_SONG_KEY.name )
             .set( SoundAsset.ASSET_GROUP, INTRO_SONG_KEY.group )
-            .set( SoundAsset.STREAMING, true )
+            .set( SoundAsset.STREAMING, false )
             .set( SoundAsset.RESOURCE_NAME, configuration.titleSongResource )
         .build();
         assetSystem.loadAsset( INTRO_SONG_KEY );
-    }
-
-    public final void playIntroSong() {
-        Sound introSong = soundSystem.getSoundBuilder()
+        introSongId = soundSystem.getSoundBuilder()
             .set( Sound.ASSET_ID, assetSystem.getAssetTypeKey( INTRO_SONG_KEY ).id )
             .set( Sound.VOLUME, 10 )
             .set( Sound.LOOPING, true )
             .set( Sound.NAME, "titleSongSound" )
-        .build();
-        eventDispatcher.notify( new SoundEvent( introSong.index(), SoundEvent.Type.PLAY_SOUND ) );
+        .build().getId();
+    }
+
+    public final void playIntroSong() {
+        
+        eventDispatcher.notify( new SoundEvent( introSongId, SoundEvent.Type.PLAY_SOUND ) );
     }
     
     public final void stopIntroSong() {
-        eventDispatcher.notify( new SoundEvent( soundSystem.getSound( "titleSongSound" ).getId(), SoundEvent.Type.STOP_PLAYING ) );
+        eventDispatcher.notify( new SoundEvent( introSongId, SoundEvent.Type.STOP_PLAYING ) );
     }
 
     @Override

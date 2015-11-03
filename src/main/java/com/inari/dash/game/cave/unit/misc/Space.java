@@ -18,7 +18,7 @@ import com.inari.firefly.renderer.tile.ETile;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FFInitException;
 
-public final class SpaceHandle extends UnitHandle {
+public final class Space extends UnitHandle {
     
     public static final String SPACE_NAME = "space";
     public static final AssetNameKey SPACE_SPRITE_ASSET_KEY = new AssetNameKey( CaveService.GAME_UNIT_TEXTURE_KEY.group, SPACE_NAME );

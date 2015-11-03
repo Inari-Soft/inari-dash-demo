@@ -24,7 +24,7 @@ public final class ExplosionController extends UnitController {
             ETile tile = entitySystem.getComponent( entityId, ETile.class );
             int xpos = tile.getGridXPos();
             int ypos = tile.getGridYPos();
-            UnitType explodeToType = unit.getExplodeTo();
+            UnitType explodeToType = unit.getChangeTo();
             entitySystem.delete( entityId );
             explodeToType.handler.createOne( xpos, ypos );
         }

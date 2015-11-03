@@ -8,8 +8,7 @@ public enum UnitActionType implements IndexedObject {
     MOVE( MoveAction.class ),
     EXPLODE( ExplosionAction.class ),
     COLLECT( CollectAction.class ), 
-    FLASH( FlashAction.class ),
-    END_CAVE( null ), 
+    FLASH( FlashAction.class ), 
     ;
     
     private final int index;

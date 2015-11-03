@@ -37,7 +37,7 @@ public final class RFController extends UnitController {
 
     @Override
     protected final void update( FFTimer timer, int entityId ) {
-        RFHandle rfHandle = UnitType.ROCKFORD.getHandle();
+        Rockford rfHandle = UnitType.ROCKFORD.getHandle();
         CaveState caveState = caveService.getCaveState();
         if ( caveState == CaveState.WON || caveState == CaveState.INIT ) {
             return;
@@ -70,7 +70,7 @@ public final class RFController extends UnitController {
         }
         
         if ( unit.isHit() ) {
-            unit.setExplodeTo( UnitType.SPACE );
+            unit.setChangeTo( UnitType.SPACE );
             eventDispatcher.notify( new ActionEvent( UnitActionType.EXPLODE.index(), entityId ) );
             return;
         }
@@ -122,7 +122,6 @@ public final class RFController extends UnitController {
         nextPos.y = currentPos.y;
         Direction move = unit.getMovement();
         boolean grabbing = Gdx.input.isKeyPressed( Input.Keys.SPACE );
-        
         
         if ( move == Direction.WEST || move == Direction.NORTH ) {
             rockford.setState( RFState.LEFT );
