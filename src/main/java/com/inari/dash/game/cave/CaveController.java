@@ -9,6 +9,7 @@ import com.inari.commons.geom.Position;
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.aspect.AspectSetBuilder;
 import com.inari.dash.game.GameService;
+import com.inari.dash.game.GameService.StateChangeName;
 import com.inari.dash.game.cave.CaveService.CaveSoundKey;
 import com.inari.dash.game.cave.CaveService.CaveState;
 import com.inari.dash.game.cave.unit.EUnit;
@@ -186,7 +187,7 @@ public final class CaveController extends Controller {
     private void exitPlay() {
         eventDispatcher.notify( new WorkflowEvent( 
             GameService.GAME_WORKFLOW_NAME, 
-            GameService.StateChangeName.EXIT_PLAY.name(), 
+            StateChangeName.EXIT_PLAY.name(), 
             WorkflowEvent.Type.STATE_CHANGE ) 
         );
     }

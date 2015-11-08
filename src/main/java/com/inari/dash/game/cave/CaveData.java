@@ -1,4 +1,4 @@
-package com.inari.dash.game;
+package com.inari.dash.game.cave;
 
 
 import com.inari.commons.graphics.RGBColor;

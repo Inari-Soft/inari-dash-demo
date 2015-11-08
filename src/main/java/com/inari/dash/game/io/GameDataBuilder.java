@@ -4,14 +4,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.inari.commons.StringUtils;
-import com.inari.dash.game.CaveData;
-import com.inari.dash.game.CaveData.CaveColors;
 import com.inari.dash.game.GameData;
 import com.inari.dash.game.GameInfo;
 import com.inari.dash.game.GameInfo.CodeType;
 import com.inari.dash.game.GameInfo.Fontset;
 import com.inari.dash.game.GameInfo.Gametype;
 import com.inari.dash.game.GameInfo.Graphicset;
+import com.inari.dash.game.cave.CaveData;
+import com.inari.dash.game.cave.CaveData.CaveColors;
 import com.inari.firefly.filter.ColorReplaceMapFitler;
 
 public class GameDataBuilder {

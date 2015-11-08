@@ -1,41 +1,53 @@
 package com.inari.dash.game;
 
+import java.util.Collection;
+
 import com.inari.commons.event.IEventDispatcher;
 import com.inari.commons.graphics.RGBColor;
 import com.inari.commons.lang.TypedKey;
 import com.inari.dash.Configuration;
-import com.inari.dash.game.workflow.ExitCaveTask;
-import com.inari.dash.game.workflow.ExitGameTask;
-import com.inari.dash.game.workflow.GameExitCondition;
-import com.inari.dash.game.workflow.InitCaveTask;
-import com.inari.dash.game.workflow.InitGameTask;
-import com.inari.dash.game.workflow.StartGameCondition;
-import com.inari.firefly.app.FFApplicationManager;
+import com.inari.dash.game.io.GameInfos;
+import com.inari.dash.game.tasks.DisposeCave;
+import com.inari.dash.game.tasks.DisposeGame;
+import com.inari.dash.game.tasks.DisposeGameSelection;
+import com.inari.dash.game.tasks.DisposePlay;
+import com.inari.dash.game.tasks.LoadCave;
+import com.inari.dash.game.tasks.LoadGame;
+import com.inari.dash.game.tasks.LoadGameSelection;
+import com.inari.dash.game.tasks.LoadPlay;
 import com.inari.firefly.asset.AssetNameKey;
-import com.inari.firefly.asset.AssetSystem;
-import com.inari.firefly.sound.Sound;
-import com.inari.firefly.sound.SoundAsset;
-import com.inari.firefly.sound.SoundSystem;
-import com.inari.firefly.sound.event.SoundEvent;
-import com.inari.firefly.state.State;
-import com.inari.firefly.state.StateChange;
-import com.inari.firefly.state.StateSystem;
-import com.inari.firefly.state.Workflow;
+import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.system.FFContext;
-import com.inari.firefly.system.FFInitException;
 import com.inari.firefly.task.Task;
-import com.inari.firefly.task.TaskSystem;
-import com.inari.firefly.text.Font;
-import com.inari.firefly.text.TextSystem;
+import com.inari.firefly.text.EText;
 
-public final class GameService implements FFApplicationManager {
+public final class GameService {
     
     public static final TypedKey<GameService> CONTEXT_KEY = TypedKey.create( "GameService", GameService.class );
     
-    public static final RGBColor YELLOW_FONT_COLOR = new RGBColor( .98f, .9f, .16f, 1f );
-    public static final RGBColor WHITE_FONT_COLOR = new RGBColor( 1, 1, 1, 1 );
+    public enum TaskName {
+        LOAD_GAME( LoadGame.class, true ),
+        LOAD_GAME_SELECTION( LoadGameSelection.class ),
+        LOAD_PLAY( LoadPlay.class ),
+        LOAD_CAVE( LoadCave.class ),
+        DISPOSE_CAVE( DisposeCave.class ),
+        DISPOSE_PLAY( DisposePlay.class ),
+        DISPOSE_GAME_SELECTION( DisposeGameSelection.class ),
+        DISPOSE_GAME( DisposeGame.class, true );
+        
+        public boolean removeAfterRun = false;
+        public final Class<? extends Task> type;
+        
+        private TaskName( Class<? extends Task> type ) {
+            this.type = type;
+        }
+        
+        private TaskName( Class<? extends Task> type, boolean removeAfterRun ) {
+            this.type = type;
+            this.removeAfterRun = removeAfterRun;
+        }
+    }
     
-    public static final String GAME_WORKFLOW_NAME = "gameWorkflow";
     public enum StateName {
         GAME_SELECTION,
         CAVE_PLAY
@@ -54,146 +66,173 @@ public final class GameService implements FFApplicationManager {
             this.to = to;
         }
     }
+    
+    
+    public static final String TITLE_SONG_SOUND_NAME = "titleSongSound";
+    public static final String GAME_WORKFLOW_NAME = "gameWorkflow";
+    public static final String GAME_SELECTION_CONTROLLER_NAME = "GAME_SELECTION_CONTROLLER";
+    
+    public static final String ENTITY_NAME_GAME_SELECTION_TITLE = "GAME_SELECTION_TITLE";
+    public static final String ENTITY_NAME_GAME_SELECTION = "GAME_SELECTION";
+    public static final String ENTITY_NAME_CAVE_SELECTION_TITLE = "CAVE_SELECTION_TITLE";
+    public static final String ENTITY_NAME_CAVE_SELECTION = "CAVE_SELECTION";
+    public static final String ENTITY_NAME_EXIT_TITLE = "EXIT_TITLE";
+
+    public static final RGBColor YELLOW_FONT_COLOR = new RGBColor( .98f, .9f, .16f, 1f );
+    public static final RGBColor WHITE_FONT_COLOR = new RGBColor( 1, 1, 1, 1 );
 
     public static final AssetNameKey GAME_FONT_TEXTURE_KEY = new AssetNameKey( "gameFontTexturKey", "gameFontTexturKey" );
     public static final AssetNameKey INTRO_SONG_KEY = new AssetNameKey( "sounds", "INTRO_SONG" );
     
+    public static enum SelectionMode {
+        GAME_SELECTION,
+        CAVE_SELECTION,
+        EXIT
+    }
+    
     private Configuration configuration;
-    private AssetSystem assetSystem;
-    private TextSystem textSystem;
-    private SoundSystem soundSystem;
     private IEventDispatcher eventDispatcher;
-    private StateSystem stateSystem;
-    private TaskSystem taskSystem;
+    private EntitySystem entitySystem;
+    private GameInfos gameInfos;
     
-    private int introSongId;
+    private SelectionMode mode = SelectionMode.GAME_SELECTION;
+    private int selectedGameIndex = 0;
+    private int selectedCave = 0;
+    private boolean selected = false;
 
+    public int gameSelectionTitleId = -1;
+    public int gameSelectionId = -1;
+    public int caveSelectionTitleId = -1;
+    public int caveSelectionId = -1;
+    public int exitTitleId = -1;
     
-    @Override
-    public void init( FFContext context ) throws FFInitException {
+    public GameService( FFContext context, Configuration config ) {
         configuration = new Configuration();
-        assetSystem = context.getComponent( AssetSystem.CONTEXT_KEY );
-        textSystem = context.getComponent( TextSystem.CONTEXT_KEY );
-        soundSystem = context.getComponent( SoundSystem.CONTEXT_KEY );
         eventDispatcher = context.getComponent( FFContext.EVENT_DISPATCHER );
-        stateSystem = context.getComponent( StateSystem.CONTEXT_KEY );
-        taskSystem = context.getComponent( TaskSystem.CONTEXT_KEY );
-        context.putComponent( CONTEXT_KEY, this );
+        entitySystem = context.getComponent( EntitySystem.CONTEXT_KEY );
         
-        taskSystem.getTaskBuilder( InitGameTask.class )
-            .set( Task.NAME, InitGameTask.NAME )
-            .set( Task.REMOVE_AFTER_RUN, true )
-        .buildAndNext( ExitGameTask.class )
-            .set( Task.NAME, ExitGameTask.NAME )
-            .set( Task.REMOVE_AFTER_RUN, true )
-        .buildAndNext( InitCaveTask.class )
-            .set( Task.NAME, InitCaveTask.NAME )
-            .set( Task.REMOVE_AFTER_RUN, false )
-        .buildAndNext( ExitCaveTask.class )
-            .set( Task.NAME, ExitCaveTask.NAME )
-            .set( Task.REMOVE_AFTER_RUN, false )
-        .build();
-        
-        int workflowId = stateSystem.getWorkflowBuilder()
-            .set( Workflow.NAME, GAME_WORKFLOW_NAME )
-            .set( Workflow.START_STATE_NAME, StateName.GAME_SELECTION.name() )
-            .set( Workflow.INIT_TASK_ID, taskSystem.getTaskId( InitGameTask.NAME ) )
-        .build().getId();
-        
-        stateSystem.getStateBuilder()
-            .set( State.NAME, StateName.GAME_SELECTION.name() )
-            .set( State.WORKFLOW_ID, workflowId )
-        .buildAndNext()
-            .set( State.NAME, StateName.CAVE_PLAY.name() )
-            .set( State.WORKFLOW_ID, workflowId )
-        .build();
-        
-        stateSystem.getStateChangeBuilder()
-            .set( StateChange.NAME, StateChangeName.EXIT_GAME.name() )
-            .set( StateChange.WORKFLOW_ID, workflowId )
-            .set( StateChange.CONDITION_TYPE_NAME, GameExitCondition.class.getName() )
-            .set( StateChange.FORM_STATE_ID, stateSystem.getStateId( StateName.GAME_SELECTION.name() ) )
-            .set( StateChange.TASK_ID, taskSystem.getTaskId( ExitGameTask.NAME ) )
-        .buildAndNext()
-            .set( StateChange.NAME, StateChangeName.PLAY_CAVE.name() )
-            .set( StateChange.WORKFLOW_ID, workflowId )
-            .set( StateChange.CONDITION_TYPE_NAME, StartGameCondition.class.getName() )
-            .set( StateChange.FORM_STATE_ID, stateSystem.getStateId( StateName.GAME_SELECTION.name() ) )
-            .set( StateChange.TO_STATE_ID, stateSystem.getStateId( StateName.CAVE_PLAY.name() ) )
-            .set( StateChange.TASK_ID, taskSystem.getTaskId( InitCaveTask.NAME ) )
-        .buildAndNext()
-            .set( StateChange.NAME, StateChangeName.EXIT_PLAY.name() )
-            .set( StateChange.WORKFLOW_ID, workflowId )
-            .set( StateChange.FORM_STATE_ID, stateSystem.getStateId( StateName.CAVE_PLAY.name() ) )
-            .set( StateChange.TO_STATE_ID, stateSystem.getStateId( StateName.GAME_SELECTION.name() ) )
-            .set( StateChange.TASK_ID, taskSystem.getTaskId( ExitCaveTask.NAME ) )
-        .build();
-            
-        
-        stateSystem.activateWorkflow( workflowId );
+        // TODO go to game load task
+        gameInfos = new GameInfos();
+        gameInfos.load( context );
     }
     
-    @Override
-    public final void handlePause( FFContext context ) {
-        // TODO Auto-generated method stub
-        
+    private void initEntityIds() {
+        if ( gameSelectionTitleId == -1 ) {
+            gameSelectionTitleId = entitySystem.getEntityId( ENTITY_NAME_GAME_SELECTION_TITLE );
+            gameSelectionId = entitySystem.getEntityId( ENTITY_NAME_GAME_SELECTION );
+            caveSelectionTitleId = entitySystem.getEntityId( ENTITY_NAME_CAVE_SELECTION_TITLE );
+            caveSelectionId = entitySystem.getEntityId( ENTITY_NAME_CAVE_SELECTION );
+            exitTitleId = entitySystem.getEntityId( ENTITY_NAME_EXIT_TITLE );
+        }
     }
 
-    @Override
-    public final void handleResume( FFContext context ) {
-        // TODO Auto-generated method stub
-        
-    }
-    
     public final Configuration getConfiguration() {
         return configuration;
     }
     
-    public final void loadGlobalAssets() {
-        // create and load font
-        textSystem.getFontBuilderWithAutoLoad()
-            .set( Font.NAME, GAME_FONT_TEXTURE_KEY.name )
-            .set( Font.FONT_TEXTURE_RESOURCE_NAME, configuration.fontTextureResource )
-            .set( Font.CHAR_TEXTURE_MAP, configuration.fontChars )
-            .set( Font.CHAR_WIDTH, configuration.charWidth )
-            .set( Font.CHAR_HEIGHT, configuration.charHeight )
-            .set( Font.CHAR_SPACE, 0 )
-            .set( Font.LINE_SPACE, 5 )
-            .set( Font.DEFAULT_CHAR, '%' )
-        .build();
-        // create and load intro music
-        assetSystem.getAssetBuilder( SoundAsset.class )
-            .set( SoundAsset.NAME, INTRO_SONG_KEY.name )
-            .set( SoundAsset.ASSET_GROUP, INTRO_SONG_KEY.group )
-            .set( SoundAsset.STREAMING, false )
-            .set( SoundAsset.RESOURCE_NAME, configuration.titleSongResource )
-        .build();
-        assetSystem.loadAsset( INTRO_SONG_KEY );
-        introSongId = soundSystem.getSoundBuilder()
-            .set( Sound.ASSET_ID, assetSystem.getAssetTypeKey( INTRO_SONG_KEY ).id )
-            .set( Sound.VOLUME, 10 )
-            .set( Sound.LOOPING, true )
-            .set( Sound.NAME, "titleSongSound" )
-        .build().getId();
-    }
-
-    public final void playIntroSong() {
-        
-        eventDispatcher.notify( new SoundEvent( introSongId, SoundEvent.Type.PLAY_SOUND ) );
+    public final Collection<GameInfo> getGameInfos() {
+        return gameInfos.getGameInfos();
     }
     
-    public final void stopIntroSong() {
-        eventDispatcher.notify( new SoundEvent( introSongId, SoundEvent.Type.STOP_PLAYING ) );
+    public final GameInfo getSelectedGame() {
+        return gameInfos.getGameInfos().get( selectedGameIndex );
     }
 
-    @Override
-    public void dispose( FFContext context ) {
-        configuration = null;
-        textSystem.clear();
-        taskSystem.clear();
-        stateSystem.clear();
-        soundSystem.clear();
-        assetSystem.clear();
+    public final int getSelectedCave() {
+        return selectedCave;
+    }
+    
+    public final boolean isSelected() {
+        return selected;
+    }
+
+    public final SelectionMode getMode() {
+        return mode;
+    }
+    
+    final void update() {
+        initEntityIds();
+        
+        entitySystem.getComponent( gameSelectionTitleId, EText.class )
+            .setTintColor( ( mode == SelectionMode.GAME_SELECTION )? GameService.YELLOW_FONT_COLOR : GameService.WHITE_FONT_COLOR );
+        entitySystem.getComponent( caveSelectionTitleId, EText.class )
+            .setTintColor( ( mode == SelectionMode.CAVE_SELECTION )? GameService.YELLOW_FONT_COLOR : GameService.WHITE_FONT_COLOR );
+        entitySystem.getComponent( exitTitleId, EText.class )
+            .setTintColor( ( mode == SelectionMode.EXIT )? GameService.YELLOW_FONT_COLOR : GameService.WHITE_FONT_COLOR );
+        
+        entitySystem.getComponent( gameSelectionId, EText.class )
+            .setText( getSelectedGame().getName().toCharArray() );
+        entitySystem.getComponent( caveSelectionId, EText.class )
+            .setText( String.valueOf( getSelectedCave() ).toCharArray() );
+    }
+
+    final void select() {
+        selected = true;
+    }
+    
+    final void nextSelectionMode() {
+        switch ( mode ) {
+            case GAME_SELECTION : {
+                mode = SelectionMode.CAVE_SELECTION;
+                break;
+            }
+            case CAVE_SELECTION : {
+                mode = SelectionMode.EXIT;
+                break;
+            }
+            case EXIT : {
+                mode = SelectionMode.GAME_SELECTION;
+                break;
+            }
+        }
+    }
+    
+    final void peviousSelectionMode() {
+        switch ( mode ) {
+            case GAME_SELECTION : {
+                mode = SelectionMode.EXIT;
+                break;
+            }
+            case CAVE_SELECTION : {
+                mode = SelectionMode.GAME_SELECTION;
+                break;
+            }
+            case EXIT : {
+                mode = SelectionMode.CAVE_SELECTION;
+                break;
+            }
+        }
+    }
+    
+    final void nextGameSelection() {
+        selectedGameIndex++;
+        int size = getGameInfos().size();
+        if ( selectedGameIndex >= size ) {
+            selectedGameIndex = size - 1;
+        }
+        selectedCave = 0;
+    }
+    
+    final void previousGameSelection() {
+        selectedGameIndex--;
+        if ( selectedGameIndex < 0 ) {
+            selectedGameIndex = 0;
+        }
+        selectedCave = 0;
+    }
+    
+    final void nextCaveSelection() {
+        selectedCave++;
+        if ( selectedCave >= getSelectedGame().getCaves() ) {
+            selectedCave = getSelectedGame().getCaves() - 1;
+        }
+    }
+    
+    final void previousCaveSelection() {
+        selectedCave--;
+        if ( selectedCave < 0 ) {
+            selectedCave = 0;
+        }
     }
 
 }

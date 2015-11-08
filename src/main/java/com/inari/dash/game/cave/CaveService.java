@@ -5,54 +5,33 @@ import java.util.Map;
 
 import com.inari.commons.geom.Direction;
 import com.inari.commons.geom.Position;
-import com.inari.commons.geom.Rectangle;
-import com.inari.commons.graphics.RGBColor;
 import com.inari.commons.lang.TypedKey;
 import com.inari.commons.lang.aspect.Aspect;
 import com.inari.commons.lang.indexed.Indexer;
-import com.inari.dash.Configuration;
-import com.inari.dash.game.CaveData;
 import com.inari.dash.game.GameData;
-import com.inari.dash.game.GameService;
 import com.inari.dash.game.cave.unit.EUnit;
 import com.inari.dash.game.cave.unit.UnitAspect;
 import com.inari.dash.game.cave.unit.UnitType;
 import com.inari.dash.game.cave.unit.action.UnitActionType;
-import com.inari.firefly.Disposable;
-import com.inari.firefly.action.Action;
 import com.inari.firefly.action.ActionSystem;
 import com.inari.firefly.asset.AssetNameKey;
 import com.inari.firefly.asset.AssetSystem;
-import com.inari.firefly.control.Controller;
 import com.inari.firefly.control.ControllerSystem;
 import com.inari.firefly.controller.view.CameraPivot;
-import com.inari.firefly.controller.view.SimpleCameraController;
-import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.filter.IColorFilter;
-import com.inari.firefly.libgdx.GDXConfiguration;
-import com.inari.firefly.renderer.TextureAsset;
 import com.inari.firefly.renderer.tile.ETile;
 import com.inari.firefly.renderer.tile.TileGrid;
-import com.inari.firefly.renderer.tile.TileGrid.TileRenderMode;
 import com.inari.firefly.renderer.tile.TileGridSystem;
-import com.inari.firefly.sound.Sound;
 import com.inari.firefly.sound.SoundAsset;
 import com.inari.firefly.sound.SoundSystem;
 import com.inari.firefly.system.FFContext;
-import com.inari.firefly.system.FFContextInitiable;
-import com.inari.firefly.system.FFInitException;
-import com.inari.firefly.system.LowerSystemFacade;
-import com.inari.firefly.system.view.View;
 import com.inari.firefly.system.view.ViewSystem;
-import com.inari.firefly.text.EText;
-import com.inari.firefly.text.TextSystem;
 
-public class CaveService implements FFContextInitiable, Disposable {
+public class CaveService {
     
     public static final TypedKey<CaveService> CONTEXT_KEY = TypedKey.create( "CaveService", CaveService.class );
-    
-    private static final Map<String, UnitType> BDCFF_TYPES_MAP = new HashMap<String, UnitType>();
+    public static final Map<String, UnitType> BDCFF_TYPES_MAP = new HashMap<String, UnitType>();
     
     public enum CaveState {
         INIT,
@@ -105,7 +84,6 @@ public class CaveService implements FFContextInitiable, Disposable {
     CaveState caveState;
     
     private EntitySystem entitySystem;
-    private SimpleCameraController cameraController;
 
     GameData gameData;
     CaveData caveData;
@@ -116,193 +94,22 @@ public class CaveService implements FFContextInitiable, Disposable {
     int caveViewId;
     
     private TileGrid tileGrid;
-    final PlayerPivot playerPivot = new PlayerPivot();
+    private final PlayerPivot playerPivot = new PlayerPivot();
     
-    private boolean initialized = false;
-    private boolean loaded = false;
-    
-    /** Here we create all the assets that are needed for playing a cave */
-    @Override
-    public final void init( FFContext context ) throws FFInitException {
-        context.putComponent( CONTEXT_KEY, this );
-        GameService gameService = context.getComponent( GameService.CONTEXT_KEY );
-        Configuration config = gameService.getConfiguration();
-        LowerSystemFacade lowerSystemFacade = context.getComponent( FFContext.LOWER_SYSTEM_FACADE );
-        ViewSystem viewSystem = context.getComponent( ViewSystem.CONTEXT_KEY );
-        AssetSystem assetSystem = context.getComponent( AssetSystem.CONTEXT_KEY );
-        ControllerSystem controllerSystem = context.getComponent( ControllerSystem.CONTEXT_KEY );
-        ActionSystem actionSystem = context.getComponent( ActionSystem.CONTEXT_KEY );
-        SoundSystem soundSystem = context.getComponent( SoundSystem.CONTEXT_KEY );
-        entitySystem = context.getComponent( EntitySystem.CONTEXT_KEY );
-        
-        int screenWidth = lowerSystemFacade.getScreenWidth();
-        int screenHeight = lowerSystemFacade.getScreenHeight();
-        
-        cameraController = controllerSystem.getControllerBuilder( SimpleCameraController.class )
-            .set( Controller.NAME, CAVE_VIEW_CAMERA_NAME )
-            .set( Controller.UPDATE_RESOLUTION, 60 )
-            .set( SimpleCameraController.PIVOT, playerPivot )
-            .set( SimpleCameraController.H_ON_THRESHOLD, 150 )
-            .set( SimpleCameraController.H_OFF_THRESHOLD, 250 )
-            .set( SimpleCameraController.V_ON_THRESHOLD, 150 )
-            .set( SimpleCameraController.V_OFF_THRESHOLD, 250 )
-            .set( SimpleCameraController.H_VELOCITY, 3 )
-            .set( SimpleCameraController.V_VELOCITY, 3 )
-        .build();
-        
-        headerViewId = viewSystem.getViewBuilderWithAutoActivation()
-            .set( View.NAME, HEADER_VIEW_NAME )
-            .set( View.LAYERING_ENABLED, false )
-            .set( View.BOUNDS, new Rectangle( 0, 0, screenWidth, HEADER_VIEW_HEIGHT ) )
-            .set( View.WORLD_POSITION, new Position( 0, 0 ) )
-            .set( View.CLEAR_COLOR, new RGBColor( 0, 0, 0, 1 ) )
-        .build().getId();
-        caveViewId = viewSystem.getViewBuilderWithAutoActivation()
-            .set( View.NAME, CAVE_VIEW_NAME )
-            .set( View.LAYERING_ENABLED, false )
-            .set( View.BOUNDS, new Rectangle( 20, HEADER_VIEW_HEIGHT, screenWidth - 40, screenHeight - HEADER_VIEW_HEIGHT - 20 ) )
-            .set( View.WORLD_POSITION, new Position( 0, 0 ) )
-            .set( View.CONTROLLER_IDS, new int[]{ cameraController.getId() } ) 
-            .set( View.CLEAR_COLOR, new RGBColor( 0, 0, 0, 1 ) )
-        .build().getId();
-        
-        // create global cave assets and sounds
-        assetSystem.getAssetBuilder( TextureAsset.class )
-            .set( TextureAsset.NAME, GAME_UNIT_TEXTURE_KEY.name )
-            .set( TextureAsset.ASSET_GROUP, GAME_UNIT_TEXTURE_KEY.group )
-            .set( TextureAsset.RESOURCE_NAME, config.unitTextureResource )
-            .set( TextureAsset.TEXTURE_WIDTH, config.unitTextureWidth )
-            .set( TextureAsset.TEXTURE_HEIGHT, config.unitTextureHeight )
-         .build();
-        
-        for ( CaveSoundKey caveSoundKey : CaveSoundKey.values() ) {
-            assetSystem.getAssetBuilderWithAutoLoad( SoundAsset.class )
-                .set( SoundAsset.NAME, caveSoundKey.assetKey.name )
-                .set( SoundAsset.ASSET_GROUP, caveSoundKey.assetKey.group )
-                .set( SoundAsset.RESOURCE_NAME, caveSoundKey.fileName )
-                .set( SoundAsset.STREAMING, false )
-            .build( caveSoundKey.id );
-            soundSystem.getSoundBuilder()
-                .set( Sound.NAME, caveSoundKey.assetKey.name )
-                .set( Sound.ASSET_ID, caveSoundKey.id )
-                .set( Sound.LOOPING, caveSoundKey.looping )
-                .set( Sound.CHANNEL, 4 )
-            .build( caveSoundKey.id );
-        }
-        
-        // create unit actions
-        for ( UnitActionType actionType : UnitActionType.values() ) {
-            if ( actionType.getActionTypeClass() != null ) {
-                actionSystem.getActionBuilder( actionType.getActionTypeClass() )
-                    .set( Action.NAME, actionType.name() )
-                .build( actionType.index() );
-            }
-        }
-        
-        // create and initialize all units
-        for ( UnitType unitType : UnitType.values() ) {
-            if ( unitType.handler != null ) {
-                unitType.handler.init( context );
-                unitType.handler.initBDCFFTypesMap( BDCFF_TYPES_MAP );
-            }
-        }
-        
-        initialized = true;
-    } 
-    
-    public final void loadCave( FFContext context, GameData gameData ) {
-        if ( !initialized ) {
-            throw new FFInitException( "CaveService not initilized. Needs initialization first." );
-        }
-        
-        caveState = CaveState.INIT;
-
-        TileGridSystem tileGridSystem = context.getComponent( TileGridSystem.CONTEXT_KEY );
-        GameService gameService = context.getComponent( GameService.CONTEXT_KEY );
-        Configuration config = gameService.getConfiguration();
-        AssetSystem assetSystem = context.getComponent( AssetSystem.CONTEXT_KEY );
-        TextSystem textSystem = context.getComponent( TextSystem.CONTEXT_KEY );
-        ControllerSystem controllerSystem = context.getComponent( ControllerSystem.CONTEXT_KEY );
-        
+    public CaveService( GameData gameData ) {
         this.gameData = gameData;
-        caveData = gameData.getCurrentCave();
-        amoebaData = new AmoebaData( caveData );
-
-        // load unit texture asset with cave colors
-        TextureAsset unitTextureAsset = assetSystem.getAsset( GAME_UNIT_TEXTURE_KEY, TextureAsset.class );
-        IColorFilter colorFilter = caveData.getColorFilter();
-        context.putComponent( COLOR_FILTER_KEY, colorFilter );
-        unitTextureAsset.setDynamicAttribute( GDXConfiguration.DynamicAttributes.TEXTURE_COLOR_FILTER_NAME, COLOR_FILTER_KEY.id() );
-        assetSystem.loadAsset( GAME_UNIT_TEXTURE_KEY );
-
-        // create tileGrid and cave entities
-        int caveWidth = caveData.getCaveWidth();
-        int caveHeight = caveData.getCaveHeight();
-        tileGrid = tileGridSystem.getTileGridBuilder()
-            .set( TileGrid.NAME, CAVE_TILE_GRID_NAME )
-            .set( TileGrid.VIEW_ID, caveViewId )
-            .set( TileGrid.WIDTH, caveWidth )
-            .set( TileGrid.HEIGHT, caveHeight )
-            .set( TileGrid.CELL_WIDTH, config.unitWidth )
-            .set( TileGrid.CELL_HEIGHT, config.unitHeight )
-            .set( TileGrid.RENDER_MODE, TileRenderMode.FAST_RENDERING )
-        .build();
-        
-        // load all units
-        for ( UnitType unitType : UnitType.values() ) {
-            if ( unitType.handler != null ) {
-                unitType.handler.loadCaveData( context );
-            }
-        }
-        
-        String caveDataString = caveData.getCaveDataString();
-        int index = 0;
-        for ( int y = 0; y < caveHeight; y++ ) {
-            for ( int x = 0; x < caveWidth; x++ ) {
-                String type = String.valueOf( caveDataString.charAt( index ) );
-                UnitType unitType = BDCFF_TYPES_MAP.get( type );
-                if ( unitType != null ) {
-                    int entityId = unitType.handler.createOne( type, x, y );
-                    if ( unitType == UnitType.ROCKFORD ) {
-                        ETile playerTile = entitySystem.getComponent( entityId, ETile.class );
-                        EUnit playerUnit = entitySystem.getComponent( entityId, EUnit.class );
-                        playerPivot.setPlayerData( playerTile, playerUnit );
-                    }
-                } else {
-                    UnitType.SOLID_WALL.handler.createOne( x, y );
-                }
-                index++;
-            }
-        }
-        
-        cameraController.setSnapToBounds( 
-            new Rectangle( 
-                0, 0, 
-                tileGrid.getCellWidth() * caveData.getCaveWidth(), 
-                tileGrid.getCellHeight() * caveData.getCaveHeight() 
-            ) 
-        );
-        
-        entitySystem.getEntityBuilderWithAutoActivation()
-            .set( ETransform.VIEW_ID, headerViewId )
-            .set( ETransform.XPOSITION, 8 )
-            .set( ETransform.YPOSITION, 8 )
-            .set( EText.FONT_ID, textSystem.getFontId( GameService.GAME_FONT_TEXTURE_KEY.name ) )
-            .set( EText.TEXT, headerText )
-        .build();
-        
-        controllerSystem.getControllerBuilder( CaveController.class )
-            .set( Controller.NAME, CAVE_CONTROLLER_NAME )
-        .build();
-
-        loaded = true;
+    }
+    
+    public final PlayerPivot getPlayerPivot() {
+        return playerPivot;
+    }
+    
+    public final void reset() {
+        caveState = CaveState.INIT;
+        // TODO
     }
     
     public final void disposeCave( FFContext context ) {
-        if ( !loaded ) {
-            return;
-        }
-
         playerPivot.setPlayerData( null, null );
         
         // dispose all units
@@ -334,7 +141,7 @@ public class CaveService implements FFContextInitiable, Disposable {
         disposeCave( context );
         caveState = CaveState.INIT;
         caveData.reset();
-        loadCave( context, gameData );
+        loadCave( context );
     }
     
     final void nextCave( FFContext context ) {
@@ -342,7 +149,7 @@ public class CaveService implements FFContextInitiable, Disposable {
         caveState = CaveState.INIT;
         gameData.nextCave();
         caveData = null;
-        loadCave( context, gameData );
+        loadCave( context );
     }
     
     public final int getDiamondsToCollect() {
@@ -588,5 +395,7 @@ public class CaveService implements FFContextInitiable, Disposable {
             growthLimit = Math.round( caveSize * amoebaThreshold );
         }
     }
+
+    
 
 }

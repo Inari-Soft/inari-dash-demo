@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.inari.commons.lang.TypedKey;
 import com.inari.dash.game.GameInfo.CodeType;
+import com.inari.dash.game.cave.CaveData;
 
 public class GameData {
     

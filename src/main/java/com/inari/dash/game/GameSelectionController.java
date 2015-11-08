@@ -1,22 +1,22 @@
-package com.inari.dash.game.selection;
+package com.inari.dash.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.inari.dash.game.selection.GameSelectionService.Mode;
+import com.inari.dash.game.GameService.SelectionMode;
 import com.inari.firefly.control.Controller;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FFTimer;
 
 public final class GameSelectionController extends Controller {
 
-    private final GameSelectionService gameSelectionService;
+    private final GameService gameService;
     
     private final int delay = 5;
     private int changed = 0;
 
     protected GameSelectionController( int id, FFContext context ) {
         super( id );
-        gameSelectionService = context.getComponent( GameSelectionService.CONTEXT_KEY );
+        gameService = context.getComponent( GameService.CONTEXT_KEY );
     }
 
     @Override
@@ -27,27 +27,27 @@ public final class GameSelectionController extends Controller {
         }
         
         if ( Gdx.input.isKeyPressed( Input.Keys.DOWN ) || Gdx.input.isKeyPressed( Input.Keys.S ) ) {
-            gameSelectionService.nextSelectionMode();
+            gameService.nextSelectionMode();
         } else if ( Gdx.input.isKeyPressed( Input.Keys.UP ) || Gdx.input.isKeyPressed( Input.Keys.W ) ) {
-            gameSelectionService.peviousSelectionMode();
+            gameService.peviousSelectionMode();
         } else if ( Gdx.input.isKeyPressed( Input.Keys.RIGHT ) || Gdx.input.isKeyPressed( Input.Keys.D ) ) {
-            if ( gameSelectionService.getMode() == Mode.GAME_SELECTION ) {
-                gameSelectionService.nextGameSelection();
-            } else if ( gameSelectionService.getMode() == Mode.CAVE_SELECTION ) {
-                gameSelectionService.nextCaveSelection();
+            if ( gameService.getMode() == SelectionMode.GAME_SELECTION ) {
+                gameService.nextGameSelection();
+            } else if ( gameService.getMode() == SelectionMode.CAVE_SELECTION ) {
+                gameService.nextCaveSelection();
             }
         } else if ( Gdx.input.isKeyPressed( Input.Keys.LEFT ) || Gdx.input.isKeyPressed( Input.Keys.A ) ) {
-            if ( gameSelectionService.getMode() == Mode.GAME_SELECTION ) {
-                gameSelectionService.previousGameSelection();
-            } else if ( gameSelectionService.getMode() == Mode.CAVE_SELECTION ) {
-                gameSelectionService.previousCaveSelection();
+            if ( gameService.getMode() == SelectionMode.GAME_SELECTION ) {
+                gameService.previousGameSelection();
+            } else if ( gameService.getMode() == SelectionMode.CAVE_SELECTION ) {
+                gameService.previousCaveSelection();
             }
         } else if ( Gdx.input.isKeyPressed( Input.Keys.ENTER ) ) {
-            gameSelectionService.select();
+            gameService.select();
         }
         
         changed = delay;
-        gameSelectionService.update();
+        gameService.update();
     }
 
     @Override
