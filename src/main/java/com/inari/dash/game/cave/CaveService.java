@@ -12,21 +12,13 @@ import com.inari.dash.game.GameData;
 import com.inari.dash.game.cave.unit.EUnit;
 import com.inari.dash.game.cave.unit.UnitAspect;
 import com.inari.dash.game.cave.unit.UnitType;
-import com.inari.dash.game.cave.unit.action.UnitActionType;
-import com.inari.firefly.action.ActionSystem;
 import com.inari.firefly.asset.AssetNameKey;
-import com.inari.firefly.asset.AssetSystem;
-import com.inari.firefly.control.ControllerSystem;
-import com.inari.firefly.controller.view.CameraPivot;
 import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.filter.IColorFilter;
 import com.inari.firefly.renderer.tile.ETile;
 import com.inari.firefly.renderer.tile.TileGrid;
-import com.inari.firefly.renderer.tile.TileGridSystem;
 import com.inari.firefly.sound.SoundAsset;
-import com.inari.firefly.sound.SoundSystem;
 import com.inari.firefly.system.FFContext;
-import com.inari.firefly.system.view.ViewSystem;
 
 public class CaveService {
     
@@ -48,7 +40,7 @@ public class CaveService {
     public static final int HEADER_VIEW_HEIGHT = 32;
     public static final String CAVE_VIEW_NAME = "GameView";
     public static final String CAVE_CONTROLLER_NAME = "CaveController";
-    public static final String CAVE_VIEW_CAMERA_NAME = "CaveViewCamera";
+    public static final String CAVE_CAMERA_CONTROLLER_NAME = "CaveViewCamera";
     public static final String CAVE_TILE_GRID_NAME = "CaveTileGrid";
     public static final TypedKey<IColorFilter> COLOR_FILTER_KEY = TypedKey.create( "COLOR_FILTER_KEY", IColorFilter.class );
     
@@ -81,77 +73,58 @@ public class CaveService {
         }
     }
     
+    private final EntitySystem entitySystem;
+    
     CaveState caveState;
-    
-    private EntitySystem entitySystem;
 
-    GameData gameData;
-    CaveData caveData;
-    AmoebaData amoebaData;
-    
-    char[] headerText = "%%%%%%%%%%%%%%%%%%%%%%%%".toCharArray();
-    int headerViewId;
-    int caveViewId;
-    
+    private final GameData gameData;
+    private CaveData caveData;
+    private AmoebaData amoebaData;
     private TileGrid tileGrid;
-    private final PlayerPivot playerPivot = new PlayerPivot();
-    
-    public CaveService( GameData gameData ) {
-        this.gameData = gameData;
-    }
-    
-    public final PlayerPivot getPlayerPivot() {
-        return playerPivot;
+    private char[] headerText = "%%%%%%%%%%%%%%%%%%%%%%%%".toCharArray();
+
+    public CaveService( FFContext context ) {
+        gameData = context.getComponent( GameData.CONTEXT_KEY );
+        entitySystem = context.getComponent( EntitySystem.CONTEXT_KEY );
     }
     
     public final void reset() {
         caveState = CaveState.INIT;
+        caveData = gameData.getCurrentCave();
+        amoebaData = new AmoebaData( caveData );
         // TODO
     }
     
-    public final void disposeCave( FFContext context ) {
-        playerPivot.setPlayerData( null, null );
-        
-        // dispose all units
-        for ( UnitType unitType : UnitType.values() ) {
-            if ( unitType.handler != null ) {
-                unitType.handler.disposeCaveData( context );
-            }
-        }
-        
-        entitySystem.deleteAll();
-        
-        AssetSystem assetSystem = context.getComponent( AssetSystem.CONTEXT_KEY );
-        assetSystem.disposeAsset( GAME_UNIT_TEXTURE_KEY );
-        TileGridSystem tileGridSystem = context.getComponent( TileGridSystem.CONTEXT_KEY );
-        tileGridSystem.deleteAllTileGrid( caveViewId );
-        ControllerSystem controllerSystem = context.getComponent( ControllerSystem.CONTEXT_KEY );
-        controllerSystem.deleteController( CAVE_CONTROLLER_NAME );
-        ViewSystem viewSystem = context.getComponent( ViewSystem.CONTEXT_KEY );
-        Position worldPosition = viewSystem.getView( caveViewId ).getWorldPosition();
-        worldPosition.x = 0;
-        worldPosition.y = 0;
-        
-        //cameraController.reset();
-        
-        loaded = false;
+    public final CaveData getCaveData() {
+        return caveData;
     }
     
-    final void replay( FFContext context ) {
-        disposeCave( context );
-        caveState = CaveState.INIT;
-        caveData.reset();
-        loadCave( context );
+    public final GameData getGameData() {
+        return gameData;
     }
     
-    final void nextCave( FFContext context ) {
-        disposeCave( context );
-        caveState = CaveState.INIT;
-        gameData.nextCave();
-        caveData = null;
-        loadCave( context );
-    }
     
+    
+    
+//    final void replay( FFContext context ) {
+//        disposeCave( context );
+//        caveState = CaveState.INIT;
+//        caveData.reset();
+//        loadCave( context );
+//    }
+//    
+//    final void nextCave( FFContext context ) {
+//        disposeCave( context );
+//        caveState = CaveState.INIT;
+//        gameData.nextCave();
+//        caveData = null;
+//        loadCave( context );
+//    }
+    
+    public final char[] getHeaderText() {
+        return headerText;
+    }
+
     public final int getDiamondsToCollect() {
         return caveData.getDiamondsToCollect();
     }
@@ -310,74 +283,7 @@ public class CaveService {
     public final void createOne( int x, int y, UnitType unitType ) {
         unitType.handler.createOne( x, y );
     }
-    
-    @Override
-    public final void dispose( FFContext context ) {
-        ViewSystem viewSystem = context.getComponent( ViewSystem.CONTEXT_KEY );
-        SoundSystem soundSystem = context.getComponent( SoundSystem.CONTEXT_KEY );
-        ControllerSystem controllerSystem = context.getComponent( ControllerSystem.CONTEXT_KEY );
-        AssetSystem assetSystem = context.getComponent( AssetSystem.CONTEXT_KEY );
-        ActionSystem actionSystem = context.getComponent( ActionSystem.CONTEXT_KEY );
-        
-        System.out.println( assetSystem.getNameKeys() );
-        
-        // dispose all units
-        for ( UnitType unitType : UnitType.values() ) {
-            if ( unitType.handler != null ) {
-                unitType.handler.dispose( context );
-            }
-        }
-        
-        System.out.println( assetSystem.getNameKeys() );
-        
-        entitySystem.deleteAll();
-        
-        viewSystem.deleteView( HEADER_VIEW_NAME );
-        viewSystem.deleteView( CAVE_VIEW_NAME );
-        
-        for ( CaveSoundKey caveSoundKey : CaveSoundKey.values() ) {
-            soundSystem.deleteSound( caveSoundKey.id );
-        }
-        
-        System.out.println( assetSystem.getNameKeys() );
-        
-        assetSystem.deleteAssets( CAVE_SOUND_GROUP_NAME );
-        
-        controllerSystem.deleteController( CAVE_VIEW_CAMERA_NAME );
-        assetSystem.deleteAsset( GAME_UNIT_TEXTURE_KEY );
-        
-        for ( UnitActionType actionType : UnitActionType.values() ) {
-            actionSystem.deleteAction( actionType.index() );
-        }
-        
-        initialized = false;
-    }
-    
-    final class PlayerPivot implements CameraPivot {
-        
-        // TODO may here I should have only the entityId of the player
-        ETile playerTile = null;
-        EUnit playerUnit = null;
-        final Position tmpPos = new Position();
-        
-        private PlayerPivot() {}
 
-        private final void setPlayerData( ETile playerTile, EUnit playerUnit ) {
-            this.playerTile = playerTile;
-            this.playerUnit = playerUnit;
-        }
-        @Override
-        public Position getPivot() {
-            if ( playerTile != null ) {
-                tmpPos.x = tileGrid.getCellWidth() * playerTile.getGridXPos();
-                tmpPos.y = tileGrid.getCellHeight() * playerTile.getGridYPos();
-                return tmpPos;
-            }
-            return null;
-        }
-        
-    }
-    
     public final static class AmoebaData {
         public final float amoebaSlowGrowthProb;
         public final float amoebaFastGrowthProb;

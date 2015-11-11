@@ -11,6 +11,7 @@ import com.inari.dash.game.GameService.StateChangeName;
 import com.inari.dash.game.GameService.StateName;
 import com.inari.dash.game.GameService.TaskName;
 import com.inari.dash.game.StartGameCondition;
+import com.inari.dash.game.io.GameInfos;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.libgdx.GDXConfiguration;
 import com.inari.firefly.libgdx.GDXFFApplicationAdapter;
@@ -23,9 +24,7 @@ import com.inari.firefly.task.Task;
 import com.inari.firefly.task.TaskSystem;
 
 public class InariDash extends GDXFFApplicationAdapter {
-    
-    
-    
+
     @Override
     public String getTitle() {
         return "Inari Dash";
@@ -53,7 +52,10 @@ public class InariDash extends GDXFFApplicationAdapter {
 
     @Override
     protected final void init( FFContext context ) {
-        GameService gameService = new GameService( context, new Configuration() );
+        Configuration configuration = new Configuration();
+        GameInfos gameInfos = new GameInfos();
+        gameInfos.load( context );
+        GameService gameService = new GameService( context, configuration, gameInfos );
         context.putComponent( GameService.CONTEXT_KEY, gameService );
         
         initWorkflow( context );

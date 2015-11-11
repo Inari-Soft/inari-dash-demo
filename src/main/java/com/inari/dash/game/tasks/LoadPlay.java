@@ -19,13 +19,17 @@ import com.inari.firefly.action.ActionSystem;
 import com.inari.firefly.asset.AssetSystem;
 import com.inari.firefly.control.Controller;
 import com.inari.firefly.control.ControllerSystem;
+import com.inari.firefly.controller.view.CameraPivot;
 import com.inari.firefly.controller.view.SimpleCameraController;
+import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.renderer.TextureAsset;
+import com.inari.firefly.renderer.tile.ETile;
 import com.inari.firefly.sound.Sound;
 import com.inari.firefly.sound.SoundAsset;
 import com.inari.firefly.sound.SoundSystem;
 import com.inari.firefly.sound.event.SoundEvent;
 import com.inari.firefly.system.FFContext;
+import com.inari.firefly.system.FFInitException;
 import com.inari.firefly.system.LowerSystemFacade;
 import com.inari.firefly.system.view.View;
 import com.inari.firefly.system.view.ViewSystem;
@@ -54,8 +58,9 @@ public final class LoadPlay extends Task {
         // load selected game data
         GameData gameData = ( new BDCFFGameDataLoader() ).load( selectedGame.getGameConfigResource() );
         gameData.setCave( selectedCave );
+        context.putComponent( GameData.CONTEXT_KEY, gameData );
         // create CaveService
-        CaveService caveService = new CaveService( gameData );
+        CaveService caveService = new CaveService( context );
         context.putComponent( CaveService.CONTEXT_KEY, caveService );
         // load the selected cave
         initCaveAndUnits( context );
@@ -63,7 +68,6 @@ public final class LoadPlay extends Task {
     }
     
     private void initCaveAndUnits( FFContext context ) {
-        CaveService caveService  = context.getComponent( CaveService.CONTEXT_KEY );
         GameService gameService = context.getComponent( GameService.CONTEXT_KEY );
         Configuration config = gameService.getConfiguration();
         LowerSystemFacade lowerSystemFacade = context.getComponent( FFContext.LOWER_SYSTEM_FACADE );
@@ -75,11 +79,12 @@ public final class LoadPlay extends Task {
         
         int screenWidth = lowerSystemFacade.getScreenWidth();
         int screenHeight = lowerSystemFacade.getScreenHeight();
-        
+
+        CameraPivot playerPivot = createPlayerPivot( config.unitWidth, config.unitHeight );
         Controller cameraController = controllerSystem.getControllerBuilder( SimpleCameraController.class )
-            .set( Controller.NAME, CaveService.CAVE_VIEW_CAMERA_NAME )
+            .set( Controller.NAME, CaveService.CAVE_CAMERA_CONTROLLER_NAME )
             .set( Controller.UPDATE_RESOLUTION, 60 )
-            .set( SimpleCameraController.PIVOT, caveService.getPlayerPivot() )
+            .set( SimpleCameraController.PIVOT, playerPivot )
             .set( SimpleCameraController.H_ON_THRESHOLD, 150 )
             .set( SimpleCameraController.H_OFF_THRESHOLD, 250 )
             .set( SimpleCameraController.V_ON_THRESHOLD, 150 )
@@ -144,6 +149,31 @@ public final class LoadPlay extends Task {
                 unitType.handler.initBDCFFTypesMap( CaveService.BDCFF_TYPES_MAP );
             }
         }
+    }
+
+    public CameraPivot createPlayerPivot( final int unitWidth, final int unitHeight ) {
+        final Position tmpPos = new Position();
+        
+        return new CameraPivot() {
+            
+            private ETile playerTile = null;
+
+            @Override
+            public final void init( FFContext context ) throws FFInitException {
+                EntitySystem entitySystem = context.getComponent( EntitySystem.CONTEXT_KEY );
+                playerTile = entitySystem.getComponent( UnitType.ROCKFORD.getHandle().getEntityId(), ETile.class );
+            }
+
+            @Override
+            public final Position getPivot() {
+                if ( playerTile != null ) {
+                    tmpPos.x = unitWidth * playerTile.getGridXPos();
+                    tmpPos.y = unitHeight * playerTile.getGridYPos();
+                    return tmpPos;
+                }
+                return null;
+            }
+        };
     } 
 
 }

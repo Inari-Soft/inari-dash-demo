@@ -8,6 +8,7 @@ import com.inari.commons.event.IEventDispatcher;
 import com.inari.commons.geom.Position;
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.aspect.AspectSetBuilder;
+import com.inari.dash.game.GameData;
 import com.inari.dash.game.GameService;
 import com.inari.dash.game.GameService.StateChangeName;
 import com.inari.dash.game.cave.CaveService.CaveSoundKey;
@@ -39,6 +40,7 @@ import com.inari.firefly.system.UpdateEvent;
 import com.inari.firefly.system.UpdateEventListener;
 import com.inari.firefly.system.view.View;
 import com.inari.firefly.system.view.ViewSystem;
+import com.inari.firefly.task.event.TaskEvent;
 import com.inari.firefly.text.EText;
 import com.inari.firefly.text.TextSystem;
 
@@ -63,6 +65,7 @@ public final class CaveController extends Controller {
     private final int scoreTextPos = 18;
     
     private final int exitEntityId;
+    private final int playerEntityId;
     
     
     protected CaveController( int id, FFContext context ) {
@@ -73,14 +76,19 @@ public final class CaveController extends Controller {
         entitySystem = context.getComponent( EntitySystem.CONTEXT_KEY );
         secondTimer = context.getComponent( FFContext.TIMER ).createUpdateScheduler( 1 );
         exitEntityId = UnitType.EXIT.getHandle().getEntityId();
+        playerEntityId = UnitType.ROCKFORD.getHandle().getEntityId();
     }
 
     @Override
     public final void update( FFTimer timer ) {
+        GameData gameData = caveService.getGameData();
+        CaveData caveData = caveService.getCaveData();
+        EUnit playerUnit = entitySystem.getComponent( playerEntityId, EUnit.class );
+        
         if ( caveService.caveState == CaveState.INIT ) {
             if ( caveInitScene == null ) {
                 caveInitScene = new CaveInitScene( context );
-                initHeader();
+                initHeader( gameData );
             }
             if ( secondTimer.needsUpdate() ) {
                 initSeconds ++;
@@ -96,7 +104,7 @@ public final class CaveController extends Controller {
         
         if ( caveService.caveState == CaveState.ENTERING ) {
             initSeconds = 0;
-            if ( caveService.playerPivot.playerUnit.has( UnitAspect.ALIVE ) ) {
+            if ( playerUnit.has( UnitAspect.ALIVE ) ) {
                 caveService.caveState = CaveState.PLAY;
             }
             return;
@@ -105,8 +113,8 @@ public final class CaveController extends Controller {
         if ( caveService.caveState == CaveState.PLAY ) {
             initSeconds = 0;
             if ( secondTimer.needsUpdate() ) {
-                caveService.caveData.tick();
-                int caveTime = caveService.caveData.getTime();
+                caveData.tick();
+                int caveTime = caveData.getTime();
                 if ( caveTime < 10 && caveTime > 0 ) {
                     String soundName = "TIMEOUT" + caveTime;
                     eventDispatcher.notify( new SoundEvent( CaveSoundKey.valueOf( soundName ).id, Type.PLAY_SOUND ) );
@@ -114,7 +122,7 @@ public final class CaveController extends Controller {
                 
                 if ( caveTime == 0 ) {
                     caveService.caveState = CaveState.LOOSE;
-                    caveService.playerPivot.playerUnit.resetAspect( UnitAspect.ALIVE );
+                    playerUnit.resetAspect( UnitAspect.ALIVE );
                     initSeconds = 0;
                     return;
                 }
@@ -122,7 +130,7 @@ public final class CaveController extends Controller {
             
             EUnit exitUnit = entitySystem.getComponent( exitEntityId, EUnit.class );
             if ( !exitUnit.has( UnitAspect.ACTIVE ) ) {
-                boolean enough = caveService.caveData.getDiamondsToCollect() == caveService.caveData.getDiamondsCollected();
+                boolean enough = caveData.getDiamondsToCollect() == caveData.getDiamondsCollected();
                 if ( enough ) {
                     exitUnit.setAspects( AspectSetBuilder.create( UnitAspect.ACTIVE, UnitAspect.WALKABLE ) );
                     eventDispatcher.notify( new ActionEvent( UnitActionType.FLASH.index(), exitEntityId ) );
@@ -130,8 +138,8 @@ public final class CaveController extends Controller {
                 }
             }
             
-            if ( caveService.caveData.isModified() || caveService.gameData.isModified() ) {
-                updatePlayHeader();
+            if ( caveData.isModified() || gameData.isModified() ) {
+                updatePlayHeader( gameData, caveData );
             }
             
             return;
@@ -139,18 +147,18 @@ public final class CaveController extends Controller {
         
         if ( caveService.caveState == CaveState.WON ) {
             if ( initSeconds <= 0 ) {
-                caveService.playerPivot.playerUnit.resetAspect( UnitAspect.ALIVE );
+                playerUnit.resetAspect( UnitAspect.ALIVE );
                 eventDispatcher.notify( new SoundEvent( CaveService.CaveSoundKey.FINISHED.id, Type.PLAY_SOUND ) );
                 initSeconds++;
             }
-            int time = caveService.caveData.getTime();
+            int time = caveData.getTime();
             if ( time > 0 ) {
-                caveService.caveData.tick();
-                updatePlayHeader();
+                caveData.tick();
+                updatePlayHeader( gameData, caveData );
             } else {
                 eventDispatcher.notify( new SoundEvent( CaveService.CaveSoundKey.FINISHED.id, Type.STOP_PLAYING ) );
-                if ( caveService.gameData.hasNextCave() ) {
-                    caveService.nextCave( context );
+                if ( gameData.hasNextCave() ) {
+                    eventDispatcher.notify( new TaskEvent( TaskEvent.Type.RUN_TASK, GameService.TaskName.NEXT_CAVE.name() ) );
                 } else {
                     exitPlay();
                 }
@@ -160,10 +168,10 @@ public final class CaveController extends Controller {
         
         if ( caveService.caveState == CaveState.LOOSE ) {
             if ( initSeconds > 2 ) {
-                int lives = caveService.gameData.getLives() - 1;
-                caveService.gameData.setLives( lives );
+                int lives = gameData.getLives() - 1;
+                gameData.setLives( lives );
                 if ( lives >= 1 ) {
-                    caveService.replay( context );
+                    eventDispatcher.notify( new TaskEvent( TaskEvent.Type.RUN_TASK, GameService.TaskName.REPLAY_CAVE.name() ) );
                 } else {
                     gameOverHeader();
                 }
@@ -199,27 +207,29 @@ public final class CaveController extends Controller {
         
     }
     
-    private void initHeader() {
+    private void initHeader( GameData gameData ) {
         clearHeader();
         char[] charArray = "PLAYER 1".toCharArray();
-        System.arraycopy( charArray, 0, caveService.headerText, playerTextPos, charArray.length );
-        charArray = ( caveService.gameData.getLives() + " MEN" ).toCharArray();
-        System.arraycopy( charArray, 0, caveService.headerText, menTextPos, charArray.length );
+        char[] headerText = caveService.getHeaderText();
+        System.arraycopy( charArray, 0, headerText, playerTextPos, charArray.length );
+        charArray = ( gameData.getLives() + " MEN" ).toCharArray();
+        System.arraycopy( charArray, 0, headerText, menTextPos, charArray.length );
         charArray = ( "1:A" ).toCharArray();
-        System.arraycopy( charArray, 0, caveService.headerText, caveTextPos, charArray.length );
+        System.arraycopy( charArray, 0, headerText, caveTextPos, charArray.length );
     }
     
     private void playHeader() {
         clearHeader();
-        updatePlayHeader();
+        updatePlayHeader( caveService.getGameData(), caveService.getCaveData() );
     }
     
     private void gameOverHeader() {
         clearHeader();
         caveService.caveState = CaveState.GAME_OVER;
         TextSystem textSystem = context.getComponent( TextSystem.CONTEXT_KEY );
+        ViewSystem viewSystem = context.getComponent( ViewSystem.CONTEXT_KEY );
         entitySystem.getEntityBuilderWithAutoActivation()
-            .set( ETransform.VIEW_ID, caveService.headerViewId )
+            .set( ETransform.VIEW_ID, viewSystem.getViewId( CaveService.HEADER_VIEW_NAME ) )
             .set( ETransform.XPOSITION, 100 )
             .set( ETransform.YPOSITION, 8 )
             .set( EText.FONT_ID, textSystem.getFontId( GameService.GAME_FONT_TEXTURE_KEY.name ) )
@@ -228,36 +238,38 @@ public final class CaveController extends Controller {
         .build();
     }
     
-    private void updatePlayHeader() {
-        int diamondsToCollect = caveService.caveData.getDiamondsToCollect();
-        boolean enough = caveService.caveData.getDiamondsCollected() >= diamondsToCollect;
+    private void updatePlayHeader( GameData gameData, CaveData caveData ) {
+        int diamondsToCollect = caveData.getDiamondsToCollect();
+        boolean enough = caveData.getDiamondsCollected() >= diamondsToCollect;
         String diamondsToCollectString = 
             ( enough )?
                 "%%" : ( ( diamondsToCollect < 10 )? "0" + diamondsToCollect : String.valueOf( diamondsToCollect ) );
-        int pointsForDiamond = ( enough )? caveService.caveData.getExtraDiamondPoints() : caveService.caveData.getNeededDiamondPoints();
+        int pointsForDiamond = ( enough )? caveData.getExtraDiamondPoints() : caveData.getNeededDiamondPoints();
         String neededDiamondPointsString = ( pointsForDiamond < 10 )? "0" + pointsForDiamond : String.valueOf( pointsForDiamond );
         char[] charArray = ( diamondsToCollectString + "%" + neededDiamondPointsString ).toCharArray();
-        System.arraycopy( charArray, 0, caveService.headerText, diamondTextPos, charArray.length );
+        char[] headerText = caveService.getHeaderText();
+        System.arraycopy( charArray, 0, headerText, diamondTextPos, charArray.length );
         
-        int collected = caveService.caveData.getDiamondsCollected();
+        int collected = caveData.getDiamondsCollected();
         String collectedString = ( collected < 10 )? "0" + collected : String.valueOf( collected );
         charArray = collectedString.toCharArray();
-        System.arraycopy( charArray, 0, caveService.headerText, collectedTextPos, charArray.length );
+        System.arraycopy( charArray, 0, headerText, collectedTextPos, charArray.length );
         
-        int time = caveService.caveData.getTime();
+        int time = caveData.getTime();
         String timeString = ( time < 10 )? "00" + time : ( time < 100 )? "0" + time : String.valueOf( time );
         charArray = timeString.toCharArray();
-        System.arraycopy( charArray, 0, caveService.headerText, timeTextPos, charArray.length );
+        System.arraycopy( charArray, 0, headerText, timeTextPos, charArray.length );
         
         charArray = "000000".toCharArray();
-        char[] score = String.valueOf( caveService.gameData.getScore() ).toCharArray();
+        char[] score = String.valueOf( gameData.getScore() ).toCharArray();
         System.arraycopy( score, 0, charArray, charArray.length - score.length, score.length );
-        System.arraycopy( charArray, 0, caveService.headerText, scoreTextPos, charArray.length );
+        System.arraycopy( charArray, 0, headerText, scoreTextPos, charArray.length );
     }
     
     private void clearHeader() {
-        for ( int i = 0; i < caveService.headerText.length; i++ ) {
-            caveService.headerText[ i ] = ' ';
+        char[] headerText = caveService.getHeaderText();
+        for ( int i = 0; i < headerText.length; i++ ) {
+            headerText[ i ] = ' ';
         }
     }
 
@@ -283,6 +295,7 @@ public final class CaveController extends Controller {
             AssetSystem assetSystem = context.getComponent( AssetSystem.CONTEXT_KEY );
             ViewSystem viewSystem = context.getComponent( ViewSystem.CONTEXT_KEY );
             eventDispatcher = context.getComponent( FFContext.EVENT_DISPATCHER );
+            CaveData caveData = caveService.getCaveData();
             
             eventDispatcher.register( UpdateEvent.class, this );
             eventDispatcher.register( RenderEvent.class, this );
@@ -291,8 +304,8 @@ public final class CaveController extends Controller {
             caveViewId = caveView.getId();
             Rectangle viewBounds = caveView.getBounds();
             
-            width = caveService.caveData.getCaveWidth() * 2;
-            height = caveService.caveData.getCaveHeight() * 2;
+            width = caveData.getCaveWidth() * 2;
+            height = caveData.getCaveHeight() * 2;
             if ( viewBounds.width / 16 < width ) {
                 width = viewBounds.width / 16;
             }

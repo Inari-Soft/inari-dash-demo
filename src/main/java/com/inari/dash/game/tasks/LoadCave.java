@@ -4,22 +4,23 @@ import com.inari.commons.geom.Rectangle;
 import com.inari.dash.Configuration;
 import com.inari.dash.game.GameService;
 import com.inari.dash.game.cave.CaveController;
+import com.inari.dash.game.cave.CaveData;
 import com.inari.dash.game.cave.CaveService;
-import com.inari.dash.game.cave.CaveService.AmoebaData;
-import com.inari.dash.game.cave.unit.EUnit;
 import com.inari.dash.game.cave.unit.UnitType;
 import com.inari.firefly.asset.AssetSystem;
 import com.inari.firefly.control.Controller;
 import com.inari.firefly.control.ControllerSystem;
+import com.inari.firefly.controller.view.SimpleCameraController;
 import com.inari.firefly.entity.ETransform;
+import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.filter.IColorFilter;
 import com.inari.firefly.libgdx.GDXConfiguration;
 import com.inari.firefly.renderer.TextureAsset;
-import com.inari.firefly.renderer.tile.ETile;
 import com.inari.firefly.renderer.tile.TileGrid;
 import com.inari.firefly.renderer.tile.TileGrid.TileRenderMode;
 import com.inari.firefly.renderer.tile.TileGridSystem;
 import com.inari.firefly.system.FFContext;
+import com.inari.firefly.system.view.ViewSystem;
 import com.inari.firefly.task.Task;
 import com.inari.firefly.text.EText;
 import com.inari.firefly.text.TextSystem;
@@ -33,31 +34,32 @@ public final class LoadCave extends Task {
     @Override
     public final void run( FFContext context ) {
         CaveService caveService = context.getComponent( CaveService.CONTEXT_KEY );
-        
-        caveService.reset();
-
         TileGridSystem tileGridSystem = context.getComponent( TileGridSystem.CONTEXT_KEY );
         GameService gameService = context.getComponent( GameService.CONTEXT_KEY );
         Configuration config = gameService.getConfiguration();
         AssetSystem assetSystem = context.getComponent( AssetSystem.CONTEXT_KEY );
         TextSystem textSystem = context.getComponent( TextSystem.CONTEXT_KEY );
         ControllerSystem controllerSystem = context.getComponent( ControllerSystem.CONTEXT_KEY );
+        EntitySystem entitySystem = context.getComponent( EntitySystem.CONTEXT_KEY );
+        ViewSystem viewSystem = context.getComponent( ViewSystem.CONTEXT_KEY );
+        int caveViewId = viewSystem.getViewId( CaveService.CAVE_VIEW_NAME );
         
-        caveData = gameData.getCurrentCave();
-        amoebaData = new AmoebaData( caveData );
+        caveService.reset();
+        
+        CaveData caveData = caveService.getCaveData();
 
         // load unit texture asset with cave colors
-        TextureAsset unitTextureAsset = assetSystem.getAsset( GAME_UNIT_TEXTURE_KEY, TextureAsset.class );
+        TextureAsset unitTextureAsset = assetSystem.getAsset( CaveService.GAME_UNIT_TEXTURE_KEY, TextureAsset.class );
         IColorFilter colorFilter = caveData.getColorFilter();
-        context.putComponent( COLOR_FILTER_KEY, colorFilter );
-        unitTextureAsset.setDynamicAttribute( GDXConfiguration.DynamicAttributes.TEXTURE_COLOR_FILTER_NAME, COLOR_FILTER_KEY.id() );
-        assetSystem.loadAsset( GAME_UNIT_TEXTURE_KEY );
+        context.putComponent( CaveService.COLOR_FILTER_KEY, colorFilter );
+        unitTextureAsset.setDynamicAttribute( GDXConfiguration.DynamicAttributes.TEXTURE_COLOR_FILTER_NAME, CaveService.COLOR_FILTER_KEY.id() );
+        assetSystem.loadAsset( CaveService.GAME_UNIT_TEXTURE_KEY );
 
         // create tileGrid and cave entities
         int caveWidth = caveData.getCaveWidth();
         int caveHeight = caveData.getCaveHeight();
-        tileGrid = tileGridSystem.getTileGridBuilder()
-            .set( TileGrid.NAME, CAVE_TILE_GRID_NAME )
+        tileGridSystem.getTileGridBuilder()
+            .set( TileGrid.NAME, CaveService.CAVE_TILE_GRID_NAME )
             .set( TileGrid.VIEW_ID, caveViewId )
             .set( TileGrid.WIDTH, caveWidth )
             .set( TileGrid.HEIGHT, caveHeight )
@@ -78,14 +80,9 @@ public final class LoadCave extends Task {
         for ( int y = 0; y < caveHeight; y++ ) {
             for ( int x = 0; x < caveWidth; x++ ) {
                 String type = String.valueOf( caveDataString.charAt( index ) );
-                UnitType unitType = BDCFF_TYPES_MAP.get( type );
+                UnitType unitType = CaveService.BDCFF_TYPES_MAP.get( type );
                 if ( unitType != null ) {
-                    int entityId = unitType.handler.createOne( type, x, y );
-                    if ( unitType == UnitType.ROCKFORD ) {
-                        ETile playerTile = entitySystem.getComponent( entityId, ETile.class );
-                        EUnit playerUnit = entitySystem.getComponent( entityId, EUnit.class );
-                        playerPivot.setPlayerData( playerTile, playerUnit );
-                    }
+                    unitType.handler.createOne( type, x, y );
                 } else {
                     UnitType.SOLID_WALL.handler.createOne( x, y );
                 }
@@ -93,24 +90,30 @@ public final class LoadCave extends Task {
             }
         }
         
+        SimpleCameraController cameraController = controllerSystem.getControllerAs( 
+            CaveService.CAVE_CAMERA_CONTROLLER_NAME, 
+            SimpleCameraController.class 
+        );
         cameraController.setSnapToBounds( 
             new Rectangle( 
                 0, 0, 
-                tileGrid.getCellWidth() * caveData.getCaveWidth(), 
-                tileGrid.getCellHeight() * caveData.getCaveHeight() 
+                gameService.getConfiguration().unitWidth * caveData.getCaveWidth(), 
+                gameService.getConfiguration().unitHeight * caveData.getCaveHeight() 
             ) 
         );
+        cameraController.getPivot().init( context );
         
         entitySystem.getEntityBuilderWithAutoActivation()
-            .set( ETransform.VIEW_ID, headerViewId )
+            .set( ETransform.VIEW_ID, viewSystem.getViewId( CaveService.HEADER_VIEW_NAME ) )
             .set( ETransform.XPOSITION, 8 )
             .set( ETransform.YPOSITION, 8 )
             .set( EText.FONT_ID, textSystem.getFontId( GameService.GAME_FONT_TEXTURE_KEY.name ) )
-            .set( EText.TEXT, headerText )
+            .set( EText.TEXT, caveService.getHeaderText() )
         .build();
         
+        // create new CaveController
         controllerSystem.getControllerBuilder( CaveController.class )
-            .set( Controller.NAME, CAVE_CONTROLLER_NAME )
+            .set( Controller.NAME, CaveService.CAVE_CONTROLLER_NAME )
         .build();
     }
     

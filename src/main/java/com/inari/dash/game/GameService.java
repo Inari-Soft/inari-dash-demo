@@ -2,7 +2,6 @@ package com.inari.dash.game;
 
 import java.util.Collection;
 
-import com.inari.commons.event.IEventDispatcher;
 import com.inari.commons.graphics.RGBColor;
 import com.inari.commons.lang.TypedKey;
 import com.inari.dash.Configuration;
@@ -15,6 +14,8 @@ import com.inari.dash.game.tasks.LoadCave;
 import com.inari.dash.game.tasks.LoadGame;
 import com.inari.dash.game.tasks.LoadGameSelection;
 import com.inari.dash.game.tasks.LoadPlay;
+import com.inari.dash.game.tasks.NextCave;
+import com.inari.dash.game.tasks.ReplayCave;
 import com.inari.firefly.asset.AssetNameKey;
 import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.system.FFContext;
@@ -30,6 +31,8 @@ public final class GameService {
         LOAD_GAME_SELECTION( LoadGameSelection.class ),
         LOAD_PLAY( LoadPlay.class ),
         LOAD_CAVE( LoadCave.class ),
+        NEXT_CAVE( NextCave.class ),
+        REPLAY_CAVE( ReplayCave.class ),
         DISPOSE_CAVE( DisposeCave.class ),
         DISPOSE_PLAY( DisposePlay.class ),
         DISPOSE_GAME_SELECTION( DisposeGameSelection.class ),
@@ -91,7 +94,6 @@ public final class GameService {
     }
     
     private Configuration configuration;
-    private IEventDispatcher eventDispatcher;
     private EntitySystem entitySystem;
     private GameInfos gameInfos;
     
@@ -106,14 +108,11 @@ public final class GameService {
     public int caveSelectionId = -1;
     public int exitTitleId = -1;
     
-    public GameService( FFContext context, Configuration config ) {
-        configuration = new Configuration();
-        eventDispatcher = context.getComponent( FFContext.EVENT_DISPATCHER );
+    public GameService( FFContext context, Configuration configuration, GameInfos gameInfos ) {
         entitySystem = context.getComponent( EntitySystem.CONTEXT_KEY );
-        
-        // TODO go to game load task
-        gameInfos = new GameInfos();
-        gameInfos.load( context );
+
+        this.configuration = configuration;
+        this.gameInfos = gameInfos;
     }
     
     private void initEntityIds() {
