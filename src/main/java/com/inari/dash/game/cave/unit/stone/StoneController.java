@@ -62,14 +62,6 @@ public abstract class StoneController extends UnitController {
             unit.setMovement( Direction.SOUTH );
             playSample( update );
             eventDispatcher.notify( new ActionEvent( UnitActionType.MOVE.type(),  entityId ) );
-//            if ( unit.getAnimationCount() >= 1 ) {
-//                unit.setMovement( Direction.SOUTH );
-//                playSample( update );
-//                eventDispatcher.notify( new ActionEvent( ActionType.MOVE.type(),  entityId ) );
-//                unit.resetAnimationCount();
-//            } else {
-//                unit.incrementAnimationCount();
-//            }
             return;
         }
         

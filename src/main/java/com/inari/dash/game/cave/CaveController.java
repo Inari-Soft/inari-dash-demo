@@ -83,7 +83,6 @@ public final class CaveController extends Controller {
     public final void update( FFTimer timer ) {
         GameData gameData = caveService.getGameData();
         CaveData caveData = caveService.getCaveData();
-        EUnit playerUnit = entitySystem.getComponent( playerEntityId, EUnit.class );
         
         if ( caveService.caveState == CaveState.INIT ) {
             if ( caveInitScene == null ) {
@@ -103,6 +102,7 @@ public final class CaveController extends Controller {
         }
         
         if ( caveService.caveState == CaveState.ENTERING ) {
+            EUnit playerUnit = entitySystem.getComponent( playerEntityId, EUnit.class );
             initSeconds = 0;
             if ( playerUnit.has( UnitAspect.ALIVE ) ) {
                 caveService.caveState = CaveState.PLAY;
@@ -122,6 +122,7 @@ public final class CaveController extends Controller {
                 
                 if ( caveTime == 0 ) {
                     caveService.caveState = CaveState.LOOSE;
+                    EUnit playerUnit = entitySystem.getComponent( playerEntityId, EUnit.class );
                     playerUnit.resetAspect( UnitAspect.ALIVE );
                     initSeconds = 0;
                     return;
@@ -147,6 +148,7 @@ public final class CaveController extends Controller {
         
         if ( caveService.caveState == CaveState.WON ) {
             if ( initSeconds <= 0 ) {
+                EUnit playerUnit = entitySystem.getComponent( playerEntityId, EUnit.class );
                 playerUnit.resetAspect( UnitAspect.ALIVE );
                 eventDispatcher.notify( new SoundEvent( CaveService.CaveSoundKey.FINISHED.id, Type.PLAY_SOUND ) );
                 initSeconds++;

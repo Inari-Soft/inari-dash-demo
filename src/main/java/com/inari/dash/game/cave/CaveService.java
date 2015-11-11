@@ -17,6 +17,7 @@ import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.filter.IColorFilter;
 import com.inari.firefly.renderer.tile.ETile;
 import com.inari.firefly.renderer.tile.TileGrid;
+import com.inari.firefly.renderer.tile.TileGridSystem;
 import com.inari.firefly.sound.SoundAsset;
 import com.inari.firefly.system.FFContext;
 
@@ -74,25 +75,27 @@ public class CaveService {
     }
     
     private final EntitySystem entitySystem;
+    private final TileGridSystem tileGridSystem;
     
     CaveState caveState;
 
     private final GameData gameData;
     private CaveData caveData;
     private AmoebaData amoebaData;
-    private TileGrid tileGrid;
+    private TileGrid tileGrid = null;
     private char[] headerText = "%%%%%%%%%%%%%%%%%%%%%%%%".toCharArray();
 
     public CaveService( FFContext context ) {
         gameData = context.getComponent( GameData.CONTEXT_KEY );
         entitySystem = context.getComponent( EntitySystem.CONTEXT_KEY );
+        tileGridSystem = context.getComponent( TileGridSystem.CONTEXT_KEY );
     }
     
     public final void reset() {
         caveState = CaveState.INIT;
         caveData = gameData.getCurrentCave();
         amoebaData = new AmoebaData( caveData );
-        // TODO
+        tileGrid = null;
     }
     
     public final CaveData getCaveData() {
@@ -102,24 +105,6 @@ public class CaveService {
     public final GameData getGameData() {
         return gameData;
     }
-    
-    
-    
-    
-//    final void replay( FFContext context ) {
-//        disposeCave( context );
-//        caveState = CaveState.INIT;
-//        caveData.reset();
-//        loadCave( context );
-//    }
-//    
-//    final void nextCave( FFContext context ) {
-//        disposeCave( context );
-//        caveState = CaveState.INIT;
-//        gameData.nextCave();
-//        caveData = null;
-//        loadCave( context );
-//    }
     
     public final char[] getHeaderText() {
         return headerText;
@@ -154,10 +139,12 @@ public class CaveService {
     }
     
     public final void setEntityId( int entityId, int x, int y ) {
+        loadTileGrid();
         tileGrid.set( entityId, x, y );
     }
     
     public final int getEntityId( int x, int y, Direction dir ) {
+        loadTileGrid();
         switch ( dir ) {
             case NORTH: return tileGrid.get( x, y - 1 );
             case NORTH_WEST: return tileGrid.get( x - 1, y - 1 );
@@ -172,6 +159,7 @@ public class CaveService {
     }
     
     public final int getEntityId( int x, int y ) {
+        loadTileGrid();
         return tileGrid.get( x, y );
     }
 
@@ -302,6 +290,12 @@ public class CaveService {
         }
     }
 
-    
+    private void loadTileGrid() {
+        if ( tileGrid != null ) {
+            return;
+        }
+        
+        tileGrid = tileGridSystem.getTileGrid( CaveService.CAVE_TILE_GRID_NAME );
+    }
 
 }
