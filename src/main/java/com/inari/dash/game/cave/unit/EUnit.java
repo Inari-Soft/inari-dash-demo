@@ -13,6 +13,8 @@ import com.inari.firefly.entity.EntityComponent;
 
 public final class EUnit extends EntityComponent {
     
+    public static final EntityComponentTypeKey TYPE_KEY = createTypeKey( EUnit.class );
+    
     public static final AttributeKey<UnitType> UNIT_TYPE = new AttributeKey<UnitType>( "unitType", UnitType.class, EUnit.class );
     public static final AttributeKey<Direction> MOVEMENT = new AttributeKey<Direction>( "movement", Direction.class, EUnit.class );
     public static final AttributeKey<AspectBitSet> ASPECTS = new AttributeKey<AspectBitSet>( "aspects", AspectBitSet.class, EUnit.class );
@@ -39,7 +41,7 @@ public final class EUnit extends EntityComponent {
     private UnitType changeTo;
     
     public EUnit() {
-        super();
+        super( TYPE_KEY );
         resetAttributes();
     }
 

@@ -3,16 +3,11 @@ package com.inari.dash.game.cave.unit.action;
 import com.inari.commons.GeomUtils;
 import com.inari.commons.geom.Direction;
 import com.inari.commons.geom.Position;
-import com.inari.commons.lang.indexed.Indexer;
 import com.inari.dash.game.cave.unit.EUnit;
 import com.inari.dash.game.cave.unit.UnitType;
-import com.inari.firefly.entity.EntityComponent;
 import com.inari.firefly.renderer.tile.ETile;
 
 public final class MoveAction extends UnitAction {
-    
-    protected final int COMPONENT_ID_EUNIT = Indexer.getIndexForType( EUnit.class, EntityComponent.class );
-    protected final int COMPONENT_ID_ETILE = Indexer.getIndexForType( ETile.class, EntityComponent.class );
 
     private Position tmpPos = new Position();
 
@@ -23,13 +18,13 @@ public final class MoveAction extends UnitAction {
     @Override
     public final void performAction( int entityId ) {
         // First we get the EUnit component and its Direction
-        EUnit unit = entitySystem.getComponent( entityId, COMPONENT_ID_EUNIT );
+        EUnit unit = entitySystem.getComponent( entityId, EUnit.TYPE_KEY );
         Direction movement = unit.getMovement();
         if ( movement == Direction.NONE ) {
             return;
         }
         
-        ETile tile = entitySystem.getComponent( entityId, COMPONENT_ID_ETILE );
+        ETile tile = entitySystem.getComponent( entityId, ETile.TYPE_KEY );
         tmpPos.x = tile.getGridXPos();
         tmpPos.y = tile.getGridYPos();
         

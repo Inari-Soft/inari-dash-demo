@@ -10,13 +10,13 @@ import com.inari.firefly.asset.AssetSystem;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.Entity;
 import com.inari.firefly.entity.EntitySystem;
-import com.inari.firefly.libgdx.GDXFFTestAdapter;
+import com.inari.firefly.libgdx.GdxFFTestAdapter;
 import com.inari.firefly.renderer.TextureAsset;
 import com.inari.firefly.renderer.sprite.ESprite;
 import com.inari.firefly.renderer.sprite.SpriteAsset;
 import com.inari.firefly.system.FFContext;
 
-public class DisplayTextureTest extends GDXFFTestAdapter {
+public class DisplayTextureTest extends GdxFFTestAdapter {
 
     @Override
     public void initTest( FFContext context ) {

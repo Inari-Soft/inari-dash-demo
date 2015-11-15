@@ -10,7 +10,7 @@ import com.inari.dash.game.GameService;
 import com.inari.firefly.asset.AssetSystem;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.EntitySystem;
-import com.inari.firefly.libgdx.GDXFFTestAdapter;
+import com.inari.firefly.libgdx.GdxFFTestAdapter;
 import com.inari.firefly.renderer.TextureAsset;
 import com.inari.firefly.renderer.sprite.ESprite;
 import com.inari.firefly.renderer.sprite.SpriteAsset;
@@ -18,7 +18,7 @@ import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.view.View;
 import com.inari.firefly.system.view.ViewSystem;
 
-public class TwoViewTest extends GDXFFTestAdapter {
+public class TwoViewTest extends GdxFFTestAdapter {
 
     @Override
     public void initTest( FFContext context ) {

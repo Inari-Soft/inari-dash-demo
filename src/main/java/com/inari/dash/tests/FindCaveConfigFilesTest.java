@@ -4,10 +4,10 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.badlogic.gdx.files.FileHandle;
-import com.inari.firefly.libgdx.GDXFFTestAdapter;
+import com.inari.firefly.libgdx.GdxFFTestAdapter;
 import com.inari.firefly.system.FFContext;
 
-public class FindCaveConfigFilesTest extends GDXFFTestAdapter {
+public class FindCaveConfigFilesTest extends GdxFFTestAdapter {
     
     @Override
     public void initTest( FFContext context ) {

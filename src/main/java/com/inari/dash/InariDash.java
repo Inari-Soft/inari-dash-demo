@@ -13,8 +13,8 @@ import com.inari.dash.game.GameService.TaskName;
 import com.inari.dash.game.StartGameCondition;
 import com.inari.dash.game.io.GameInfos;
 import com.inari.firefly.component.attr.AttributeKey;
-import com.inari.firefly.libgdx.GDXConfiguration;
-import com.inari.firefly.libgdx.GDXFFApplicationAdapter;
+import com.inari.firefly.libgdx.GdxConfiguration;
+import com.inari.firefly.libgdx.GdxFFApplicationAdapter;
 import com.inari.firefly.state.State;
 import com.inari.firefly.state.StateChange;
 import com.inari.firefly.state.StateSystem;
@@ -23,7 +23,7 @@ import com.inari.firefly.system.FFContext;
 import com.inari.firefly.task.Task;
 import com.inari.firefly.task.TaskSystem;
 
-public class InariDash extends GDXFFApplicationAdapter {
+public class InariDash extends GdxFFApplicationAdapter {
 
     @Override
     public String getTitle() {
@@ -46,7 +46,7 @@ public class InariDash extends GDXFFApplicationAdapter {
     @Override
     protected Collection<AttributeKey<?>> getDynamicAttributes() {
         Collection<AttributeKey<?>> dynamicAttributes = super.getDynamicAttributes();
-        dynamicAttributes.add( GDXConfiguration.DynamicAttributes.TEXTURE_COLOR_FILTER_NAME );
+        dynamicAttributes.add( GdxConfiguration.DynamicAttributes.TEXTURE_COLOR_FILTER_NAME );
         return dynamicAttributes;
     }
 

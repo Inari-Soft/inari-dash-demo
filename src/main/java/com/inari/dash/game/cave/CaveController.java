@@ -33,7 +33,7 @@ import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FFTimer;
 import com.inari.firefly.system.FFTimer.UpdateScheduler;
 import com.inari.firefly.system.FireFly;
-import com.inari.firefly.system.LowerSystemFacade;
+import com.inari.firefly.system.FFSystemInterface;
 import com.inari.firefly.system.RenderEvent;
 import com.inari.firefly.system.RenderEventListener;
 import com.inari.firefly.system.UpdateEvent;
@@ -287,7 +287,7 @@ public final class CaveController extends Controller {
         
         private final int[] spriteData = new int[ 4 ];
         
-        private final LowerSystemFacade lowerSystem;
+        private final FFSystemInterface lowerSystem;
         private final IEventDispatcher eventDispatcher;
         private final UpdateScheduler animationTimer;
         private final View caveView;

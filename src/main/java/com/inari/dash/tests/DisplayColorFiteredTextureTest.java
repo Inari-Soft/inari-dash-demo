@@ -17,18 +17,18 @@ import com.inari.firefly.entity.Entity;
 import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.filter.ColorReplaceMapFitler;
 import com.inari.firefly.filter.IColorFilter;
-import com.inari.firefly.libgdx.GDXConfiguration;
-import com.inari.firefly.libgdx.GDXFFTestAdapter;
+import com.inari.firefly.libgdx.GdxConfiguration;
+import com.inari.firefly.libgdx.GdxFFTestAdapter;
 import com.inari.firefly.renderer.TextureAsset;
 import com.inari.firefly.renderer.sprite.ESprite;
 import com.inari.firefly.renderer.sprite.SpriteAsset;
 import com.inari.firefly.system.FFContext;
 
-public class DisplayColorFiteredTextureTest extends GDXFFTestAdapter {
+public class DisplayColorFiteredTextureTest extends GdxFFTestAdapter {
     
     @Override
     public void initTest( FFContext context ) {
-        DynamicAttribueMapper.addDynamicAttribute( GDXConfiguration.DynamicAttributes.TEXTURE_COLOR_FILTER_NAME );
+        DynamicAttribueMapper.addDynamicAttribute( GdxConfiguration.DynamicAttributes.TEXTURE_COLOR_FILTER_NAME );
         
         Configuration globalAssetData = new Configuration();
         AssetSystem assetSystem = context.getComponent( AssetSystem.CONTEXT_KEY );
@@ -45,7 +45,7 @@ public class DisplayColorFiteredTextureTest extends GDXFFTestAdapter {
                 .set( TextureAsset.RESOURCE_NAME, globalAssetData.unitTextureResource )
                 .set( TextureAsset.TEXTURE_WIDTH, globalAssetData.unitTextureWidth )
                 .set( TextureAsset.TEXTURE_HEIGHT, globalAssetData.unitTextureHeight )
-                .set( GDXConfiguration.DynamicAttributes.TEXTURE_COLOR_FILTER_NAME, colorFilterKey.id() )
+                .set( GdxConfiguration.DynamicAttributes.TEXTURE_COLOR_FILTER_NAME, colorFilterKey.id() )
             .build();
         
         SpriteAsset spriteAsset = assetSystem

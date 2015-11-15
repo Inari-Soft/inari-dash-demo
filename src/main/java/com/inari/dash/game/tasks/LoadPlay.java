@@ -30,7 +30,7 @@ import com.inari.firefly.sound.SoundSystem;
 import com.inari.firefly.sound.event.SoundEvent;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FFInitException;
-import com.inari.firefly.system.LowerSystemFacade;
+import com.inari.firefly.system.FFSystemInterface;
 import com.inari.firefly.system.view.View;
 import com.inari.firefly.system.view.ViewSystem;
 import com.inari.firefly.task.Task;
@@ -70,7 +70,7 @@ public final class LoadPlay extends Task {
     private void initCaveAndUnits( FFContext context ) {
         GameService gameService = context.getComponent( GameService.CONTEXT_KEY );
         Configuration config = gameService.getConfiguration();
-        LowerSystemFacade lowerSystemFacade = context.getComponent( FFContext.LOWER_SYSTEM_FACADE );
+        FFSystemInterface lowerSystemFacade = context.getComponent( FFContext.LOWER_SYSTEM_FACADE );
         ViewSystem viewSystem = context.getComponent( ViewSystem.CONTEXT_KEY );
         AssetSystem assetSystem = context.getComponent( AssetSystem.CONTEXT_KEY );
         ControllerSystem controllerSystem = context.getComponent( ControllerSystem.CONTEXT_KEY );

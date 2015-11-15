@@ -14,7 +14,7 @@ import com.inari.firefly.controller.view.SimpleCameraController;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.filter.IColorFilter;
-import com.inari.firefly.libgdx.GDXConfiguration;
+import com.inari.firefly.libgdx.GdxConfiguration;
 import com.inari.firefly.renderer.TextureAsset;
 import com.inari.firefly.renderer.tile.TileGrid;
 import com.inari.firefly.renderer.tile.TileGrid.TileRenderMode;
@@ -52,7 +52,7 @@ public final class LoadCave extends Task {
         TextureAsset unitTextureAsset = assetSystem.getAsset( CaveService.GAME_UNIT_TEXTURE_KEY, TextureAsset.class );
         IColorFilter colorFilter = caveData.getColorFilter();
         context.putComponent( CaveService.COLOR_FILTER_KEY, colorFilter );
-        unitTextureAsset.setDynamicAttribute( GDXConfiguration.DynamicAttributes.TEXTURE_COLOR_FILTER_NAME, CaveService.COLOR_FILTER_KEY.id() );
+        unitTextureAsset.setDynamicAttribute( GdxConfiguration.DynamicAttributes.TEXTURE_COLOR_FILTER_NAME, CaveService.COLOR_FILTER_KEY.id() );
         assetSystem.loadAsset( CaveService.GAME_UNIT_TEXTURE_KEY );
 
         // create tileGrid and cave entities

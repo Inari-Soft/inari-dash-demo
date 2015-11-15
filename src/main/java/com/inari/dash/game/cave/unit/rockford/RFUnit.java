@@ -10,6 +10,8 @@ import com.inari.firefly.entity.EntityComponent;
 
 public final class RFUnit extends EntityComponent {
     
+    public static final EntityComponentTypeKey TYPE_KEY = createTypeKey( RFUnit.class );
+    
     public enum RFState {
         ENTERING,
         APPEARING,             // Rockford appears in a short explosion where the blinking door was before
@@ -31,7 +33,7 @@ public final class RFUnit extends EntityComponent {
     
     
     public RFUnit() {
-        super();
+        super( TYPE_KEY );
         resetAttributes();
     }
 
