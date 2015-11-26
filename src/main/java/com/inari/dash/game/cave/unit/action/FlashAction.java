@@ -1,7 +1,7 @@
 package com.inari.dash.game.cave.unit.action;
 
 import com.inari.commons.geom.Rectangle;
-import com.inari.dash.game.cave.CaveService;
+import com.inari.dash.game.cave.CaveSystem;
 import com.inari.dash.game.cave.unit.UnitType;
 import com.inari.firefly.asset.AssetNameKey;
 import com.inari.firefly.asset.AssetSystem;
@@ -14,7 +14,7 @@ import com.inari.firefly.system.UpdateEventListener;
 public final class FlashAction extends UnitAction {
     
     private static final String FLASH_NAME = "flash";
-    private static final AssetNameKey FLASH_SPRITE_ASSET = new AssetNameKey( FLASH_NAME, CaveService.GAME_UNIT_TEXTURE_KEY.group );
+    private static final AssetNameKey FLASH_SPRITE_ASSET = new AssetNameKey( FLASH_NAME, CaveSystem.GAME_UNIT_TEXTURE_KEY.group );
     
     private final FFContext context;
 
@@ -25,8 +25,7 @@ public final class FlashAction extends UnitAction {
 
     @Override
     public final void performAction( int entityId ) {
-        context.getComponent( FFContext.EVENT_DISPATCHER )
-            .register( UpdateEvent.class, new FlashAnimation( context ) );
+        context.registerListener( UpdateEvent.class, new FlashAnimation( context ) );
     }
 
     private final class FlashAnimation implements UpdateEventListener {
@@ -36,13 +35,13 @@ public final class FlashAction extends UnitAction {
         private int tick = 0;
 
         private FlashAnimation( FFContext context ) {
-            AssetSystem assetSystem = context.getComponent( AssetSystem.CONTEXT_KEY );
-            flashSpriteId = assetSystem.getAssetBuilderWithAutoLoad( SpriteAsset.class )
+            AssetSystem assetSystem = context.getSystem( AssetSystem.CONTEXT_KEY );
+            flashSpriteId = assetSystem.getAssetBuilderWithAutoLoad()
                 .set( SpriteAsset.NAME, FLASH_SPRITE_ASSET.name )
                 .set( SpriteAsset.ASSET_GROUP, FLASH_SPRITE_ASSET.group )
-                .set( SpriteAsset.TEXTURE_ID, assetSystem.getAssetId( CaveService.GAME_UNIT_TEXTURE_KEY ) )
+                .set( SpriteAsset.TEXTURE_ID, assetSystem.getAssetId( CaveSystem.GAME_UNIT_TEXTURE_KEY ) )
                 .set( SpriteAsset.TEXTURE_REGION, new Rectangle( 4 * 32, 0, 32, 32 ) )
-            .build().getId();
+            .build( SpriteAsset.class );
         }
 
         @Override
@@ -61,10 +60,9 @@ public final class FlashAction extends UnitAction {
                 ESprite spaceSprite = entitySystem.getComponent( spaceEntityId, ESprite.class );
                 spaceSprite.setSpriteId( spaceSpriteId );
                 // self remove
-                AssetSystem assetSystem = context.getComponent( AssetSystem.CONTEXT_KEY );
+                AssetSystem assetSystem = context.getSystem( AssetSystem.CONTEXT_KEY );
                 assetSystem.deleteAsset( FLASH_SPRITE_ASSET );
-                context.getComponent( FFContext.EVENT_DISPATCHER )
-                    .unregister( UpdateEvent.class, this );
+                context.disposeListener( UpdateEvent.class, this );
             }
         }
     }

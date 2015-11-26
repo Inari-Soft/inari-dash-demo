@@ -1,26 +1,33 @@
 package com.inari.dash;
 
+import java.util.Set;
 
-public final class Configuration {
+import com.inari.commons.lang.TypedKey;
+import com.inari.firefly.component.DataComponent;
+import com.inari.firefly.component.attr.AttributeKey;
+import com.inari.firefly.component.attr.AttributeMap;
 
-    public final String titleSongResource;
+public final class Configuration extends DataComponent {
+    
+    public static final TypedKey<Configuration> CONTEXT_KEY = TypedKey.create( "InariDashConfiguration", Configuration.class );
 
-    public final String unitTextureResource;
-    public final int unitTextureWidth;
-    public final int unitTextureHeight;
-    public final int unitWidth;
-    public final int unitHeight;
+    public String titleSongResource;
     
-    public final String fontTextureResource;
-    public final int fontTextureWidth;
-    public final int fontTextureHeight;
-    public final int charWidth;
-    public final int charHeight;
+    public String unitTextureResource;
+    public int unitTextureWidth;
+    public int unitTextureHeight;
+    public int unitWidth;
+    public int unitHeight;
     
-    public final int cameraMoveVelocity = 3;
+    public String fontTextureResource;
+    public int fontTextureWidth;
+    public int fontTextureHeight;
+    public int charWidth;
+    public int charHeight;
     
+    public int cameraMoveVelocity = 3;
     
-    public final char[][] fontChars;
+    public char[][] fontChars;
 
     public Configuration() {
         titleSongResource = "original/sound/intro.wav";
@@ -53,6 +60,32 @@ public final class Configuration {
         };
     }
 
-    
+    @Override
+    public final Class<Configuration> componentType() {
+        return Configuration.class;
+    }
+
+    @Override
+    public final Set<AttributeKey<?>> attributeKeys() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public final void fromAttributes( AttributeMap attributes ) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public final void toAttributes( AttributeMap attributes ) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public final TypedKey<? extends DataComponent> componentKey() {
+        return CONTEXT_KEY;
+    }
 
 }

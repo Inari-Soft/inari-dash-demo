@@ -5,7 +5,7 @@ import java.util.Map;
 import com.inari.commons.geom.Position;
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.aspect.AspectSetBuilder;
-import com.inari.dash.game.cave.CaveService;
+import com.inari.dash.game.cave.CaveSystem;
 import com.inari.dash.game.cave.unit.EUnit;
 import com.inari.dash.game.cave.unit.UnitAspect;
 import com.inari.dash.game.cave.unit.UnitHandle;
@@ -21,7 +21,7 @@ import com.inari.firefly.system.FFInitException;
 public final class Sand extends UnitHandle {
     
     public static final String SAND_NAME = "sand";
-    public static final AssetNameKey SAND_SPRITE_ASSET_KEY = new AssetNameKey( CaveService.GAME_UNIT_TEXTURE_KEY.group, SAND_NAME );
+    public static final AssetNameKey SAND_SPRITE_ASSET_KEY = new AssetNameKey( CaveSystem.GAME_UNIT_TEXTURE_KEY.group, SAND_NAME );
 
     private int sandEntityId;
 
@@ -29,12 +29,12 @@ public final class Sand extends UnitHandle {
     public final void init( FFContext context ) throws FFInitException {
         super.init( context );
 
-        assetSystem.getAssetBuilder( SpriteAsset.class )
+        assetSystem.getAssetBuilder()
             .set( SpriteAsset.NAME, SAND_SPRITE_ASSET_KEY.name )
             .set( SpriteAsset.ASSET_GROUP, SAND_SPRITE_ASSET_KEY.group )
-            .set( SpriteAsset.TEXTURE_ID, assetSystem.getAssetId( CaveService.GAME_UNIT_TEXTURE_KEY ) )
+            .set( SpriteAsset.TEXTURE_ID, assetSystem.getAssetId( CaveSystem.GAME_UNIT_TEXTURE_KEY ) )
             .set( SpriteAsset.TEXTURE_REGION, new Rectangle( 32, 7 * 32, 32, 32 ) )
-        .build();
+        .build( SpriteAsset.class );
         super.caveAssetsToReload.add( assetSystem.getAssetTypeKey( SAND_SPRITE_ASSET_KEY ) );
         
         initialized = true;
@@ -45,7 +45,7 @@ public final class Sand extends UnitHandle {
         super.loadCaveData( context );
 
         sandEntityId = entitySystem.getEntityBuilderWithAutoActivation()
-            .set( ETransform.VIEW_ID, viewSystem.getViewId( CaveService.CAVE_VIEW_NAME ) )
+            .set( ETransform.VIEW_ID, viewSystem.getViewId( CaveSystem.CAVE_VIEW_NAME ) )
             .set( ETile.MULTI_POSITION, true )
             .set( ESprite.SPRITE_ID, assetSystem.getAssetId( SAND_SPRITE_ASSET_KEY ) )
             .set( EUnit.UNIT_TYPE, type() )
@@ -54,7 +54,7 @@ public final class Sand extends UnitHandle {
                 UnitAspect.CONSUMABLE, 
                 UnitAspect.WALKABLE ) 
             )
-        .build().getId();
+        .build();
     }
 
     @Override

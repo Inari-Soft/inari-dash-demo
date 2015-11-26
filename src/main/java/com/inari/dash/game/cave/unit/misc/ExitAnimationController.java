@@ -12,7 +12,7 @@ public final class ExitAnimationController extends StatedSpriteAnimation {
 
     public ExitAnimationController( int id, FFContext context ) {
         super( id, context );
-        entitySystem = context.getComponent( EntitySystem.CONTEXT_KEY );
+        entitySystem = context.getSystem( EntitySystem.CONTEXT_KEY );
     }
 
     @Override

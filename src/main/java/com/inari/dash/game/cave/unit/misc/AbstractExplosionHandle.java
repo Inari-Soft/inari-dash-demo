@@ -1,6 +1,6 @@
 package com.inari.dash.game.cave.unit.misc;
 
-import com.inari.dash.game.cave.CaveService;
+import com.inari.dash.game.cave.CaveSystem;
 import com.inari.dash.game.cave.unit.UnitHandle;
 import com.inari.firefly.asset.AssetNameKey;
 import com.inari.firefly.entity.EntityController;
@@ -10,7 +10,7 @@ import com.inari.firefly.system.FFContext;
 
 public abstract class AbstractExplosionHandle  extends UnitHandle {
     
-    public static final AssetNameKey EXPLOSION_SOUND_ASSEET_KEY = new AssetNameKey( CaveService.CAVE_SOUND_GROUP_NAME, "explosion" );
+    public static final AssetNameKey EXPLOSION_SOUND_ASSEET_KEY = new AssetNameKey( CaveSystem.CAVE_SOUND_GROUP_NAME, "explosion" );
     private static boolean GENERAL_INIT_DONE = false;
     protected static int CONTROLLER_ID;
     private static int soundId;
@@ -22,23 +22,23 @@ public abstract class AbstractExplosionHandle  extends UnitHandle {
             return;
         }
         
-        assetSystem.getAssetBuilderWithAutoLoad( SoundAsset.class )
+        assetSystem.getAssetBuilderWithAutoLoad()
             .set( SoundAsset.NAME, EXPLOSION_SOUND_ASSEET_KEY.name )
             .set( SoundAsset.ASSET_GROUP, EXPLOSION_SOUND_ASSEET_KEY.group )
             .set( SoundAsset.RESOURCE_NAME, "original/sound/explosion.wav" )
             .set( SoundAsset.STREAMING, false )
-        .build();
+        .build( SoundAsset.class );
         
         soundId = soundSystem.getSoundBuilder()
             .set( Sound.NAME, EXPLOSION_SOUND_ASSEET_KEY.name )
             .set( Sound.ASSET_ID, assetSystem.getAssetId( EXPLOSION_SOUND_ASSEET_KEY ) )
             .set( Sound.CHANNEL, 2 )
             .set( Sound.LOOPING, false )
-        .build().getId();
+        .build();
 
-        CONTROLLER_ID = controllerSystem.getComponentBuilder( ExplosionController.class )
+        CONTROLLER_ID = controllerSystem.getControllerBuilder()
             .set( EntityController.NAME, "ExplosionController" )
-        .build().getId();
+        .build( ExplosionController.class );
         
         GENERAL_INIT_DONE = true;
     }

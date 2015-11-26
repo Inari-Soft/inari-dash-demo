@@ -8,17 +8,16 @@ import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.TypedKey;
 import com.inari.dash.Configuration;
-import com.inari.dash.game.GameService;
+import com.inari.dash.game.GameSystem;
 import com.inari.dash.game.cave.CaveData;
 import com.inari.firefly.asset.AssetSystem;
 import com.inari.firefly.component.dynattr.DynamicAttribueMapper;
 import com.inari.firefly.entity.ETransform;
-import com.inari.firefly.entity.Entity;
 import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.filter.ColorReplaceMapFitler;
 import com.inari.firefly.filter.IColorFilter;
-import com.inari.firefly.libgdx.GdxConfiguration;
 import com.inari.firefly.libgdx.GdxFFTestAdapter;
+import com.inari.firefly.libgdx.GdxFirefly;
 import com.inari.firefly.renderer.TextureAsset;
 import com.inari.firefly.renderer.sprite.ESprite;
 import com.inari.firefly.renderer.sprite.SpriteAsset;
@@ -28,45 +27,45 @@ public class DisplayColorFiteredTextureTest extends GdxFFTestAdapter {
     
     @Override
     public void initTest( FFContext context ) {
-        DynamicAttribueMapper.addDynamicAttribute( GdxConfiguration.DynamicAttributes.TEXTURE_COLOR_FILTER_NAME );
+        DynamicAttribueMapper.addDynamicAttribute( GdxFirefly.DynamicAttributes.TEXTURE_COLOR_FILTER_NAME );
         
         Configuration globalAssetData = new Configuration();
-        AssetSystem assetSystem = context.getComponent( AssetSystem.CONTEXT_KEY );
-        EntitySystem entitySystem = context.getComponent( EntitySystem.CONTEXT_KEY );
+        AssetSystem assetSystem = context.getSystem( AssetSystem.CONTEXT_KEY );
+        EntitySystem entitySystem = context.getSystem( EntitySystem.CONTEXT_KEY );
         
         TypedKey<IColorFilter> colorFilterKey = TypedKey.create( "colorFilterKey", IColorFilter.class );
         ColorReplaceMapFitler colorFilter = new ColorReplaceMapFitler( createColorReplaceMap() );
-        context.putComponent( colorFilterKey, colorFilter );
+        context.addProperty( colorFilterKey, colorFilter );
 
-        TextureAsset textureAsset = assetSystem
-            .getAssetBuilder( TextureAsset.class )
-                .set( TextureAsset.NAME, GameService.GAME_FONT_TEXTURE_KEY.name )
-                .set( TextureAsset.ASSET_GROUP, GameService.GAME_FONT_TEXTURE_KEY.group )
+        assetSystem
+            .getAssetBuilder()
+                .set( TextureAsset.NAME, GameSystem.GAME_FONT_TEXTURE_KEY.name )
+                .set( TextureAsset.ASSET_GROUP, GameSystem.GAME_FONT_TEXTURE_KEY.group )
                 .set( TextureAsset.RESOURCE_NAME, globalAssetData.unitTextureResource )
                 .set( TextureAsset.TEXTURE_WIDTH, globalAssetData.unitTextureWidth )
                 .set( TextureAsset.TEXTURE_HEIGHT, globalAssetData.unitTextureHeight )
-                .set( GdxConfiguration.DynamicAttributes.TEXTURE_COLOR_FILTER_NAME, colorFilterKey.id() )
-            .build();
+                .set( GdxFirefly.DynamicAttributes.TEXTURE_COLOR_FILTER_NAME, colorFilterKey.id() )
+            .build( TextureAsset.class );
         
-        SpriteAsset spriteAsset = assetSystem
-            .getAssetBuilder( SpriteAsset.class )
+        int spriteAssetId = assetSystem
+            .getAssetBuilder()
                 .set( SpriteAsset.NAME, "TextureSprite" )
-                .set( SpriteAsset.ASSET_GROUP, GameService.GAME_FONT_TEXTURE_KEY.group )
-                .set( SpriteAsset.TEXTURE_ID, assetSystem.getAssetTypeKey( GameService.GAME_FONT_TEXTURE_KEY ).id )
+                .set( SpriteAsset.ASSET_GROUP, GameSystem.GAME_FONT_TEXTURE_KEY.group )
+                .set( SpriteAsset.TEXTURE_ID, assetSystem.getAssetTypeKey( GameSystem.GAME_FONT_TEXTURE_KEY ).id )
                 .set( SpriteAsset.TEXTURE_REGION, new Rectangle( 0, 0, globalAssetData.unitTextureWidth, globalAssetData.unitTextureHeight ) )
-            .build();
+            .build( SpriteAsset.class );
         
-        assetSystem.loadAssets( GameService.GAME_FONT_TEXTURE_KEY.group );
+        assetSystem.loadAssets( GameSystem.GAME_FONT_TEXTURE_KEY.group );
         
-        Entity entity = entitySystem
+        int entityId = entitySystem
               .getEntityBuilder()
                   .set( ETransform.VIEW_ID, 0 )
                   .set( ETransform.XPOSITION, 10 )
                   .set( ETransform.YPOSITION, 10 )
-                  .set( ESprite.SPRITE_ID, spriteAsset.getId() )
+                  .set( ESprite.SPRITE_ID, spriteAssetId )
               .build();
               
-        entitySystem.activate( entity.getId() );
+        entitySystem.activate( entityId );
 
     }
 

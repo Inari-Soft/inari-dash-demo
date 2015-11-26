@@ -43,7 +43,7 @@ public final class RFUnit extends EntityComponent {
     }
     
     @Override
-    public final Class<RFUnit> getComponentType() {
+    public final Class<RFUnit> componentType() {
         return RFUnit.class;
     }
 

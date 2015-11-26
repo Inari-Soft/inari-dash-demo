@@ -4,19 +4,19 @@ import java.util.BitSet;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.inari.commons.event.IEventDispatcher;
 import com.inari.commons.geom.Position;
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.aspect.AspectSetBuilder;
 import com.inari.dash.game.GameData;
-import com.inari.dash.game.GameService;
-import com.inari.dash.game.GameService.StateChangeName;
-import com.inari.dash.game.cave.CaveService.CaveSoundKey;
-import com.inari.dash.game.cave.CaveService.CaveState;
+import com.inari.dash.game.GameSystem;
+import com.inari.dash.game.cave.CaveSystem.CaveSoundKey;
+import com.inari.dash.game.cave.CaveSystem.CaveState;
 import com.inari.dash.game.cave.unit.EUnit;
 import com.inari.dash.game.cave.unit.UnitAspect;
 import com.inari.dash.game.cave.unit.UnitType;
 import com.inari.dash.game.cave.unit.action.UnitActionType;
+import com.inari.dash.game.tasks.InitGameWorkflow.StateChangeName;
+import com.inari.dash.game.tasks.InitGameWorkflow.TaskName;
 import com.inari.firefly.Disposable;
 import com.inari.firefly.action.event.ActionEvent;
 import com.inari.firefly.asset.AssetSystem;
@@ -30,10 +30,10 @@ import com.inari.firefly.sound.event.SoundEvent;
 import com.inari.firefly.sound.event.SoundEvent.Type;
 import com.inari.firefly.state.event.WorkflowEvent;
 import com.inari.firefly.system.FFContext;
+import com.inari.firefly.system.FFSystemInterface;
 import com.inari.firefly.system.FFTimer;
 import com.inari.firefly.system.FFTimer.UpdateScheduler;
 import com.inari.firefly.system.FireFly;
-import com.inari.firefly.system.FFSystemInterface;
 import com.inari.firefly.system.RenderEvent;
 import com.inari.firefly.system.RenderEventListener;
 import com.inari.firefly.system.UpdateEvent;
@@ -47,8 +47,7 @@ import com.inari.firefly.text.TextSystem;
 public final class CaveController extends Controller {
     
     private final FFContext context;
-    private final CaveService caveService;
-    private final IEventDispatcher eventDispatcher;
+    private final CaveSystem caveService;
     private final EntitySystem entitySystem;
     
     private CaveInitScene caveInitScene = null;
@@ -71,10 +70,9 @@ public final class CaveController extends Controller {
     protected CaveController( int id, FFContext context ) {
         super( id );
         this.context = context;
-        caveService = context.getComponent( CaveService.CONTEXT_KEY ); 
-        eventDispatcher = context.getComponent( FFContext.EVENT_DISPATCHER );
-        entitySystem = context.getComponent( EntitySystem.CONTEXT_KEY );
-        secondTimer = context.getComponent( FFContext.TIMER ).createUpdateScheduler( 1 );
+        caveService = context.getSystem( CaveSystem.CONTEXT_KEY ); 
+        entitySystem = context.getSystem( EntitySystem.CONTEXT_KEY );
+        secondTimer = context.getTimer().createUpdateScheduler( 1 );
         exitEntityId = UnitType.EXIT.getHandle().getEntityId();
         playerEntityId = UnitType.ROCKFORD.getHandle().getEntityId();
     }
@@ -117,7 +115,7 @@ public final class CaveController extends Controller {
                 int caveTime = caveData.getTime();
                 if ( caveTime < 10 && caveTime > 0 ) {
                     String soundName = "TIMEOUT" + caveTime;
-                    eventDispatcher.notify( new SoundEvent( CaveSoundKey.valueOf( soundName ).id, Type.PLAY_SOUND ) );
+                    context.notify( new SoundEvent( CaveSoundKey.valueOf( soundName ).id, Type.PLAY_SOUND ) );
                 }
                 
                 if ( caveTime == 0 ) {
@@ -134,8 +132,8 @@ public final class CaveController extends Controller {
                 boolean enough = caveData.getDiamondsToCollect() == caveData.getDiamondsCollected();
                 if ( enough ) {
                     exitUnit.setAspects( AspectSetBuilder.create( UnitAspect.ACTIVE, UnitAspect.WALKABLE ) );
-                    eventDispatcher.notify( new ActionEvent( UnitActionType.FLASH.index(), exitEntityId ) );
-                    eventDispatcher.notify( new SoundEvent( CaveSoundKey.CRACK.id, Type.PLAY_SOUND ) );
+                    context.notify( new ActionEvent( UnitActionType.FLASH.index(), exitEntityId ) );
+                    context.notify( new SoundEvent( CaveSoundKey.CRACK.id, Type.PLAY_SOUND ) );
                 }
             }
             
@@ -150,7 +148,7 @@ public final class CaveController extends Controller {
             if ( initSeconds <= 0 ) {
                 EUnit playerUnit = entitySystem.getComponent( playerEntityId, EUnit.class );
                 playerUnit.resetAspect( UnitAspect.ALIVE );
-                eventDispatcher.notify( new SoundEvent( CaveService.CaveSoundKey.FINISHED.id, Type.PLAY_SOUND ) );
+                context.notify( new SoundEvent( CaveSystem.CaveSoundKey.FINISHED.id, Type.PLAY_SOUND ) );
                 initSeconds++;
             }
             int time = caveData.getTime();
@@ -158,9 +156,9 @@ public final class CaveController extends Controller {
                 caveData.tick();
                 updatePlayHeader( gameData, caveData );
             } else {
-                eventDispatcher.notify( new SoundEvent( CaveService.CaveSoundKey.FINISHED.id, Type.STOP_PLAYING ) );
+                context.notify( new SoundEvent( CaveSystem.CaveSoundKey.FINISHED.id, Type.STOP_PLAYING ) );
                 if ( gameData.hasNextCave() ) {
-                    eventDispatcher.notify( new TaskEvent( TaskEvent.Type.RUN_TASK, GameService.TaskName.NEXT_CAVE.name() ) );
+                    context.notify( new TaskEvent( TaskEvent.Type.RUN_TASK, TaskName.NEXT_CAVE.name() ) );
                 } else {
                     exitPlay();
                 }
@@ -173,7 +171,7 @@ public final class CaveController extends Controller {
                 int lives = gameData.getLives() - 1;
                 gameData.setLives( lives );
                 if ( lives >= 1 ) {
-                    eventDispatcher.notify( new TaskEvent( TaskEvent.Type.RUN_TASK, GameService.TaskName.REPLAY_CAVE.name() ) );
+                    context.notify( new TaskEvent( TaskEvent.Type.RUN_TASK, TaskName.REPLAY_CAVE.name() ) );
                 } else {
                     gameOverHeader();
                 }
@@ -195,10 +193,10 @@ public final class CaveController extends Controller {
     }
 
     private void exitPlay() {
-        eventDispatcher.notify( new WorkflowEvent( 
-            GameService.GAME_WORKFLOW_NAME, 
+        context.notify( new WorkflowEvent( 
+            GameSystem.GAME_WORKFLOW_NAME, 
             StateChangeName.EXIT_PLAY.name(), 
-            WorkflowEvent.Type.STATE_CHANGE ) 
+            WorkflowEvent.Type.DO_STATE_CHANGE ) 
         );
     }
 
@@ -228,15 +226,15 @@ public final class CaveController extends Controller {
     private void gameOverHeader() {
         clearHeader();
         caveService.caveState = CaveState.GAME_OVER;
-        TextSystem textSystem = context.getComponent( TextSystem.CONTEXT_KEY );
-        ViewSystem viewSystem = context.getComponent( ViewSystem.CONTEXT_KEY );
+        TextSystem textSystem = context.getSystem( TextSystem.CONTEXT_KEY );
+        ViewSystem viewSystem = context.getSystem( ViewSystem.CONTEXT_KEY );
         entitySystem.getEntityBuilderWithAutoActivation()
-            .set( ETransform.VIEW_ID, viewSystem.getViewId( CaveService.HEADER_VIEW_NAME ) )
+            .set( ETransform.VIEW_ID, viewSystem.getViewId( CaveSystem.HEADER_VIEW_NAME ) )
             .set( ETransform.XPOSITION, 100 )
             .set( ETransform.YPOSITION, 8 )
-            .set( EText.FONT_ID, textSystem.getFontId( GameService.GAME_FONT_TEXTURE_KEY.name ) )
+            .set( EText.FONT_ID, textSystem.getFontId( GameSystem.GAME_FONT_TEXTURE_KEY.name ) )
             .set( EText.TEXT_STRING, "%%% GAME OVER %%%" )
-            .set( EText.TINT_COLOR, GameService.YELLOW_FONT_COLOR )
+            .set( EText.TINT_COLOR, GameSystem.YELLOW_FONT_COLOR )
         .build();
     }
     
@@ -288,21 +286,19 @@ public final class CaveController extends Controller {
         private final int[] spriteData = new int[ 4 ];
         
         private final FFSystemInterface lowerSystem;
-        private final IEventDispatcher eventDispatcher;
         private final UpdateScheduler animationTimer;
         private final View caveView;
 
         CaveInitScene( FFContext context ) {
-            lowerSystem = context.getComponent( FFContext.LOWER_SYSTEM_FACADE );
-            AssetSystem assetSystem = context.getComponent( AssetSystem.CONTEXT_KEY );
-            ViewSystem viewSystem = context.getComponent( ViewSystem.CONTEXT_KEY );
-            eventDispatcher = context.getComponent( FFContext.EVENT_DISPATCHER );
+            lowerSystem = context.getSystemInterface();
+            AssetSystem assetSystem = context.getSystem( AssetSystem.CONTEXT_KEY );
+            ViewSystem viewSystem = context.getSystem( ViewSystem.CONTEXT_KEY );
             CaveData caveData = caveService.getCaveData();
             
-            eventDispatcher.register( UpdateEvent.class, this );
-            eventDispatcher.register( RenderEvent.class, this );
+            context.registerListener( UpdateEvent.class, this );
+            context.registerListener( RenderEvent.class, this );
 
-            caveView  = viewSystem.getView( CaveService.CAVE_VIEW_NAME );
+            caveView  = viewSystem.getView( CaveSystem.CAVE_VIEW_NAME );
             caveViewId = caveView.getId();
             Rectangle viewBounds = caveView.getBounds();
             
@@ -323,19 +319,19 @@ public final class CaveController extends Controller {
             
             for ( int i = 0; i < 3; i++ ) {
                 int offset = 4 * i;
-                spriteData[ i ] = assetSystem.getAssetBuilderWithAutoLoad( SpriteAsset.class )
+                spriteData[ i ] = assetSystem.getAssetBuilderWithAutoLoad()
                     .set( SpriteAsset.NAME, "introTileSprite" + i )
-                    .set( SpriteAsset.ASSET_GROUP, CaveService.GAME_UNIT_TEXTURE_KEY.group )
-                    .set( SpriteAsset.TEXTURE_ID, assetSystem.getAssetId( CaveService.GAME_UNIT_TEXTURE_KEY ) )
+                    .set( SpriteAsset.ASSET_GROUP, CaveSystem.GAME_UNIT_TEXTURE_KEY.group )
+                    .set( SpriteAsset.TEXTURE_ID, assetSystem.getAssetId( CaveSystem.GAME_UNIT_TEXTURE_KEY ) )
                     .set( SpriteAsset.TEXTURE_REGION, new Rectangle( 32 + offset, ( 6 * 32 ) + offset, 16, 16 ) )
-                .build().getId();
+                .build( SpriteAsset.class );
             }
             spriteData[ 3 ] = 0;
             tmpSprite.setSpriteId( spriteData[ spriteData[ 3 ] ] );
             
-            animationTimer = context.getComponent( FFContext.TIMER ).createUpdateScheduler( 10 );
+            animationTimer = context.getTimer().createUpdateScheduler( 10 );
             
-            eventDispatcher.notify( new SoundEvent( CaveService.CaveSoundKey.COVER.id, Type.PLAY_SOUND ) );
+            context.notify( new SoundEvent( CaveSystem.CaveSoundKey.COVER.id, Type.PLAY_SOUND ) );
         }   
 
         @Override
@@ -374,11 +370,11 @@ public final class CaveController extends Controller {
 
         @Override
         public final void dispose( FFContext context ) {
-            eventDispatcher.notify( new SoundEvent( CaveService.CaveSoundKey.COVER.id, Type.STOP_PLAYING ) );
-            eventDispatcher.unregister( UpdateEvent.class, this );
-            eventDispatcher.unregister( RenderEvent.class, this );
+            context.notify( new SoundEvent( CaveSystem.CaveSoundKey.COVER.id, Type.STOP_PLAYING ) );
+            context.disposeListener( UpdateEvent.class, this );
+            context.disposeListener( RenderEvent.class, this );
             
-            AssetSystem assetSystem = context.getComponent( AssetSystem.CONTEXT_KEY );
+            AssetSystem assetSystem = context.getSystem( AssetSystem.CONTEXT_KEY );
             for ( int i = 0; i < 3; i++ ) {
                 assetSystem.deleteAsset( new AssetTypeKey( spriteData[ i ], SpriteAsset.class ) );
             }

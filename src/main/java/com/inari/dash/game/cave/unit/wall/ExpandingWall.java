@@ -4,11 +4,12 @@ import java.util.Map;
 
 import com.inari.commons.geom.Position;
 import com.inari.commons.lang.aspect.AspectSetBuilder;
-import com.inari.dash.game.cave.CaveService;
+import com.inari.dash.game.cave.CaveSystem;
 import com.inari.dash.game.cave.unit.EUnit;
 import com.inari.dash.game.cave.unit.UnitAspect;
 import com.inari.dash.game.cave.unit.UnitHandle;
 import com.inari.dash.game.cave.unit.UnitType;
+import com.inari.firefly.control.Controller;
 import com.inari.firefly.control.EController;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.EntityController;
@@ -25,15 +26,17 @@ public final class ExpandingWall extends UnitHandle {
     public final void loadCaveData( FFContext context ) {
         super.loadCaveData( context );
         
-        ExpandingWallController controller = controllerSystem.getComponentBuilder( ExpandingWallController.class )
-            .set( EntityController.NAME, "ExpandingWallController" )
-        .build();
+        Controller controller = controllerSystem.getController( 
+            controllerSystem.getControllerBuilder()
+                .set( EntityController.NAME, "ExpandingWallController" )
+            .build( ExpandingWallController.class )
+        );
         controllerId = controller.getId();
         float updateRate = caveService.getUpdateRate();
         controller.setUpdateResolution( updateRate );
         
         expandingWallEntityId = entitySystem.getEntityBuilderWithAutoActivation()
-            .set( ETransform.VIEW_ID, viewSystem.getViewId( CaveService.CAVE_VIEW_NAME ) )
+            .set( ETransform.VIEW_ID, viewSystem.getViewId( CaveSystem.CAVE_VIEW_NAME ) )
             .set( EController.CONTROLLER_IDS, new int[] { controllerId } )
             .set( ETile.MULTI_POSITION, true )
             .set( ESprite.SPRITE_ID, assetSystem.getAssetId( BrickWall.BRICK_WALL_SPRITE_ASSET_KEY ) )
@@ -42,7 +45,7 @@ public final class ExpandingWall extends UnitHandle {
                 UnitAspect.ASLOPE, 
                 UnitAspect.DESTRUCTIBLE
             ) )
-        .build().getId();
+        .build();
     }
 
     @Override

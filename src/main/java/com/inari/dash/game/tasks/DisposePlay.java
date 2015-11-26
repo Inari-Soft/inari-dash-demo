@@ -1,13 +1,12 @@
 package com.inari.dash.game.tasks;
 
-import com.inari.commons.event.IEventDispatcher;
 import com.inari.dash.game.GameData;
-import com.inari.dash.game.GameService;
-import com.inari.dash.game.GameService.TaskName;
-import com.inari.dash.game.cave.CaveService;
-import com.inari.dash.game.cave.CaveService.CaveSoundKey;
+import com.inari.dash.game.GameSystem;
+import com.inari.dash.game.cave.CaveSystem;
+import com.inari.dash.game.cave.CaveSystem.CaveSoundKey;
 import com.inari.dash.game.cave.unit.UnitType;
 import com.inari.dash.game.cave.unit.action.UnitActionType;
+import com.inari.dash.game.tasks.InitGameWorkflow.TaskName;
 import com.inari.firefly.action.ActionSystem;
 import com.inari.firefly.asset.AssetSystem;
 import com.inari.firefly.control.ControllerSystem;
@@ -28,21 +27,20 @@ public final class DisposePlay extends Task {
 
     @Override
     public final void run( FFContext context ) {
-        IEventDispatcher eventDispatcher = context.getComponent( FFContext.EVENT_DISPATCHER );
         
-        eventDispatcher.notify( new TaskEvent( Type.RUN_TASK, TaskName.DISPOSE_CAVE.name() ) ); 
+        context.notify( new TaskEvent( Type.RUN_TASK, TaskName.DISPOSE_CAVE.name() ) ); 
         disposeCaveData( context );
-        eventDispatcher.notify( new TaskEvent( Type.RUN_TASK, TaskName.LOAD_GAME_SELECTION.name() ) ); 
-        eventDispatcher.notify( new SoundEvent( GameService.TITLE_SONG_SOUND_NAME, SoundEvent.Type.PLAY_SOUND ) );
+        context.notify( new TaskEvent( Type.RUN_TASK, TaskName.LOAD_GAME_SELECTION.name() ) ); 
+        context.notify( new SoundEvent( GameSystem.TITLE_SONG_SOUND_NAME, SoundEvent.Type.PLAY_SOUND ) );
     }
     
     private final void disposeCaveData( FFContext context ) {
-        ViewSystem viewSystem = context.getComponent( ViewSystem.CONTEXT_KEY );
-        SoundSystem soundSystem = context.getComponent( SoundSystem.CONTEXT_KEY );
-        ControllerSystem controllerSystem = context.getComponent( ControllerSystem.CONTEXT_KEY );
-        AssetSystem assetSystem = context.getComponent( AssetSystem.CONTEXT_KEY );
-        ActionSystem actionSystem = context.getComponent( ActionSystem.CONTEXT_KEY );
-        EntitySystem entitySystem = context.getComponent( EntitySystem.CONTEXT_KEY );
+        ViewSystem viewSystem = context.getSystem( ViewSystem.CONTEXT_KEY );
+        SoundSystem soundSystem = context.getSystem( SoundSystem.CONTEXT_KEY );
+        ControllerSystem controllerSystem = context.getSystem( ControllerSystem.CONTEXT_KEY );
+        AssetSystem assetSystem = context.getSystem( AssetSystem.CONTEXT_KEY );
+        ActionSystem actionSystem = context.getSystem( ActionSystem.CONTEXT_KEY );
+        EntitySystem entitySystem = context.getSystem( EntitySystem.CONTEXT_KEY );
         
         // dispose all units
         for ( UnitType unitType : UnitType.values() ) {
@@ -51,30 +49,26 @@ public final class DisposePlay extends Task {
             }
         }
         
-        System.out.println( assetSystem.getNameKeys() );
-        
         entitySystem.deleteAll();
         
-        viewSystem.deleteView( CaveService.HEADER_VIEW_NAME );
-        viewSystem.deleteView( CaveService.CAVE_VIEW_NAME );
+        viewSystem.deleteView( CaveSystem.HEADER_VIEW_NAME );
+        viewSystem.deleteView( CaveSystem.CAVE_VIEW_NAME );
         
         for ( CaveSoundKey caveSoundKey : CaveSoundKey.values() ) {
             soundSystem.deleteSound( caveSoundKey.id );
         }
         
-        System.out.println( assetSystem.getNameKeys() );
+        assetSystem.deleteAssets( CaveSystem.CAVE_SOUND_GROUP_NAME );
         
-        assetSystem.deleteAssets( CaveService.CAVE_SOUND_GROUP_NAME );
-        
-        controllerSystem.deleteController( CaveService.CAVE_CAMERA_CONTROLLER_NAME );
-        assetSystem.deleteAsset( CaveService.GAME_UNIT_TEXTURE_KEY );
+        controllerSystem.deleteController( CaveSystem.CAVE_CAMERA_CONTROLLER_NAME );
+        assetSystem.deleteAsset( CaveSystem.GAME_UNIT_TEXTURE_KEY );
         
         for ( UnitActionType actionType : UnitActionType.values() ) {
             actionSystem.deleteAction( actionType.index() );
         }
         
-        context.putComponent( GameData.CONTEXT_KEY, null );
-        context.putComponent( CaveService.CONTEXT_KEY, null );
+        context.disposeComponent( GameData.CONTEXT_KEY );
+        context.disposeSystem( CaveSystem.CONTEXT_KEY );
     }
 
 }

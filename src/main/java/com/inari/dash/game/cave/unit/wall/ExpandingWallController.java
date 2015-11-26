@@ -20,16 +20,16 @@ public final class ExpandingWallController extends UnitController {
 
     @Override
     protected final void update( FFTimer timer, int entityId ) {
-        ETile tile = entitySystem.getComponent( entityId, ETile.class );
+        ETile tile = context.getEntityComponent( entityId, ETile.TYPE_KEY );
         for ( Position pos : new HashSet<Position>( tile.getGridPositions() ) ) {
             if ( caveService.isOfType( pos.x, pos.y, Direction.EAST, UnitType.SPACE ) ) {
                 caveService.createOne( pos.x + 1, pos.y, UnitType.EXPANDING_WALL );
-                eventDispatcher.notify( new SoundEvent( UnitType.EXPANDING_WALL.handler.getSoundId(), Type.PLAY_SOUND ) );
+                context.notify( new SoundEvent( UnitType.EXPANDING_WALL.handler.getSoundId(), Type.PLAY_SOUND ) );
                 return;
             }
             if ( caveService.isOfType( pos.x, pos.y, Direction.WEST, UnitType.SPACE ) ) {
                 caveService.createOne( pos.x - 1, pos.y, UnitType.EXPANDING_WALL );
-                eventDispatcher.notify( new SoundEvent( UnitType.EXPANDING_WALL.handler.getSoundId(), Type.PLAY_SOUND ) );
+                context.notify( new SoundEvent( UnitType.EXPANDING_WALL.handler.getSoundId(), Type.PLAY_SOUND ) );
                 return;
             }
         }

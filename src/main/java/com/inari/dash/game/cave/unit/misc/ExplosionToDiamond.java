@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.Map;
 
 import com.inari.commons.geom.Rectangle;
-import com.inari.dash.game.cave.CaveService;
+import com.inari.dash.game.cave.CaveSystem;
 import com.inari.dash.game.cave.unit.EUnit;
 import com.inari.dash.game.cave.unit.UnitType;
 import com.inari.firefly.animation.sprite.SpriteAnimationBuilder;
@@ -32,10 +32,10 @@ public class ExplosionToDiamond extends AbstractExplosionHandle {
         initGeneralExplosion();
         
         spriteAnimationHandler = new SpriteAnimationBuilder( context )
-            .setGroup( CaveService.GAME_UNIT_TEXTURE_KEY.group )
+            .setGroup( CaveSystem.GAME_UNIT_TEXTURE_KEY.group )
             .setLooping( true )
             .setNamePrefix( EXPLOSION_NAME )
-            .setTextureAssetKey( CaveService.GAME_UNIT_TEXTURE_KEY )
+            .setTextureAssetKey( CaveSystem.GAME_UNIT_TEXTURE_KEY )
             .addSpritesToAnimation( 0, new Rectangle( 2 * 32, 7 * 32, 32, 32 ), 6, true )
         .build();
         
@@ -45,12 +45,12 @@ public class ExplosionToDiamond extends AbstractExplosionHandle {
         prefabId = prefabSystem.getEntityPrefabBuilder()
             .set( EController.CONTROLLER_IDS, new int[] { CONTROLLER_ID, spriteAnimationHandler.getControllerId() } )
             .set( EntityPrefab.NAME, EXPLOSION_NAME )
-            .set( ETransform.VIEW_ID, viewSystem.getViewId( CaveService.CAVE_VIEW_NAME ) )
+            .set( ETransform.VIEW_ID, viewSystem.getViewId( CaveSystem.CAVE_VIEW_NAME ) )
             .set( ETransform.LAYER_ID, 0 )
             .set( ESprite.SPRITE_ID, allSpriteAssetKeys.iterator().next().id )
             .set( ETile.MULTI_POSITION, false )
             .set( EUnit.UNIT_TYPE, type() )
-        .build().getId();
+        .build();
         prefabSystem.cacheComponents( prefabId, 100 );
         
         initialized = true;

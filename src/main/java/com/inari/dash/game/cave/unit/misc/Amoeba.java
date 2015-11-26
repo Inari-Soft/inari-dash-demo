@@ -6,7 +6,7 @@ import java.util.Map;
 import com.inari.commons.geom.Position;
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.aspect.AspectSetBuilder;
-import com.inari.dash.game.cave.CaveService;
+import com.inari.dash.game.cave.CaveSystem;
 import com.inari.dash.game.cave.unit.EUnit;
 import com.inari.dash.game.cave.unit.UnitAspect;
 import com.inari.dash.game.cave.unit.UnitHandle;
@@ -15,6 +15,7 @@ import com.inari.firefly.animation.sprite.SpriteAnimationBuilder;
 import com.inari.firefly.animation.sprite.SpriteAnimationBuilder.SpriteAnimationHandler;
 import com.inari.firefly.asset.AssetNameKey;
 import com.inari.firefly.asset.AssetTypeKey;
+import com.inari.firefly.control.Controller;
 import com.inari.firefly.control.EController;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.EntityController;
@@ -28,8 +29,8 @@ import com.inari.firefly.system.FFInitException;
 public final class Amoeba extends UnitHandle {
     
     public static final String AMOEBA_NAME = "amoeba";
-    public static final AssetNameKey MOEBA_SPRITE_ASSET_KEY = new AssetNameKey( CaveService.GAME_UNIT_TEXTURE_KEY.group, AMOEBA_NAME );
-    public static final AssetNameKey MOEBA_SOUND_ASSEET_KEY = new AssetNameKey( CaveService.CAVE_SOUND_GROUP_NAME, AMOEBA_NAME );
+    public static final AssetNameKey MOEBA_SPRITE_ASSET_KEY = new AssetNameKey( CaveSystem.GAME_UNIT_TEXTURE_KEY.group, AMOEBA_NAME );
+    public static final AssetNameKey MOEBA_SOUND_ASSEET_KEY = new AssetNameKey( CaveSystem.CAVE_SOUND_GROUP_NAME, AMOEBA_NAME );
     private static final int UPDATE_TIME_FACTOR = 2;
     
     private int controllerId;
@@ -43,25 +44,25 @@ public final class Amoeba extends UnitHandle {
         super.init( context );
         
         // sound
-        assetSystem.getAssetBuilderWithAutoLoad( SoundAsset.class )
+        assetSystem.getAssetBuilderWithAutoLoad()
             .set( SoundAsset.NAME, MOEBA_SOUND_ASSEET_KEY.name )
             .set( SoundAsset.ASSET_GROUP, MOEBA_SOUND_ASSEET_KEY.group )
             .set( SoundAsset.RESOURCE_NAME, "original/sound/amoeba.wav" )
             .set( SoundAsset.STREAMING, false )
-        .build();
+        .build( SoundAsset.class );
         soundId = soundSystem.getSoundBuilder()
             .set( Sound.NAME, MOEBA_SOUND_ASSEET_KEY.name )
             .set( Sound.ASSET_ID, assetSystem.getAssetId( MOEBA_SOUND_ASSEET_KEY ) )
             .set( Sound.CHANNEL, 3 )
             .set( Sound.LOOPING, true )
-        .build().getId();
+        .build();
         
         // sprite animation
         spriteAnimationHandler = new SpriteAnimationBuilder( context )
-            .setGroup( CaveService.GAME_UNIT_TEXTURE_KEY.group )
+            .setGroup( CaveSystem.GAME_UNIT_TEXTURE_KEY.group )
             .setLooping( true )
             .setNamePrefix( AMOEBA_NAME )
-            .setTextureAssetKey( CaveService.GAME_UNIT_TEXTURE_KEY )
+            .setTextureAssetKey( CaveSystem.GAME_UNIT_TEXTURE_KEY )
             .addSpritesToAnimation( 0, new Rectangle( 0, 8 * 32, 32, 32 ), 8, true )
         .build();
         Collection<AssetTypeKey> allSpriteAssetKeys = spriteAnimationHandler.getAllSpriteAssetKeys();
@@ -78,10 +79,10 @@ public final class Amoeba extends UnitHandle {
         super.loadCaveData( context );
         
         // controller
-        AmoebaController controller = controllerSystem.getComponentBuilder( AmoebaController.class )
+        controllerId = controllerSystem.getControllerBuilder()
             .set( EntityController.NAME, AMOEBA_NAME )
-        .build();
-        controllerId = controller.getId();
+        .build( AmoebaController.class );
+        Controller controller = controllerSystem.getController( controllerId );
         
         float updateRate = caveService.getUpdateRate();
         controller.setUpdateResolution( UPDATE_TIME_FACTOR );
@@ -89,17 +90,15 @@ public final class Amoeba extends UnitHandle {
         
         amoebaEntityId = entitySystem.getEntityBuilderWithAutoActivation()
             .set( EController.CONTROLLER_IDS, new int[] { controllerId, spriteAnimationHandler.getControllerId() } )
-            .set( ETransform.VIEW_ID, viewSystem.getViewId( CaveService.CAVE_VIEW_NAME ) )
+            .set( ETransform.VIEW_ID, viewSystem.getViewId( CaveSystem.CAVE_VIEW_NAME ) )
             .set( ESprite.SPRITE_ID, firstSpriteId )
             .set( ETile.MULTI_POSITION, true )
             .set( EUnit.UNIT_TYPE, type() )
             .set( EUnit.ASPECTS, AspectSetBuilder.create( 
                 UnitAspect.DESTRUCTIBLE
             ) )
-        .build().getId();
+        .build();
     }
-    
-    
 
     @Override
     public final void disposeCaveData( FFContext context ) {

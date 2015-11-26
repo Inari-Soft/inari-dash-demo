@@ -10,12 +10,12 @@ public final class RFSpriteAnimation extends StatedSpriteAnimation {
 
     public RFSpriteAnimation( int id, FFContext context ) {
         super( id, context );
-        entitySystem = context.getComponent( EntitySystem.CONTEXT_KEY );
+        entitySystem = context.getSystem( EntitySystem.CONTEXT_KEY );
     }
 
     @Override
     public int getState( int entityId ) {
-        RFUnit unit = entitySystem.getComponent( entityId, RFUnit.class );
+        RFUnit unit = entitySystem.getComponent( entityId, RFUnit.TYPE_KEY );
         return unit.getState().ordinal();
     }
 

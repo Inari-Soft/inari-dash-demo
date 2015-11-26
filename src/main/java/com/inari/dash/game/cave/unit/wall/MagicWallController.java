@@ -23,7 +23,7 @@ public final class MagicWallController extends UnitController {
     protected MagicWallController( int id, FFContext context ) {
         super( id, context );
         activDuration = caveService.getMagicWallTime();
-        secondTimer = context.getComponent( FFContext.TIMER ).createUpdateScheduler( 1 );
+        secondTimer = context.getTimer().createUpdateScheduler( 1 );
     }
     
     void setMagicWallAnimationController( MagicWallAnimationController magicWallAnimationController ) {
@@ -41,14 +41,14 @@ public final class MagicWallController extends UnitController {
                 activTime++;
                 if ( activTime > activDuration ) {
                     magicWallAnimationController.setMagicWallState( State.INACTIVE );
-                    eventDispatcher.notify( new SoundEvent( UnitType.MAGIC_WALL.handler.getSoundId(), Type.STOP_PLAYING ) ); 
+                    context .notify( new SoundEvent( UnitType.MAGIC_WALL.handler.getSoundId(), Type.STOP_PLAYING ) ); 
                     return;
                 }
             }
         }
 
-        EUnit unit = entitySystem.getComponent( entityId, EUnit.class );
-        ETile tile = entitySystem.getComponent( entityId, ETile.class );
+        EUnit unit = context.getEntityComponent( entityId, EUnit.TYPE_KEY );
+        ETile tile = context.getEntityComponent( entityId, ETile.TYPE_KEY );
         int x = tile.getGridXPos();
         int y = tile.getGridYPos();
         
@@ -58,11 +58,11 @@ public final class MagicWallController extends UnitController {
                 activTime++;
                 secondTimer.getTick();
                 magicWallAnimationController.setMagicWallState( State.ACTIVE );
-                eventDispatcher.notify( new SoundEvent( UnitType.MAGIC_WALL.handler.getSoundId(), Type.PLAY_SOUND ) ); 
+                context.notify( new SoundEvent( UnitType.MAGIC_WALL.handler.getSoundId(), Type.PLAY_SOUND ) ); 
             }
 
             int aboveEntityId = caveService.getEntityId( x, y, Direction.NORTH );
-            EUnit aboveUnit = entitySystem.getComponent( aboveEntityId, EUnit.class );
+            EUnit aboveUnit = context.getEntityComponent( aboveEntityId, EUnit.TYPE_KEY );
             UnitType changeTo = aboveUnit.getChangeTo();
             
             if ( changeTo != null ) {

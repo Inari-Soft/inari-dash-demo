@@ -2,12 +2,16 @@ package com.inari.dash.game;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import com.inari.commons.lang.TypedKey;
 import com.inari.dash.game.GameInfo.CodeType;
 import com.inari.dash.game.cave.CaveData;
+import com.inari.firefly.component.DataComponent;
+import com.inari.firefly.component.attr.AttributeKey;
+import com.inari.firefly.component.attr.AttributeMap;
 
-public class GameData {
+public class GameData extends DataComponent {
     
     public static final TypedKey<GameData> CONTEXT_KEY = TypedKey.create( "GameData", GameData.class );
 
@@ -113,6 +117,32 @@ public class GameData {
     
     public CodeType getType() {
         return gameInfo.getType();
+    }
+
+    @Override
+    public Class<GameData> componentType() {
+        return GameData.class;
+    }
+
+    @Override
+    public Set<AttributeKey<?>> attributeKeys() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void fromAttributes( AttributeMap attributes ) {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
+    public void toAttributes( AttributeMap attributes ) {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
+    public final TypedKey<? extends DataComponent> componentKey() {
+        return CONTEXT_KEY;
     }
 
 }

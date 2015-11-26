@@ -56,7 +56,7 @@ public final class EUnit extends EntityComponent {
     }
     
     @Override
-    public final Class<EUnit> getComponentType() {
+    public final Class<EUnit> componentType() {
         return EUnit.class;
     }
     

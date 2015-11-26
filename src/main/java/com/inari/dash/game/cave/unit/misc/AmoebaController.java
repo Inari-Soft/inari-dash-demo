@@ -7,7 +7,7 @@ import java.util.Set;
 import com.inari.commons.GeomUtils;
 import com.inari.commons.geom.Direction;
 import com.inari.commons.geom.Position;
-import com.inari.dash.game.cave.CaveService.AmoebaData;
+import com.inari.dash.game.cave.CaveSystem.AmoebaData;
 import com.inari.dash.game.cave.unit.EUnit;
 import com.inari.dash.game.cave.unit.UnitAspect;
 import com.inari.dash.game.cave.unit.UnitController;
@@ -35,7 +35,7 @@ public final class AmoebaController extends UnitController {
 
     @Override
     protected final void update( FFTimer timer, int entityId ) {
-        EUnit unit = entitySystem.getComponent( entityId, EUnit.class );
+        EUnit unit = context.getEntityComponent( entityId, EUnit.TYPE_KEY );
         if ( !unit.has( UnitAspect.ACTIVE ) ) {
             return;
         }
@@ -43,12 +43,12 @@ public final class AmoebaController extends UnitController {
         tick++;
 
         if ( !soundPaying ) {
-            eventDispatcher.notify( new SoundEvent( UnitType.AMOEBA.handler.getSoundId(), Type.PLAY_SOUND ) );
+            context.notify( new SoundEvent( UnitType.AMOEBA.handler.getSoundId(), Type.PLAY_SOUND ) );
             soundPaying = true;
         }
         
         AmoebaData amoebaData = caveService.getAmoebaData();
-        ETile tile = entitySystem.getComponent( entityId, ETile.class );
+        ETile tile = context.getEntityComponent( entityId, ETile.TYPE_KEY );
         
         if ( growthFaktor < 0 ) {
             growthFaktor = amoebaData.amoebaSlowGrowthProb;
@@ -110,12 +110,12 @@ public final class AmoebaController extends UnitController {
     }
 
     private void transformTo( UnitType type, int entityId, Set<Position> gridPositions ) {
-        entitySystem.deactivate( entityId );
+        context.deactivateEntity( entityId );
         for ( Position pos : gridPositions ) {
             type.handler.createOne( pos.x, pos.y );
         }
-        entitySystem.delete( entityId );
-        eventDispatcher.notify( new SoundEvent( UnitType.AMOEBA.handler.getSoundId(), Type.STOP_PLAYING ) );
+        context.deleteEntity( entityId );
+        context.notify( new SoundEvent( UnitType.AMOEBA.handler.getSoundId(), Type.STOP_PLAYING ) );
     }
 
 }

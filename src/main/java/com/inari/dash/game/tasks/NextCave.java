@@ -1,8 +1,7 @@
 package com.inari.dash.game.tasks;
 
-import com.inari.commons.event.IEventDispatcher;
-import com.inari.dash.game.GameService.TaskName;
-import com.inari.dash.game.cave.CaveService;
+import com.inari.dash.game.cave.CaveSystem;
+import com.inari.dash.game.tasks.InitGameWorkflow.TaskName;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.task.Task;
 import com.inari.firefly.task.event.TaskEvent;
@@ -16,12 +15,11 @@ public final class NextCave extends Task {
 
     @Override
     public final void run( FFContext context ) {
-        IEventDispatcher eventDispatcher = context.getComponent( FFContext.EVENT_DISPATCHER );
-        CaveService caveService = context.getComponent( CaveService.CONTEXT_KEY );
+        CaveSystem caveSystem = context.getSystem( CaveSystem.CONTEXT_KEY );
         
-        eventDispatcher.notify( new TaskEvent( Type.RUN_TASK, TaskName.DISPOSE_CAVE.name() ) );
-        caveService.getGameData().nextCave();
-        eventDispatcher.notify( new TaskEvent( Type.RUN_TASK, TaskName.LOAD_CAVE.name() ) );
+        context.notify( new TaskEvent( Type.RUN_TASK, TaskName.DISPOSE_CAVE.name() ) );
+        caveSystem.getGameData().nextCave();
+        context.notify( new TaskEvent( Type.RUN_TASK, TaskName.LOAD_CAVE.name() ) );
     }
 
 }

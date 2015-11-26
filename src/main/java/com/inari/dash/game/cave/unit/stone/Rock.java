@@ -4,7 +4,7 @@ import java.util.Map;
 
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.aspect.AspectSetBuilder;
-import com.inari.dash.game.cave.CaveService;
+import com.inari.dash.game.cave.CaveSystem;
 import com.inari.dash.game.cave.unit.EUnit;
 import com.inari.dash.game.cave.unit.UnitAspect;
 import com.inari.dash.game.cave.unit.UnitHandle;
@@ -26,8 +26,8 @@ import com.inari.firefly.system.FFInitException;
 public final class Rock extends UnitHandle {
     
     public static final String ROCK_NAME = "rock";
-    public static final AssetNameKey ROCK_SPRITE_ASSET_KEY = new AssetNameKey( CaveService.GAME_UNIT_TEXTURE_KEY.group, ROCK_NAME );
-    public static final AssetNameKey ROCK_SOUND_ASSEET_KEY = new AssetNameKey( CaveService.CAVE_SOUND_GROUP_NAME, ROCK_NAME );
+    public static final AssetNameKey ROCK_SPRITE_ASSET_KEY = new AssetNameKey( CaveSystem.GAME_UNIT_TEXTURE_KEY.group, ROCK_NAME );
+    public static final AssetNameKey ROCK_SOUND_ASSEET_KEY = new AssetNameKey( CaveSystem.CAVE_SOUND_GROUP_NAME, ROCK_NAME );
     
     private int prefabId;
     private int controllerId;
@@ -37,26 +37,27 @@ public final class Rock extends UnitHandle {
     public final void init( FFContext context ) throws FFInitException {
         super.init( context );
         
-        assetSystem.getAssetBuilder( SpriteAsset.class )
+        assetSystem.getAssetBuilder()
             .set( SpriteAsset.NAME, ROCK_SPRITE_ASSET_KEY.name )
             .set( SpriteAsset.ASSET_GROUP, ROCK_SPRITE_ASSET_KEY.group )
-            .set( SpriteAsset.TEXTURE_ID, assetSystem.getAssetId( CaveService.GAME_UNIT_TEXTURE_KEY ) )
+            .set( SpriteAsset.TEXTURE_ID, assetSystem.getAssetId( CaveSystem.GAME_UNIT_TEXTURE_KEY ) )
             .set( SpriteAsset.TEXTURE_REGION, new Rectangle( 0, 7 * 32, 32, 32 ) )
-        .build();
+        .build( SpriteAsset.class );
         super.caveAssetsToReload.add( assetSystem.getAssetTypeKey( ROCK_SPRITE_ASSET_KEY ) );
         
-        assetSystem.getAssetBuilderWithAutoLoad( SoundAsset.class )
+        assetSystem.getAssetBuilderWithAutoLoad()
             .set( SoundAsset.NAME, ROCK_SOUND_ASSEET_KEY.name )
             .set( SoundAsset.ASSET_GROUP, ROCK_SOUND_ASSEET_KEY.group )
             .set( SoundAsset.RESOURCE_NAME, "original/sound/stone.wav" )
             .set( SoundAsset.STREAMING, false )
-        .build();
+        .build( SoundAsset.class );
         
         soundId = soundSystem.getSoundBuilder()
             .set( Sound.NAME, ROCK_SOUND_ASSEET_KEY.name )
             .set( Sound.ASSET_ID, assetSystem.getAssetId( ROCK_SOUND_ASSEET_KEY ) )
             .set( Sound.LOOPING, false )
-        .build().getId();
+            .set( Sound.CHANNEL, 1 )
+        .build();
 
         initialized = true;
     }
@@ -64,15 +65,14 @@ public final class Rock extends UnitHandle {
     @Override
     public final void loadCaveData( FFContext context ) {
         super.loadCaveData( context );
-        RockController controller = controllerSystem.getComponentBuilder( RockController.class )
+        controllerId = controllerSystem.getControllerBuilder()
             .set( EntityController.NAME, "RockController" )
-        .build();
-        controllerId = controller.getId();
+        .build( RockController.class );
         
         prefabId = prefabSystem.getEntityPrefabBuilder()
             .set( EController.CONTROLLER_IDS, new int[] { controllerId } )
             .set( EntityPrefab.NAME, ROCK_NAME )
-            .set( ETransform.VIEW_ID, viewSystem.getViewId( CaveService.CAVE_VIEW_NAME ) )
+            .set( ETransform.VIEW_ID, viewSystem.getViewId( CaveSystem.CAVE_VIEW_NAME ) )
             .set( ESprite.SPRITE_ID, assetSystem.getAssetId( ROCK_SPRITE_ASSET_KEY ) )
             .set( ETile.MULTI_POSITION, false )
             .set( EUnit.UNIT_TYPE, type() )
@@ -82,11 +82,11 @@ public final class Rock extends UnitHandle {
                 UnitAspect.STONE, 
                 UnitAspect.ASLOPE
             ) )
-        .build().getId();
+        .build();
         prefabSystem.cacheComponents( prefabId, 200 );
         
         float updateRate = caveService.getUpdateRate();
-        controller.setUpdateResolution( updateRate );
+        controllerSystem.getController( controllerId ).setUpdateResolution( updateRate );
     }
 
     @Override

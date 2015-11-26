@@ -6,7 +6,7 @@ import com.inari.commons.GeomUtils;
 import com.inari.commons.geom.Direction;
 import com.inari.commons.geom.Position;
 import com.inari.commons.lang.aspect.AspectSetBuilder;
-import com.inari.dash.game.cave.CaveService.CaveState;
+import com.inari.dash.game.cave.CaveSystem.CaveState;
 import com.inari.dash.game.cave.unit.EUnit;
 import com.inari.dash.game.cave.unit.UnitAspect;
 import com.inari.dash.game.cave.unit.UnitController;
@@ -43,8 +43,8 @@ public final class RFController extends UnitController {
             return;
         }
         
-        RFUnit rockford = entitySystem.getComponent( entityId, RFUnit.class );
-        EUnit unit = entitySystem.getComponent( entityId, EUnit.class );
+        RFUnit rockford = context.getEntityComponent( entityId, RFUnit.TYPE_KEY );
+        EUnit unit = context.getEntityComponent( entityId, EUnit.TYPE_KEY );
         RFState state = rockford.getState();
         
         if ( state == RFState.APPEARING || state == RFState.ENTERING ) {
@@ -53,7 +53,7 @@ public final class RFController extends UnitController {
             if ( state == RFState.ENTERING && animationCount > ENTERING_ANIMATION_DURATION ) {
                 rockford.setState( RFState.APPEARING );
                 unit.resetAnimationCount();
-                eventDispatcher.notify( new SoundEvent( rfHandle.inSoundId, Type.PLAY_SOUND ) );
+                context.notify( new SoundEvent( rfHandle.inSoundId, Type.PLAY_SOUND ) );
                 return;
             }
             if ( state == RFState.APPEARING && animationCount > APPEARING_ANIMATION_DURATION ) {
@@ -71,7 +71,7 @@ public final class RFController extends UnitController {
         
         if ( unit.isHit() ) {
             unit.setChangeTo( UnitType.SPACE );
-            eventDispatcher.notify( new ActionEvent( UnitActionType.EXPLODE.index(), entityId ) );
+            context.notify( new ActionEvent( UnitActionType.EXPLODE.index(), entityId ) );
             return;
         }
         
@@ -115,7 +115,7 @@ public final class RFController extends UnitController {
             return;
         }
         
-        ETile tile = entitySystem.getComponent( entityId, ETile.class );
+        ETile tile = context.getEntityComponent( entityId, ETile.TYPE_KEY );
         currentPos.x = tile.getGridXPos();
         currentPos.y = tile.getGridYPos();
         nextPos.x = currentPos.x;
@@ -131,19 +131,19 @@ public final class RFController extends UnitController {
         
         GeomUtils.movePositionOnDirection( nextPos, move, 1, true );
         int nextEntityId = caveService.getEntityId( nextPos.x, nextPos.y );
-        EUnit nextUnit = entitySystem.getComponent( nextEntityId, EUnit.class );
+        EUnit nextUnit = context.getEntityComponent( nextEntityId, EUnit.TYPE_KEY );
         UnitType nextType = nextUnit.getUnitType();
 
         if ( nextUnit.has( UnitAspect.WALKABLE ) ) {
            if ( nextType == UnitType.DIAMOND ) {
-               eventDispatcher.notify( new ActionEvent( UnitActionType.COLLECT.index(), nextEntityId ) );
-               eventDispatcher.notify( new SoundEvent( rfHandle.collectSoundId, Type.PLAY_SOUND ) ); 
+               context.notify( new ActionEvent( UnitActionType.COLLECT.index(), nextEntityId ) );
+               context.notify( new SoundEvent( rfHandle.collectSoundId, Type.PLAY_SOUND ) ); 
            } else if ( nextType == UnitType.SPACE ) {
                if ( !grabbing ) {
-                   eventDispatcher.notify( new SoundEvent( rfHandle.spaceSoundId, Type.PLAY_SOUND ) ); 
+                   context.notify( new SoundEvent( rfHandle.spaceSoundId, Type.PLAY_SOUND ) ); 
                }
            } else {
-               eventDispatcher.notify( new SoundEvent( rfHandle.sandSoundId, Type.PLAY_SOUND ) ); 
+               context.notify( new SoundEvent( rfHandle.sandSoundId, Type.PLAY_SOUND ) ); 
            }
            
            if ( grabbing ) {
@@ -152,7 +152,7 @@ public final class RFController extends UnitController {
                    caveService.createOne( nextPos.x, nextPos.y, UnitType.SPACE );
                }
            } else {
-               eventDispatcher.notify( new ActionEvent( UnitActionType.MOVE.index(), entityId ) );
+               context.notify( new ActionEvent( UnitActionType.MOVE.index(), entityId ) );
            }
            return;
         }
@@ -171,14 +171,14 @@ public final class RFController extends UnitController {
         }
         
         if ( FireFly.RANDOM.nextInt( 100 ) < 20 ) {
-            EUnit unit = entitySystem.getComponent( rockEntityId, EUnit.class );
+            EUnit unit = context.getEntityComponent( rockEntityId, EUnit.TYPE_KEY );
             unit.setMovement( move );
-            eventDispatcher.notify( new ActionEvent( UnitActionType.MOVE.index(), rockEntityId ) );
+            context.notify( new ActionEvent( UnitActionType.MOVE.index(), rockEntityId ) );
             if ( !grabbing ) {
-                eventDispatcher.notify( new ActionEvent( UnitActionType.MOVE.index(), rockfordId ) );
+                context.notify( new ActionEvent( UnitActionType.MOVE.index(), rockfordId ) );
             }
             unit.setMovement( Direction.NONE );
-            eventDispatcher.notify( new SoundEvent( UnitType.ROCK.handler.getSoundId(), Type.PLAY_SOUND ) ); 
+            context.notify( new SoundEvent( UnitType.ROCK.handler.getSoundId(), Type.PLAY_SOUND ) ); 
         }
     }
 

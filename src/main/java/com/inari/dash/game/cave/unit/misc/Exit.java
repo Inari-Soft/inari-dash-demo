@@ -5,7 +5,7 @@ import java.util.Map;
 
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.aspect.AspectSetBuilder;
-import com.inari.dash.game.cave.CaveService;
+import com.inari.dash.game.cave.CaveSystem;
 import com.inari.dash.game.cave.unit.EUnit;
 import com.inari.dash.game.cave.unit.UnitHandle;
 import com.inari.dash.game.cave.unit.UnitType;
@@ -28,7 +28,7 @@ public final class Exit extends UnitHandle {
     }
     
     public static final String EXIT_NAME = "exit";
-    public static final AssetNameKey ROCKFORD_SPRITE_ASSET_KEY = new AssetNameKey( CaveService.GAME_UNIT_TEXTURE_KEY.group, EXIT_NAME );
+    public static final AssetNameKey ROCKFORD_SPRITE_ASSET_KEY = new AssetNameKey( CaveSystem.GAME_UNIT_TEXTURE_KEY.group, EXIT_NAME );
     
     private SpriteAnimationHandler spriteAnimationHandler;
     private int exitEntityId;
@@ -39,10 +39,10 @@ public final class Exit extends UnitHandle {
         super.init( context );
         
         spriteAnimationHandler = new SpriteAnimationBuilder( context )
-            .setGroup( CaveService.GAME_UNIT_TEXTURE_KEY.group )
+            .setGroup( CaveSystem.GAME_UNIT_TEXTURE_KEY.group )
             .setLooping( true )
             .setNamePrefix( EXIT_NAME )
-            .setTextureAssetKey( CaveService.GAME_UNIT_TEXTURE_KEY )
+            .setTextureAssetKey( CaveSystem.GAME_UNIT_TEXTURE_KEY )
             .setStatedAnimationType( ExitAnimationController.class )
             .setState( State.CLOSED.ordinal() )
             .addSpritesToAnimation( 0, new Rectangle( 32, 6 * 32, 32, 32 ), 1, true )
@@ -88,13 +88,13 @@ public final class Exit extends UnitHandle {
     public final int createOne( int xGridPos, int yGridPos ) {
         exitEntityId = entitySystem.getEntityBuilderWithAutoActivation()
             .set( EController.CONTROLLER_IDS, new int[] { spriteAnimationHandler.getControllerId() } )
-            .set( ETransform.VIEW_ID, viewSystem.getViewId( CaveService.CAVE_VIEW_NAME ) )
+            .set( ETransform.VIEW_ID, viewSystem.getViewId( CaveSystem.CAVE_VIEW_NAME ) )
             .set( ESprite.SPRITE_ID, firstSpriteId )
             .set( ETile.GRID_X_POSITION, xGridPos )
             .set( ETile.GRID_Y_POSITION, yGridPos )
             .set( EUnit.UNIT_TYPE, type() )
             .set( EUnit.ASPECTS, AspectSetBuilder.create() )
-        .build().getId();
+        .build();
         return exitEntityId;
     }
     

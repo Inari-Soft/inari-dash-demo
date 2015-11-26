@@ -50,7 +50,7 @@ public final class ExplosionAction extends UnitAction {
         GeomUtils.movePositionOnDirection( tmpPos, Direction.NORTH, 1, true );
         createExplosion( explodeTo );
         
-        eventDispatcher.notify( new SoundEvent( UnitType.EXPLOSION.handler.getSoundId(), SoundEvent.Type.PLAY_SOUND ) );
+        context.notify( new SoundEvent( UnitType.EXPLOSION.handler.getSoundId(), SoundEvent.Type.PLAY_SOUND ) );
         explosionType = UnitType.EXPLOSION;
     }
 

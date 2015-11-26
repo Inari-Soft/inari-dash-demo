@@ -6,7 +6,7 @@ import com.inari.commons.geom.Position;
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.graphics.RGBColor;
 import com.inari.dash.Configuration;
-import com.inari.dash.game.GameService;
+import com.inari.dash.game.GameSystem;
 import com.inari.firefly.asset.AssetSystem;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.EntitySystem;
@@ -22,7 +22,7 @@ public class TwoViewTest extends GdxFFTestAdapter {
 
     @Override
     public void initTest( FFContext context ) {
-        ViewSystem viewSystem = context.getComponent( ViewSystem.CONTEXT_KEY );
+        ViewSystem viewSystem = context.getSystem( ViewSystem.CONTEXT_KEY );
         
         viewSystem.getViewBuilderWithAutoActivation()
             .set( View.NAME, "HEADER_VIEW_NAME" )
@@ -39,38 +39,38 @@ public class TwoViewTest extends GdxFFTestAdapter {
         .build();
         
         Configuration globalAssetData = new Configuration();
-        AssetSystem assetSystem = context.getComponent( AssetSystem.CONTEXT_KEY );
-        EntitySystem entitySystem = context.getComponent( EntitySystem.CONTEXT_KEY );
+        AssetSystem assetSystem = context.getSystem( AssetSystem.CONTEXT_KEY );
+        EntitySystem entitySystem = context.getSystem( EntitySystem.CONTEXT_KEY );
         
-        TextureAsset textureAsset = assetSystem
-            .getAssetBuilder( TextureAsset.class )
-                .set( TextureAsset.NAME, GameService.GAME_FONT_TEXTURE_KEY.name )
-                .set( TextureAsset.ASSET_GROUP, GameService.GAME_FONT_TEXTURE_KEY.group )
+        assetSystem
+            .getAssetBuilder()
+                .set( TextureAsset.NAME, GameSystem.GAME_FONT_TEXTURE_KEY.name )
+                .set( TextureAsset.ASSET_GROUP, GameSystem.GAME_FONT_TEXTURE_KEY.group )
                 .set( TextureAsset.RESOURCE_NAME, globalAssetData.unitTextureResource )
                 .set( TextureAsset.TEXTURE_WIDTH, globalAssetData.unitTextureWidth )
                 .set( TextureAsset.TEXTURE_HEIGHT, globalAssetData.unitTextureHeight )
-            .build();
+            .build( TextureAsset.class );
         
-        SpriteAsset spriteAsset = assetSystem
-            .getAssetBuilder( SpriteAsset.class )
+        int spriteAssetId = assetSystem
+            .getAssetBuilder()
                 .set( SpriteAsset.NAME, "TextureSprite" )
-                .set( SpriteAsset.ASSET_GROUP, GameService.GAME_FONT_TEXTURE_KEY.group )
-                .set( SpriteAsset.TEXTURE_ID, assetSystem.getAssetTypeKey( GameService.GAME_FONT_TEXTURE_KEY ).id )
+                .set( SpriteAsset.ASSET_GROUP, GameSystem.GAME_FONT_TEXTURE_KEY.group )
+                .set( SpriteAsset.TEXTURE_ID, assetSystem.getAssetTypeKey( GameSystem.GAME_FONT_TEXTURE_KEY ).id )
                 .set( SpriteAsset.TEXTURE_REGION, new Rectangle( 0, 0, globalAssetData.unitTextureWidth, globalAssetData.unitTextureHeight ) )
-            .build();
+            .build( SpriteAsset.class );
         
-        assetSystem.loadAssets( GameService.GAME_FONT_TEXTURE_KEY.group );
+        assetSystem.loadAssets( GameSystem.GAME_FONT_TEXTURE_KEY.group );
         
         entitySystem.getEntityBuilderWithAutoActivation()
               .set( ETransform.VIEW_ID, viewSystem.getViewId( "HEADER_VIEW_NAME" ) )
               .set( ETransform.XPOSITION, 0 )
               .set( ETransform.YPOSITION, 0 )
-              .set( ESprite.SPRITE_ID, spriteAsset.getId() )
+              .set( ESprite.SPRITE_ID, spriteAssetId )
           .buildAndNext()
               .set( ETransform.VIEW_ID, viewSystem.getViewId( "CAVE_VIEW_NAME" ) )
               .set( ETransform.XPOSITION, 0 )
               .set( ETransform.YPOSITION, 0 )
-              .set( ESprite.SPRITE_ID, spriteAsset.getId() )
+              .set( ESprite.SPRITE_ID, spriteAssetId )
           .build();
 
         

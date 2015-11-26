@@ -6,71 +6,17 @@ import com.inari.commons.graphics.RGBColor;
 import com.inari.commons.lang.TypedKey;
 import com.inari.dash.Configuration;
 import com.inari.dash.game.io.GameInfos;
-import com.inari.dash.game.tasks.DisposeCave;
-import com.inari.dash.game.tasks.DisposeGame;
-import com.inari.dash.game.tasks.DisposeGameSelection;
-import com.inari.dash.game.tasks.DisposePlay;
-import com.inari.dash.game.tasks.LoadCave;
-import com.inari.dash.game.tasks.LoadGame;
-import com.inari.dash.game.tasks.LoadGameSelection;
-import com.inari.dash.game.tasks.LoadPlay;
-import com.inari.dash.game.tasks.NextCave;
-import com.inari.dash.game.tasks.ReplayCave;
 import com.inari.firefly.asset.AssetNameKey;
 import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.system.FFContext;
-import com.inari.firefly.task.Task;
+import com.inari.firefly.system.FFInitException;
+import com.inari.firefly.system.FFSystem;
 import com.inari.firefly.text.EText;
 
-public final class GameService {
+public final class GameSystem implements FFSystem {
     
-    public static final TypedKey<GameService> CONTEXT_KEY = TypedKey.create( "GameService", GameService.class );
-    
-    public enum TaskName {
-        LOAD_GAME( LoadGame.class, true ),
-        LOAD_GAME_SELECTION( LoadGameSelection.class ),
-        LOAD_PLAY( LoadPlay.class ),
-        LOAD_CAVE( LoadCave.class ),
-        NEXT_CAVE( NextCave.class ),
-        REPLAY_CAVE( ReplayCave.class ),
-        DISPOSE_CAVE( DisposeCave.class ),
-        DISPOSE_PLAY( DisposePlay.class ),
-        DISPOSE_GAME_SELECTION( DisposeGameSelection.class ),
-        DISPOSE_GAME( DisposeGame.class, true );
-        
-        public boolean removeAfterRun = false;
-        public final Class<? extends Task> type;
-        
-        private TaskName( Class<? extends Task> type ) {
-            this.type = type;
-        }
-        
-        private TaskName( Class<? extends Task> type, boolean removeAfterRun ) {
-            this.type = type;
-            this.removeAfterRun = removeAfterRun;
-        }
-    }
-    
-    public enum StateName {
-        GAME_SELECTION,
-        CAVE_PLAY
-    }
-    
-    public enum StateChangeName {
-        GAME_INIT( null, StateName.GAME_SELECTION ),
-        EXIT_GAME( StateName.GAME_SELECTION, null ),
-        PLAY_CAVE( StateName.GAME_SELECTION, StateName.CAVE_PLAY ),
-        EXIT_PLAY( StateName.CAVE_PLAY, StateName.GAME_SELECTION )
-        ;
-        public final StateName from;
-        public final StateName to;
-        private StateChangeName( StateName from, StateName to ) {
-            this.from = from;
-            this.to = to;
-        }
-    }
-    
-    
+    public static final TypedKey<GameSystem> CONTEXT_KEY = TypedKey.create( "GameService", GameSystem.class );
+
     public static final String TITLE_SONG_SOUND_NAME = "titleSongSound";
     public static final String GAME_WORKFLOW_NAME = "gameWorkflow";
     public static final String GAME_SELECTION_CONTROLLER_NAME = "GAME_SELECTION_CONTROLLER";
@@ -108,11 +54,19 @@ public final class GameService {
     public int caveSelectionId = -1;
     public int exitTitleId = -1;
     
-    public GameService( FFContext context, Configuration configuration, GameInfos gameInfos ) {
-        entitySystem = context.getComponent( EntitySystem.CONTEXT_KEY );
+    @Override
+    public final void init( FFContext context ) throws FFInitException {
+        entitySystem = context.getSystem( EntitySystem.CONTEXT_KEY );
+        configuration = context.getComponent( Configuration.CONTEXT_KEY );
+        
+        gameInfos = new GameInfos();
+        gameInfos.load( context );
+    }
 
-        this.configuration = configuration;
-        this.gameInfos = gameInfos;
+    @Override
+    public final void dispose( FFContext context ) {
+        // TODO Auto-generated method stub
+        
     }
     
     private void initEntityIds() {
@@ -153,11 +107,11 @@ public final class GameService {
         initEntityIds();
         
         entitySystem.getComponent( gameSelectionTitleId, EText.class )
-            .setTintColor( ( mode == SelectionMode.GAME_SELECTION )? GameService.YELLOW_FONT_COLOR : GameService.WHITE_FONT_COLOR );
+            .setTintColor( ( mode == SelectionMode.GAME_SELECTION )? GameSystem.YELLOW_FONT_COLOR : GameSystem.WHITE_FONT_COLOR );
         entitySystem.getComponent( caveSelectionTitleId, EText.class )
-            .setTintColor( ( mode == SelectionMode.CAVE_SELECTION )? GameService.YELLOW_FONT_COLOR : GameService.WHITE_FONT_COLOR );
+            .setTintColor( ( mode == SelectionMode.CAVE_SELECTION )? GameSystem.YELLOW_FONT_COLOR : GameSystem.WHITE_FONT_COLOR );
         entitySystem.getComponent( exitTitleId, EText.class )
-            .setTintColor( ( mode == SelectionMode.EXIT )? GameService.YELLOW_FONT_COLOR : GameService.WHITE_FONT_COLOR );
+            .setTintColor( ( mode == SelectionMode.EXIT )? GameSystem.YELLOW_FONT_COLOR : GameSystem.WHITE_FONT_COLOR );
         
         entitySystem.getComponent( gameSelectionId, EText.class )
             .setText( getSelectedGame().getName().toCharArray() );

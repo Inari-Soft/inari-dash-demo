@@ -5,7 +5,7 @@ import java.util.Map;
 
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.aspect.AspectSetBuilder;
-import com.inari.dash.game.cave.CaveService;
+import com.inari.dash.game.cave.CaveSystem;
 import com.inari.dash.game.cave.unit.EUnit;
 import com.inari.dash.game.cave.unit.UnitAspect;
 import com.inari.dash.game.cave.unit.UnitHandle;
@@ -43,26 +43,26 @@ public final class Diamond extends UnitHandle {
         soundIds = new int[ 8 ];
         for ( int i = 0; i < 8; i++ ) {
             String name = DIAMOND_NAME + ( i + 1 );
-            int soundAssetId = assetSystem.getAssetBuilderWithAutoLoad( SoundAsset.class )
+            int soundAssetId = assetSystem.getAssetBuilderWithAutoLoad()
                 .set( SoundAsset.NAME, name )
-                .set( SoundAsset.ASSET_GROUP, CaveService.CAVE_SOUND_GROUP_NAME )
+                .set( SoundAsset.ASSET_GROUP, CaveSystem.CAVE_SOUND_GROUP_NAME )
                 .set( SoundAsset.RESOURCE_NAME, "original/sound/" + name + ".wav" )
                 .set( SoundAsset.STREAMING, false )
-            .build().index();
+            .build( SoundAsset.class );
             
              soundIds[ i ] = soundSystem.getSoundBuilder()
                 .set( Sound.NAME, name )
                 .set( Sound.ASSET_ID, soundAssetId )
                 .set( Sound.LOOPING, false )
                 .set( Sound.CHANNEL, 1 )
-            .build().getId();
+            .build();
         }
         
         spriteAnimationHandler = new SpriteAnimationBuilder( context )
-            .setGroup( CaveService.GAME_UNIT_TEXTURE_KEY.group )
+            .setGroup( CaveSystem.GAME_UNIT_TEXTURE_KEY.group )
             .setLooping( true )
             .setNamePrefix( DIAMOND_NAME )
-            .setTextureAssetKey( CaveService.GAME_UNIT_TEXTURE_KEY )
+            .setTextureAssetKey( CaveSystem.GAME_UNIT_TEXTURE_KEY )
             .addSpritesToAnimation( 0, new Rectangle( 0, 10 * 32, 32, 32 ), 8, true )
         .build();
         
@@ -78,15 +78,14 @@ public final class Diamond extends UnitHandle {
         
         super.loadCaveData( context );
         
-        DiamondController controller = controllerSystem.getComponentBuilder( DiamondController.class )
+        controllerId = controllerSystem.getControllerBuilder()
             .set( EntityController.NAME, DIAMOND_NAME )
-        .build();
-        controllerId = controller.getId();
+        .build( DiamondController.class );
         
         prefabId = prefabSystem.getEntityPrefabBuilder()
             .set( EController.CONTROLLER_IDS, new int[] { controllerId, spriteAnimationHandler.getControllerId() } )
             .set( EntityPrefab.NAME, DIAMOND_NAME )
-            .set( ETransform.VIEW_ID, viewSystem.getViewId( CaveService.CAVE_VIEW_NAME ) )
+            .set( ETransform.VIEW_ID, viewSystem.getViewId( CaveSystem.CAVE_VIEW_NAME ) )
             .set( ESprite.SPRITE_ID, firstSpriteId )
             .set( ETile.MULTI_POSITION, false )
             .set( EUnit.UNIT_TYPE, type() )
@@ -97,11 +96,11 @@ public final class Diamond extends UnitHandle {
                 UnitAspect.ASLOPE, 
                 UnitAspect.WALKABLE
             ) )
-        .build().getId();
+        .build();
         prefabSystem.cacheComponents( prefabId, 200 );
             
         float updateRate = caveService.getUpdateRate();
-        controller.setUpdateResolution( updateRate );
+        controllerSystem.getController( controllerId ).setUpdateResolution( updateRate );
         spriteAnimationHandler.setFrameTime( 80 - (int) updateRate * 4 );
     }
 

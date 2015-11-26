@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import com.inari.dash.game.cave.CaveService;
+import com.inari.dash.game.cave.CaveSystem;
 import com.inari.firefly.Disposable;
 import com.inari.firefly.asset.AssetSystem;
 import com.inari.firefly.asset.AssetTypeKey;
@@ -24,7 +24,7 @@ public abstract class UnitHandle implements FFContextInitiable, Disposable {
     
     protected EntitySystem entitySystem;
     protected EntityPrefabSystem prefabSystem;
-    protected CaveService caveService;
+    protected CaveSystem caveService;
     protected AssetSystem assetSystem;
     protected ViewSystem viewSystem;
     protected SoundSystem soundSystem;
@@ -32,13 +32,13 @@ public abstract class UnitHandle implements FFContextInitiable, Disposable {
     
     @Override
     public void init( FFContext context ) throws FFInitException {
-        entitySystem = context.getComponent( EntitySystem.CONTEXT_KEY );
-        assetSystem = context.getComponent( AssetSystem.CONTEXT_KEY );
-        caveService = context.getComponent( CaveService.CONTEXT_KEY );
-        viewSystem = context.getComponent( ViewSystem.CONTEXT_KEY );
-        prefabSystem = context.getComponent( EntityPrefabSystem.CONTEXT_KEY );
-        soundSystem = context.getComponent( SoundSystem.CONTEXT_KEY );
-        controllerSystem = context.getComponent( ControllerSystem.CONTEXT_KEY );
+        entitySystem = context.getSystem( EntitySystem.CONTEXT_KEY );
+        assetSystem = context.getSystem( AssetSystem.CONTEXT_KEY );
+        caveService = context.getSystem( CaveSystem.CONTEXT_KEY );
+        viewSystem = context.getSystem( ViewSystem.CONTEXT_KEY );
+        prefabSystem = context.getSystem( EntityPrefabSystem.CONTEXT_KEY );
+        soundSystem = context.getSystem( SoundSystem.CONTEXT_KEY );
+        controllerSystem = context.getSystem( ControllerSystem.CONTEXT_KEY );
         
         initialized = true;
     }
@@ -52,8 +52,6 @@ public abstract class UnitHandle implements FFContextInitiable, Disposable {
             throw new FFInitException( "UnitHandle: " + getClass().getName() + " not initialized" );
         }
         
-        AssetSystem assetSystem = context.getComponent( AssetSystem.CONTEXT_KEY );
-        
         for ( AssetTypeKey assetKey : caveAssetsToReload ) {
             assetSystem.loadAsset( assetKey );
         }
@@ -63,8 +61,6 @@ public abstract class UnitHandle implements FFContextInitiable, Disposable {
         if ( !initialized ) {
             throw new FFInitException( "UnitHandle: " + getClass().getName() + " not initialized" );
         }
-        
-        AssetSystem assetSystem = context.getComponent( AssetSystem.CONTEXT_KEY );
         
         for ( AssetTypeKey assetKey : caveAssetsToReload ) {
             assetSystem.disposeAsset( assetKey );

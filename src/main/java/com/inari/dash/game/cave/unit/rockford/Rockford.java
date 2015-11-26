@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.Map;
 
 import com.inari.commons.geom.Rectangle;
-import com.inari.dash.game.cave.CaveService;
+import com.inari.dash.game.cave.CaveSystem;
 import com.inari.dash.game.cave.unit.EUnit;
 import com.inari.dash.game.cave.unit.UnitHandle;
 import com.inari.dash.game.cave.unit.UnitType;
@@ -27,10 +27,10 @@ import com.inari.firefly.system.FFInitException;
 public final class Rockford extends UnitHandle {
     
     public static final String ROCKFORD_NAME = "rockford";
-    public static final AssetNameKey ROCKFORD_SPRITE_ASSET_KEY = new AssetNameKey( CaveService.GAME_UNIT_TEXTURE_KEY.group, ROCKFORD_NAME );
-    public static final AssetNameKey ROCKFORD_SPACE_SOUND_ASSEET_KEY = new AssetNameKey( CaveService.CAVE_SOUND_GROUP_NAME, ROCKFORD_NAME + "_space" );
-    public static final AssetNameKey ROCKFORD_SAND_SOUND_ASSEET_KEY = new AssetNameKey( CaveService.CAVE_SOUND_GROUP_NAME, ROCKFORD_NAME + "_sand" );
-    public static final AssetNameKey ROCKFORD_COLLECT_SOUND_ASSEET_KEY = new AssetNameKey( CaveService.CAVE_SOUND_GROUP_NAME, ROCKFORD_NAME + "_collect" );
+    public static final AssetNameKey ROCKFORD_SPRITE_ASSET_KEY = new AssetNameKey( CaveSystem.GAME_UNIT_TEXTURE_KEY.group, ROCKFORD_NAME );
+    public static final AssetNameKey ROCKFORD_SPACE_SOUND_ASSEET_KEY = new AssetNameKey( CaveSystem.CAVE_SOUND_GROUP_NAME, ROCKFORD_NAME + "_space" );
+    public static final AssetNameKey ROCKFORD_SAND_SOUND_ASSEET_KEY = new AssetNameKey( CaveSystem.CAVE_SOUND_GROUP_NAME, ROCKFORD_NAME + "_sand" );
+    public static final AssetNameKey ROCKFORD_COLLECT_SOUND_ASSEET_KEY = new AssetNameKey( CaveSystem.CAVE_SOUND_GROUP_NAME, ROCKFORD_NAME + "_collect" );
     
     private SpriteAnimationHandler spriteAnimationHandler;
     private int controllerId;
@@ -49,10 +49,10 @@ public final class Rockford extends UnitHandle {
         createSounds();
         
         spriteAnimationHandler = new SpriteAnimationBuilder( context )
-            .setGroup( CaveService.GAME_UNIT_TEXTURE_KEY.group )
+            .setGroup( CaveSystem.GAME_UNIT_TEXTURE_KEY.group )
             .setLooping( true )
             .setNamePrefix( ROCKFORD_NAME )
-            .setTextureAssetKey( CaveService.GAME_UNIT_TEXTURE_KEY )
+            .setTextureAssetKey( CaveSystem.GAME_UNIT_TEXTURE_KEY )
             .setStatedAnimationType( RFSpriteAnimation.class )
             .setState( RFState.ENTERING.ordinal() )
             .addSpritesToAnimation( 0, new Rectangle( 32, 6 * 32, 32, 32 ), 2, true )
@@ -78,39 +78,39 @@ public final class Rockford extends UnitHandle {
     }
 
     private void createSounds() {
-        assetSystem.getAssetBuilderWithAutoLoad( SoundAsset.class )
+        assetSystem.getAssetBuilderWithAutoLoad()
             .set( SoundAsset.NAME, ROCKFORD_SPACE_SOUND_ASSEET_KEY.name )
             .set( SoundAsset.ASSET_GROUP, ROCKFORD_SPACE_SOUND_ASSEET_KEY.group )
             .set( SoundAsset.RESOURCE_NAME, "original/sound/walkSpace.wav" )
             .set( SoundAsset.STREAMING, false )
-        .buildAndNext()
+        .buildAndNext( SoundAsset.class )
             .set( SoundAsset.NAME, ROCKFORD_SAND_SOUND_ASSEET_KEY.name )
             .set( SoundAsset.ASSET_GROUP, ROCKFORD_SAND_SOUND_ASSEET_KEY.group )
             .set( SoundAsset.RESOURCE_NAME, "original/sound/walkSand.wav" )
             .set( SoundAsset.STREAMING, false )
-        .buildAndNext()
+        .buildAndNext( SoundAsset.class )
             .set( SoundAsset.NAME, ROCKFORD_COLLECT_SOUND_ASSEET_KEY.name )
             .set( SoundAsset.ASSET_GROUP, ROCKFORD_COLLECT_SOUND_ASSEET_KEY.group )
             .set( SoundAsset.RESOURCE_NAME, "original/sound/collectDiamond.wav" )
             .set( SoundAsset.STREAMING, false )
-        .build();
+        .build( SoundAsset.class );
         
         spaceSoundId = soundSystem.getSoundBuilder()
             .set( Sound.NAME, ROCKFORD_SPACE_SOUND_ASSEET_KEY.name )
             .set( Sound.ASSET_ID, assetSystem.getAssetId( ROCKFORD_SPACE_SOUND_ASSEET_KEY ) )
             .set( Sound.LOOPING, false )
-        .build().getId();
+        .build();
         sandSoundId = soundSystem.getSoundBuilder()
             .set( Sound.NAME, ROCKFORD_SAND_SOUND_ASSEET_KEY.name )
             .set( Sound.ASSET_ID, assetSystem.getAssetId( ROCKFORD_SAND_SOUND_ASSEET_KEY ) )
             .set( Sound.LOOPING, false )
-        .build().getId();
+        .build();
         collectSoundId = soundSystem.getSoundBuilder()
             .set( Sound.NAME, ROCKFORD_COLLECT_SOUND_ASSEET_KEY.name )
             .set( Sound.ASSET_ID, assetSystem.getAssetId( ROCKFORD_COLLECT_SOUND_ASSEET_KEY ) )
             .set( Sound.LOOPING, false )
-        .build().getId();
-        inSoundId = CaveService.CaveSoundKey.CRACK.id;
+        .build();
+        inSoundId = CaveSystem.CaveSoundKey.CRACK.id;
     }
 
     @Override
@@ -118,11 +118,10 @@ public final class Rockford extends UnitHandle {
         super.loadCaveData( context );
         
         float updateRate = caveService.getUpdateRate();
-        RFController controller = (RFController) controllerSystem.getComponentBuilder( RFController.class )
+        controllerId = controllerSystem.getControllerBuilder()
             .set( EntityController.NAME, ROCKFORD_NAME )
             .set( Controller.UPDATE_RESOLUTION, updateRate )
-        .build();
-        controllerId = controller.getId();
+        .build( RFController.class );
         
         spriteAnimationHandler.setFrameTime( RFState.ENTERING.ordinal(), 400 - (int) updateRate * 4 );
         spriteAnimationHandler.setFrameTime( RFState.APPEARING.ordinal(), 300 - (int) updateRate * 4 );
@@ -157,13 +156,13 @@ public final class Rockford extends UnitHandle {
     public final int createOne( int xGridPos, int yGridPos ) {
         rfEntityId = entitySystem.getEntityBuilderWithAutoActivation()
             .set( EController.CONTROLLER_IDS, new int[] { controllerId, spriteAnimationHandler.getControllerId() } )
-            .set( ETransform.VIEW_ID, viewSystem.getViewId( CaveService.CAVE_VIEW_NAME ) )
+            .set( ETransform.VIEW_ID, viewSystem.getViewId( CaveSystem.CAVE_VIEW_NAME ) )
             .set( ESprite.SPRITE_ID, firstSpriteId )
             .set( ETile.GRID_X_POSITION, xGridPos )
             .set( ETile.GRID_Y_POSITION, yGridPos )
             .set( EUnit.UNIT_TYPE, type() )
             .set( RFUnit.STATE, RFState.ENTERING )
-        .build().getId();
+        .build();
         return rfEntityId;
     }
 

@@ -20,10 +20,12 @@ import com.inari.firefly.renderer.tile.TileGrid;
 import com.inari.firefly.renderer.tile.TileGridSystem;
 import com.inari.firefly.sound.SoundAsset;
 import com.inari.firefly.system.FFContext;
+import com.inari.firefly.system.FFInitException;
+import com.inari.firefly.system.FFSystem;
 
-public class CaveService {
+public class CaveSystem implements FFSystem {
     
-    public static final TypedKey<CaveService> CONTEXT_KEY = TypedKey.create( "CaveService", CaveService.class );
+    public static final TypedKey<CaveSystem> CONTEXT_KEY = TypedKey.create( "CaveService", CaveSystem.class );
     public static final Map<String, UnitType> BDCFF_TYPES_MAP = new HashMap<String, UnitType>();
     
     public enum CaveState {
@@ -74,21 +76,28 @@ public class CaveService {
         }
     }
     
-    private final EntitySystem entitySystem;
-    private final TileGridSystem tileGridSystem;
+    private EntitySystem entitySystem;
+    private TileGridSystem tileGridSystem;
     
     CaveState caveState;
 
-    private final GameData gameData;
+    private GameData gameData;
     private CaveData caveData;
     private AmoebaData amoebaData;
     private TileGrid tileGrid = null;
     private char[] headerText = "%%%%%%%%%%%%%%%%%%%%%%%%".toCharArray();
-
-    public CaveService( FFContext context ) {
+    
+    @Override
+    public final void init( FFContext context ) throws FFInitException {
         gameData = context.getComponent( GameData.CONTEXT_KEY );
-        entitySystem = context.getComponent( EntitySystem.CONTEXT_KEY );
-        tileGridSystem = context.getComponent( TileGridSystem.CONTEXT_KEY );
+        entitySystem = context.getSystem( EntitySystem.CONTEXT_KEY );
+        tileGridSystem = context.getSystem( TileGridSystem.CONTEXT_KEY );
+    }
+
+    @Override
+    public final void dispose( FFContext context ) {
+        // TODO Auto-generated method stub
+        
     }
     
     public final void reset() {
@@ -295,7 +304,7 @@ public class CaveService {
             return;
         }
         
-        tileGrid = tileGridSystem.getTileGrid( CaveService.CAVE_TILE_GRID_NAME );
+        tileGrid = tileGridSystem.getTileGrid( CaveSystem.CAVE_TILE_GRID_NAME );
     }
 
 }

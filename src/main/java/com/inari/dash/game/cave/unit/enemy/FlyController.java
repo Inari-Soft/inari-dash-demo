@@ -18,14 +18,14 @@ public abstract class FlyController extends UnitController {
     
     @Override
     protected final void update( FFTimer timer, int entityId ) {
-        EUnit unit = entitySystem.getComponent( entityId, EUnit.class );
+        EUnit unit = context.getEntityComponent( entityId, EUnit.TYPE_KEY );
         
         if ( caveService.hasInSurrounding( entityId, UnitType.AMOEBA ) || 
              caveService.hasInSurrounding( entityId, UnitType.ROCKFORD, UnitAspect.ALIVE ) ||
              unit.isHit() 
          ) {
             
-            eventDispatcher.notify( new ActionEvent( UnitActionType.EXPLODE.index(), entityId ) );
+            context.notify( new ActionEvent( UnitActionType.EXPLODE.index(), entityId ) );
             return;
         }
         
@@ -35,13 +35,13 @@ public abstract class FlyController extends UnitController {
         if ( caveService.isOfType( entityId, newDirection, UnitType.SPACE ) ) {
             
             unit.setMovement( newDirection );
-            eventDispatcher.notify( new ActionEvent( UnitActionType.MOVE.index(), entityId ) );
+            context.notify( new ActionEvent( UnitActionType.MOVE.index(), entityId ) );
             return;
         }
         
         // if we have space on the way, move along
         if ( caveService.isOfType( entityId, currentDirection, UnitType.SPACE ) ) {
-            eventDispatcher.notify( new ActionEvent( UnitActionType.MOVE.index(), entityId ) );
+            context.notify( new ActionEvent( UnitActionType.MOVE.index(), entityId ) );
             return;
         }
         

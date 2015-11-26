@@ -24,8 +24,8 @@ public abstract class StoneController extends UnitController {
     @Override
     protected void update( FFTimer timer, int entityId ) {
         long update = timer.getTime();
-        EUnit unit = entitySystem.getComponent( entityId, EUnit.class );
-        ETile tile = entitySystem.getComponent( entityId, ETile.class );
+        EUnit unit = context.getEntityComponent( entityId, EUnit.TYPE_KEY );
+        ETile tile = context.getEntityComponent( entityId, ETile.TYPE_KEY );
         
         tmpPos.x = tile.getGridXPos();
         tmpPos.y = tile.getGridYPos();
@@ -35,7 +35,7 @@ public abstract class StoneController extends UnitController {
             // ... and below is empty
             if ( caveService.isOfType( tmpPos.x, tmpPos.y, Direction.SOUTH, UnitType.SPACE ) ) {
                 // ... keep falling
-                eventDispatcher.notify( new ActionEvent( UnitActionType.MOVE.type(),  entityId ) );
+                context.notify( new ActionEvent( UnitActionType.MOVE.type(),  entityId ) );
                 return;
             }
             
@@ -46,9 +46,9 @@ public abstract class StoneController extends UnitController {
             
             // stop falling and hit the object below
             unit.setMovement( Direction.NONE );
-            EUnit unitBelow = entitySystem.getComponent( 
+            EUnit unitBelow = context.getEntityComponent( 
                 caveService.getEntityId( tmpPos.x, tmpPos.y, Direction.SOUTH ), 
-                EUnit.class 
+                EUnit.TYPE_KEY 
             );
             unitBelow.setHit( true );
 
@@ -61,7 +61,7 @@ public abstract class StoneController extends UnitController {
             // start falling... or wait for next update
             unit.setMovement( Direction.SOUTH );
             playSample( update );
-            eventDispatcher.notify( new ActionEvent( UnitActionType.MOVE.type(),  entityId ) );
+            context.notify( new ActionEvent( UnitActionType.MOVE.type(),  entityId ) );
             return;
         }
         
@@ -81,7 +81,7 @@ public abstract class StoneController extends UnitController {
             
             // fall to the right
             unit.setMovement( Direction.EAST );
-            eventDispatcher.notify( 
+            context.notify( 
                 new ActionEvent( UnitActionType.MOVE.type(), entityId ) 
             );
             unit.setMovement( Direction.SOUTH );
@@ -95,7 +95,7 @@ public abstract class StoneController extends UnitController {
             
             // fall to the left
             unit.setMovement( Direction.WEST );
-            eventDispatcher.notify( 
+            context.notify( 
                 new ActionEvent( UnitActionType.MOVE.type(), entityId ) 
             );
             unit.setMovement( Direction.SOUTH );
@@ -112,7 +112,7 @@ public abstract class StoneController extends UnitController {
             if ( soundId < 0 ) {
                 return;
             }
-            eventDispatcher.notify( new SoundEvent( soundId, SoundEvent.Type.PLAY_SOUND ) );
+            context.notify( new SoundEvent( soundId, SoundEvent.Type.PLAY_SOUND ) );
             currentUpdate = update;
         }
     }

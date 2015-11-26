@@ -1,7 +1,6 @@
 package com.inari.dash.game.cave.unit.action;
 
-import com.inari.commons.event.IEventDispatcher;
-import com.inari.dash.game.cave.CaveService;
+import com.inari.dash.game.cave.CaveSystem;
 import com.inari.firefly.action.Action;
 import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.system.FFContext;
@@ -9,9 +8,9 @@ import com.inari.firefly.system.FFInitException;
 
 public abstract class UnitAction extends Action {
     
-    protected CaveService caveService;
+    protected FFContext context;
+    protected CaveSystem caveService;
     protected EntitySystem entitySystem;
-    protected IEventDispatcher eventDispatcher;
 
     protected UnitAction( int id ) {
         super( id );
@@ -19,9 +18,9 @@ public abstract class UnitAction extends Action {
     
     @Override
     public final void init( FFContext context ) throws FFInitException {
-        entitySystem = context.getComponent( EntitySystem.CONTEXT_KEY );
-        caveService = context.getComponent( CaveService.CONTEXT_KEY );
-        eventDispatcher = context.getComponent( FFContext.EVENT_DISPATCHER );
+        this.context = context;
+        entitySystem = context.getSystem( EntitySystem.CONTEXT_KEY );
+        caveService = context.getSystem( CaveSystem.CONTEXT_KEY );
     }
     
     @Override
