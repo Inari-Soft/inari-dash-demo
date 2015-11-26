@@ -8,10 +8,10 @@ import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.Entity;
 import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.renderer.sprite.ESprite;
+import com.inari.firefly.renderer.text.EText;
+import com.inari.firefly.renderer.text.TextSystem;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.task.Task;
-import com.inari.firefly.text.EText;
-import com.inari.firefly.text.TextSystem;
 
 public final class LoadGameSelection extends Task {
 

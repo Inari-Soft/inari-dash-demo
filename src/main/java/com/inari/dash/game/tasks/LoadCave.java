@@ -16,13 +16,13 @@ import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.filter.IColorFilter;
 import com.inari.firefly.libgdx.GdxFirefly;
 import com.inari.firefly.renderer.TextureAsset;
+import com.inari.firefly.renderer.text.EText;
+import com.inari.firefly.renderer.text.TextSystem;
 import com.inari.firefly.renderer.tile.TileGrid;
 import com.inari.firefly.renderer.tile.TileGrid.TileRenderMode;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.view.ViewSystem;
 import com.inari.firefly.task.Task;
-import com.inari.firefly.text.EText;
-import com.inari.firefly.text.TextSystem;
 
 public final class LoadCave extends Task {
 

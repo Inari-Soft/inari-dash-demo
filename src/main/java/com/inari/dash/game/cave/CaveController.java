@@ -26,6 +26,8 @@ import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.renderer.sprite.ESprite;
 import com.inari.firefly.renderer.sprite.SpriteAsset;
+import com.inari.firefly.renderer.text.EText;
+import com.inari.firefly.renderer.text.TextSystem;
 import com.inari.firefly.sound.event.SoundEvent;
 import com.inari.firefly.sound.event.SoundEvent.Type;
 import com.inari.firefly.state.event.WorkflowEvent;
@@ -41,8 +43,6 @@ import com.inari.firefly.system.UpdateEventListener;
 import com.inari.firefly.system.view.View;
 import com.inari.firefly.system.view.ViewSystem;
 import com.inari.firefly.task.event.TaskEvent;
-import com.inari.firefly.text.EText;
-import com.inari.firefly.text.TextSystem;
 
 public final class CaveController extends Controller {
     

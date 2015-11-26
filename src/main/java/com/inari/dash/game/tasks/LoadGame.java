@@ -4,6 +4,8 @@ import com.inari.dash.Configuration;
 import com.inari.dash.game.GameSystem;
 import com.inari.dash.game.tasks.InitGameWorkflow.TaskName;
 import com.inari.firefly.asset.AssetSystem;
+import com.inari.firefly.renderer.text.Font;
+import com.inari.firefly.renderer.text.TextSystem;
 import com.inari.firefly.sound.Sound;
 import com.inari.firefly.sound.SoundAsset;
 import com.inari.firefly.sound.SoundSystem;
@@ -12,8 +14,6 @@ import com.inari.firefly.system.FFContext;
 import com.inari.firefly.task.Task;
 import com.inari.firefly.task.event.TaskEvent;
 import com.inari.firefly.task.event.TaskEvent.Type;
-import com.inari.firefly.text.Font;
-import com.inari.firefly.text.TextSystem;
 
 public final class LoadGame extends Task {
 
