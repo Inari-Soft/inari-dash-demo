@@ -6,6 +6,7 @@ import java.util.Map;
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.aspect.AspectSetBuilder;
 import com.inari.dash.game.cave.CaveSystem;
+import com.inari.dash.game.cave.CaveSystem.SoundChannel;
 import com.inari.dash.game.cave.unit.EUnit;
 import com.inari.dash.game.cave.unit.UnitAspect;
 import com.inari.dash.game.cave.unit.UnitHandle;
@@ -54,7 +55,7 @@ public final class Diamond extends UnitHandle {
                 .set( Sound.NAME, name )
                 .set( Sound.ASSET_ID, soundAssetId )
                 .set( Sound.LOOPING, false )
-                .set( Sound.CHANNEL, 1 )
+                .set( Sound.CHANNEL, SoundChannel.DIAMOND.ordinal() )
             .build();
         }
         

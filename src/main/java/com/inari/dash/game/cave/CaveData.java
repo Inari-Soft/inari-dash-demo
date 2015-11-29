@@ -267,7 +267,7 @@ public class CaveData {
         modified = true;
     }
 
-    public void reset() {
+    public void resetPlayerData() {
         time = timeBackup;
         diamondsCollected = 0;
         modified = true;

@@ -65,8 +65,7 @@ public final class GameSystem implements FFSystem {
 
     @Override
     public final void dispose( FFContext context ) {
-        // TODO Auto-generated method stub
-        
+
     }
     
     private void initEntityIds() {
@@ -121,6 +120,10 @@ public final class GameSystem implements FFSystem {
 
     final void select() {
         selected = true;
+    }
+    
+    public final void resetSelection() {
+        selected = false;
     }
     
     final void nextSelectionMode() {
@@ -187,5 +190,6 @@ public final class GameSystem implements FFSystem {
             selectedCave = 0;
         }
     }
+
 
 }

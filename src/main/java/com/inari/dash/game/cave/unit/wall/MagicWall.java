@@ -6,6 +6,7 @@ import java.util.Map;
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.aspect.AspectSetBuilder;
 import com.inari.dash.game.cave.CaveSystem;
+import com.inari.dash.game.cave.CaveSystem.SoundChannel;
 import com.inari.dash.game.cave.unit.EUnit;
 import com.inari.dash.game.cave.unit.UnitAspect;
 import com.inari.dash.game.cave.unit.UnitHandle;
@@ -54,7 +55,7 @@ public final class MagicWall extends UnitHandle {
         soundId = soundSystem.getSoundBuilder()
             .set( Sound.NAME, MAGIC_WALL_SOUND_ASSEET_KEY.name )
             .set( Sound.ASSET_ID, assetSystem.getAssetId( MAGIC_WALL_SOUND_ASSEET_KEY ) )
-            .set( Sound.CHANNEL, 2 )
+            .set( Sound.CHANNEL, SoundChannel.MAGIC_WALL.ordinal() )
             .set( Sound.LOOPING, true )
         .build();
         
@@ -79,10 +80,11 @@ public final class MagicWall extends UnitHandle {
     public final void loadCaveData( FFContext context ) {
         super.loadCaveData( context );
         
+        controllerId = controllerSystem.getControllerBuilder()
+            .set( EntityController.NAME, MAGIC_WALL_NAME )
+        .build( MagicWallController.class );
         MagicWallController controller = controllerSystem.getControllerAs( 
-            controllerSystem.getControllerBuilder()
-                .set( EntityController.NAME, MAGIC_WALL_NAME )
-            .build( MagicWallController.class ),
+            controllerId,
             MagicWallController.class
         );
         float updateRate = caveService.getUpdateRate();

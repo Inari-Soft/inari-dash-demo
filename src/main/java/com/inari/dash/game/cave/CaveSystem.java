@@ -28,6 +28,15 @@ public class CaveSystem implements FFSystem {
     public static final TypedKey<CaveSystem> CONTEXT_KEY = TypedKey.create( "CaveService", CaveSystem.class );
     public static final Map<String, UnitType> BDCFF_TYPES_MAP = new HashMap<String, UnitType>();
     
+    public enum SoundChannel {
+        CAVE,
+        DIAMOND,
+        ROCK,
+        MAGIC_WALL,
+        AMOEBA,
+        COLLECT
+    }
+    
     public enum CaveState {
         INIT,
         ENTERING,
@@ -49,7 +58,6 @@ public class CaveSystem implements FFSystem {
     
     public static enum CaveSoundKey {
         COVER( "original/sound/cover.wav", true ),
-        EXPLOSION( "original/sound/explosion.wav", false ),
         TIMEOUT1( "original/sound/timeout1.wav", false ),
         TIMEOUT2( "original/sound/timeout2.wav", false ),
         TIMEOUT3( "original/sound/timeout3.wav", false ),
@@ -144,7 +152,11 @@ public class CaveSystem implements FFSystem {
     }
 
     public final float getUpdateRate() {
-        return caveData.getUpdateRate() + 2;
+        return caveData.getUpdateRate() + 3;
+    }
+    
+    public final boolean updateCamera() {
+        return caveState == CaveState.PLAY || caveState == CaveState.ENTERING || caveState == CaveState.INIT;
     }
     
     public final void setEntityId( int entityId, int x, int y ) {

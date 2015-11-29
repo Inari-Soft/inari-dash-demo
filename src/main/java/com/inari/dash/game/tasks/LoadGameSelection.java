@@ -85,8 +85,8 @@ public final class LoadGameSelection extends Task {
         
         context.getComponentBuilder( Controller.TYPE_KEY )
             .set( Controller.NAME, GameSystem.GAME_SELECTION_CONTROLLER_NAME )
+            .set( Controller.UPDATE_RESOLUTION, 5f )
         .build( GameSelectionController.class  );
-        
     }
 
 }

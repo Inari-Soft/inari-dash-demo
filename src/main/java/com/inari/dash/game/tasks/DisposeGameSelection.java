@@ -16,6 +16,9 @@ public final class DisposeGameSelection extends Task {
     public void run( FFContext context ) {
         EntitySystem entitySystem = context.getSystem( EntitySystem.CONTEXT_KEY );
         ControllerSystem controllerSystem = context.getSystem( ControllerSystem.CONTEXT_KEY );
+        GameSystem gameSystem = context.getSystem( GameSystem.CONTEXT_KEY );
+        
+        gameSystem.resetSelection();
         
         controllerSystem.deleteController( GameSystem.GAME_SELECTION_CONTROLLER_NAME );
 

@@ -42,6 +42,7 @@ public final class LoadCave extends Task {
 
         caveSystem.reset();
         CaveData caveData = caveSystem.getCaveData();
+        caveData.resetPlayerData();
 
         // load unit texture asset with cave colors
         TextureAsset unitTextureAsset = assetSystem.getAsset( CaveSystem.GAME_UNIT_TEXTURE_KEY, TextureAsset.class );

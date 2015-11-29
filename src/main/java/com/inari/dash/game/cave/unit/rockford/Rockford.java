@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.inari.commons.geom.Rectangle;
 import com.inari.dash.game.cave.CaveSystem;
+import com.inari.dash.game.cave.CaveSystem.SoundChannel;
 import com.inari.dash.game.cave.unit.EUnit;
 import com.inari.dash.game.cave.unit.UnitHandle;
 import com.inari.dash.game.cave.unit.UnitType;
@@ -109,6 +110,7 @@ public final class Rockford extends UnitHandle {
             .set( Sound.NAME, ROCKFORD_COLLECT_SOUND_ASSEET_KEY.name )
             .set( Sound.ASSET_ID, assetSystem.getAssetId( ROCKFORD_COLLECT_SOUND_ASSEET_KEY ) )
             .set( Sound.LOOPING, false )
+            .set( Sound.CHANNEL, SoundChannel.COLLECT.ordinal() )
         .build();
         inSoundId = CaveSystem.CaveSoundKey.CRACK.id;
     }

@@ -1,6 +1,7 @@
 package com.inari.dash.game.cave.unit.misc;
 
 import com.inari.dash.game.cave.CaveSystem;
+import com.inari.dash.game.cave.CaveSystem.SoundChannel;
 import com.inari.dash.game.cave.unit.UnitHandle;
 import com.inari.firefly.asset.AssetNameKey;
 import com.inari.firefly.entity.EntityController;
@@ -32,7 +33,7 @@ public abstract class AbstractExplosionHandle  extends UnitHandle {
         soundId = soundSystem.getSoundBuilder()
             .set( Sound.NAME, EXPLOSION_SOUND_ASSEET_KEY.name )
             .set( Sound.ASSET_ID, assetSystem.getAssetId( EXPLOSION_SOUND_ASSEET_KEY ) )
-            .set( Sound.CHANNEL, 2 )
+            .set( Sound.CHANNEL, SoundChannel.ROCK.ordinal() )
             .set( Sound.LOOPING, false )
         .build();
 

@@ -9,6 +9,7 @@ import com.inari.dash.game.GameInfo;
 import com.inari.dash.game.GameSystem;
 import com.inari.dash.game.cave.CaveSystem;
 import com.inari.dash.game.cave.CaveSystem.CaveSoundKey;
+import com.inari.dash.game.cave.CaveSystem.SoundChannel;
 import com.inari.dash.game.cave.unit.UnitType;
 import com.inari.dash.game.cave.unit.action.UnitActionType;
 import com.inari.dash.game.io.BDCFFGameDataLoader;
@@ -117,7 +118,7 @@ public final class LoadPlay extends Task {
                 .set( Sound.NAME, caveSoundKey.assetKey.name )
                 .set( Sound.ASSET_ID, caveSoundKey.id )
                 .set( Sound.LOOPING, caveSoundKey.looping )
-                .set( Sound.CHANNEL, 4 )
+                .set( Sound.CHANNEL, SoundChannel.CAVE.ordinal() )
             .build( caveSoundKey.id );
         }
         
@@ -145,20 +146,21 @@ public final class LoadPlay extends Task {
         return new CameraPivot() {
             
             private ETile playerTile = null;
+            private CaveSystem caveSystem;
 
             @Override
             public final void init( FFContext context ) throws FFInitException {
+                caveSystem = context.getSystem( CaveSystem.CONTEXT_KEY );
                 playerTile = context.getEntityComponent( UnitType.ROCKFORD.getHandle().getEntityId(), ETile.TYPE_KEY );
             }
 
             @Override
             public final Position getPivot() {
-                if ( playerTile != null ) {
+                if ( caveSystem.updateCamera() ) {
                     tmpPos.x = unitWidth * playerTile.getGridXPos();
                     tmpPos.y = unitHeight * playerTile.getGridYPos();
-                    return tmpPos;
                 }
-                return null;
+                return tmpPos;
             }
         };
     } 

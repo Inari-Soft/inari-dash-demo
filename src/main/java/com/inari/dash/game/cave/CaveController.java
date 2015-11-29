@@ -305,10 +305,10 @@ public final class CaveController extends Controller {
             width = caveData.getCaveWidth() * 2;
             height = caveData.getCaveHeight() * 2;
             if ( viewBounds.width / 16 < width ) {
-                width = viewBounds.width / 16;
-            }
+                width = viewBounds.width / 16 + 2;
+            } 
             if ( viewBounds.height / 16 < height ) {
-                height = viewBounds.height / 16;
+                height = viewBounds.height / 16 + 2;
             }
             
             size = width * height;

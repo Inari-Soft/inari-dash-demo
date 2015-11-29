@@ -106,7 +106,7 @@ public final class AmoebaController extends UnitController {
             }
             return true;
         }
-        return false;
+        return caveService.hasAspect( tmpPos.x, tmpPos.y, UnitAspect.ALIVE );
     }
 
     private void transformTo( UnitType type, int entityId, Set<Position> gridPositions ) {

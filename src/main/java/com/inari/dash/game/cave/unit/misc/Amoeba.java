@@ -7,6 +7,7 @@ import com.inari.commons.geom.Position;
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.aspect.AspectSetBuilder;
 import com.inari.dash.game.cave.CaveSystem;
+import com.inari.dash.game.cave.CaveSystem.SoundChannel;
 import com.inari.dash.game.cave.unit.EUnit;
 import com.inari.dash.game.cave.unit.UnitAspect;
 import com.inari.dash.game.cave.unit.UnitHandle;
@@ -53,7 +54,7 @@ public final class Amoeba extends UnitHandle {
         soundId = soundSystem.getSoundBuilder()
             .set( Sound.NAME, MOEBA_SOUND_ASSEET_KEY.name )
             .set( Sound.ASSET_ID, assetSystem.getAssetId( MOEBA_SOUND_ASSEET_KEY ) )
-            .set( Sound.CHANNEL, 3 )
+            .set( Sound.CHANNEL, SoundChannel.AMOEBA.ordinal() )
             .set( Sound.LOOPING, true )
         .build();
         

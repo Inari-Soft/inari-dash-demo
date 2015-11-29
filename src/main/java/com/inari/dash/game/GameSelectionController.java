@@ -10,9 +10,6 @@ import com.inari.firefly.system.FFTimer;
 public final class GameSelectionController extends Controller {
 
     private final GameSystem gameSystem;
-    
-    private final int delay = 10;
-    private int changed = 0;
 
     protected GameSelectionController( int id, FFContext context ) {
         super( id );
@@ -21,11 +18,6 @@ public final class GameSelectionController extends Controller {
 
     @Override
     public final void update( FFTimer timer ) {
-        if ( changed > 0 ) {
-            changed--;
-            return;
-        }
-        
         if ( Gdx.input.isKeyPressed( Input.Keys.DOWN ) || Gdx.input.isKeyPressed( Input.Keys.S ) ) {
             gameSystem.nextSelectionMode();
         } else if ( Gdx.input.isKeyPressed( Input.Keys.UP ) || Gdx.input.isKeyPressed( Input.Keys.W ) ) {
@@ -46,7 +38,6 @@ public final class GameSelectionController extends Controller {
             gameSystem.select();
         }
         
-        changed = delay;
         gameSystem.update();
     }
 
