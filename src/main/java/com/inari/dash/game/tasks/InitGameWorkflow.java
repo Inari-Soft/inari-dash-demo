@@ -67,8 +67,8 @@ public class InitGameWorkflow extends Task {
 
     @Override
     public void run( FFContext context ) {
-        StateSystem stateSystem = context.getSystem( StateSystem.CONTEXT_KEY );
-        TaskSystem taskSystem = context.getSystem( TaskSystem.CONTEXT_KEY );
+        StateSystem stateSystem = context.getSystem( StateSystem.SYSTEM_KEY );
+        TaskSystem taskSystem = context.getSystem( TaskSystem.SYSTEM_KEY );
         
         for ( TaskName taskName : TaskName.values() ) {
             taskSystem.getTaskBuilder()

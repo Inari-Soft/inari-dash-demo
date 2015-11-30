@@ -19,8 +19,8 @@ public abstract class UnitAction extends Action {
     @Override
     public final void init( FFContext context ) throws FFInitException {
         this.context = context;
-        entitySystem = context.getSystem( EntitySystem.CONTEXT_KEY );
-        caveService = context.getSystem( CaveSystem.CONTEXT_KEY );
+        entitySystem = context.getSystem( EntitySystem.SYSTEM_KEY );
+        caveService = context.getSystem( CaveSystem.SYSTEM_KEY );
     }
     
     @Override

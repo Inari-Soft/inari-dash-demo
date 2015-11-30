@@ -44,12 +44,12 @@ public final class Diamond extends UnitHandle {
         soundIds = new int[ 8 ];
         for ( int i = 0; i < 8; i++ ) {
             String name = DIAMOND_NAME + ( i + 1 );
-            int soundAssetId = assetSystem.getAssetBuilderWithAutoLoad()
+            int soundAssetId = assetSystem.getAssetBuilder()
                 .set( SoundAsset.NAME, name )
                 .set( SoundAsset.ASSET_GROUP, CaveSystem.CAVE_SOUND_GROUP_NAME )
                 .set( SoundAsset.RESOURCE_NAME, "original/sound/" + name + ".wav" )
                 .set( SoundAsset.STREAMING, false )
-            .build( SoundAsset.class );
+            .activate( SoundAsset.class );
             
              soundIds[ i ] = soundSystem.getSoundBuilder()
                 .set( Sound.NAME, name )
@@ -137,7 +137,7 @@ public final class Diamond extends UnitHandle {
         ETile tile = entitySystem.getComponent( entityId , ETile.class );
         tile.setGridXPos( xGridPos );
         tile.setGridYPos( yGridPos );
-        entitySystem.activate( entityId );
+        entitySystem.activateEntity( entityId );
         return entityId;
     }
 

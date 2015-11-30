@@ -7,6 +7,7 @@ import com.inari.commons.geom.Direction;
 import com.inari.commons.geom.Position;
 import com.inari.commons.lang.TypedKey;
 import com.inari.commons.lang.aspect.Aspect;
+import com.inari.commons.lang.indexed.IndexedTypeKey;
 import com.inari.commons.lang.indexed.Indexer;
 import com.inari.dash.game.GameData;
 import com.inari.dash.game.cave.unit.EUnit;
@@ -25,7 +26,7 @@ import com.inari.firefly.system.FFSystem;
 
 public class CaveSystem implements FFSystem {
     
-    public static final TypedKey<CaveSystem> CONTEXT_KEY = TypedKey.create( "CaveService", CaveSystem.class );
+    public static final FFSystemTypeKey<CaveSystem> SYSTEM_KEY = FFSystemTypeKey.create( CaveSystem.class );
     public static final Map<String, UnitType> BDCFF_TYPES_MAP = new HashMap<String, UnitType>();
     
     public enum SoundChannel {
@@ -96,10 +97,20 @@ public class CaveSystem implements FFSystem {
     private char[] headerText = "%%%%%%%%%%%%%%%%%%%%%%%%".toCharArray();
     
     @Override
+    public final IndexedTypeKey indexedTypeKey() {
+        return SYSTEM_KEY;
+    }
+
+    @Override
+    public final FFSystemTypeKey<CaveSystem> systemTypeKey() {
+        return SYSTEM_KEY;
+    }
+    
+    @Override
     public final void init( FFContext context ) throws FFInitException {
         gameData = context.getComponent( GameData.CONTEXT_KEY );
-        entitySystem = context.getSystem( EntitySystem.CONTEXT_KEY );
-        tileGridSystem = context.getSystem( TileGridSystem.CONTEXT_KEY );
+        entitySystem = context.getSystem( EntitySystem.SYSTEM_KEY );
+        tileGridSystem = context.getSystem( TileGridSystem.SYSTEM_KEY );
     }
 
     @Override

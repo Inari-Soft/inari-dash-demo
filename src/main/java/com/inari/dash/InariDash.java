@@ -47,8 +47,8 @@ public class InariDash extends GdxFFApplicationAdapter {
         // TODO load from attribute map
         Configuration configuration = new Configuration();
         context.setComponent( configuration );
-        context.loadSystem( ActionSystem.CONTEXT_KEY );
-        context.loadSystem( GameSystem.CONTEXT_KEY );
+        context.loadSystem( ActionSystem.SYSTEM_KEY );
+        context.loadSystem( GameSystem.SYSTEM_KEY );
         
         int startTaskId = context.getComponentBuilder( Task.TYPE_KEY )
             .set( Task.REMOVE_AFTER_RUN, true )

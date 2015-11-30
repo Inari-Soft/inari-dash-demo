@@ -10,7 +10,7 @@ public final class GameExitCondition implements StateChangeCondition {
 
     @Override
     public final boolean check( FFContext context, Workflow workflow, FFTimer timer ) {
-        GameSystem selectionService = context.getSystem( GameSystem.CONTEXT_KEY );
+        GameSystem selectionService = context.getSystem( GameSystem.SYSTEM_KEY );
         return ( selectionService.isSelected() && selectionService.getMode() == SelectionMode.EXIT );
     }
 

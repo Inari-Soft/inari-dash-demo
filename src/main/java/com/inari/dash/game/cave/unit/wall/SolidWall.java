@@ -44,13 +44,13 @@ public final class SolidWall extends UnitHandle {
     public void loadCaveData( FFContext context ) {
         super.loadCaveData( context );
         
-        solidWallEntityId = entitySystem.getEntityBuilderWithAutoActivation()
+        solidWallEntityId = entitySystem.getEntityBuilder()
             .set( ETransform.VIEW_ID, viewSystem.getViewId( CaveSystem.CAVE_VIEW_NAME ) )
             .set( ETile.MULTI_POSITION, true )
             .set( ESprite.SPRITE_ID, assetSystem.getAssetId( SOLID_WALL_SPRITE_ASSET_KEY ) )
             .set( EUnit.UNIT_TYPE, type() )
             .set( EUnit.ASPECTS, AspectSetBuilder.create() )
-        .build();
+        .activate();
     }
 
     @Override

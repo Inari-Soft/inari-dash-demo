@@ -22,9 +22,9 @@ public class TwoViewTest extends GdxFFTestAdapter {
 
     @Override
     public void initTest( FFContext context ) {
-        ViewSystem viewSystem = context.getSystem( ViewSystem.CONTEXT_KEY );
+        ViewSystem viewSystem = context.getSystem( ViewSystem.SYSTEM_KEY );
         
-        viewSystem.getViewBuilderWithAutoActivation()
+        viewSystem.getViewBuilder()
             .set( View.NAME, "HEADER_VIEW_NAME" )
             .set( View.LAYERING_ENABLED, false )
             .set( View.BOUNDS, new Rectangle( 0, 0, 800, 32 ) )
@@ -36,11 +36,11 @@ public class TwoViewTest extends GdxFFTestAdapter {
             .set( View.BOUNDS, new Rectangle( 0, 32, 800, 600 - 32 ) )
             .set( View.WORLD_POSITION, new Position( 10, 20 ) )
             .set( View.CLEAR_COLOR, new RGBColor( 0, 0, 0, 1 ) )
-        .build();
+        .activate();
         
         Configuration globalAssetData = new Configuration();
-        AssetSystem assetSystem = context.getSystem( AssetSystem.CONTEXT_KEY );
-        EntitySystem entitySystem = context.getSystem( EntitySystem.CONTEXT_KEY );
+        AssetSystem assetSystem = context.getSystem( AssetSystem.SYSTEM_KEY );
+        EntitySystem entitySystem = context.getSystem( EntitySystem.SYSTEM_KEY );
         
         assetSystem
             .getAssetBuilder()
@@ -61,7 +61,7 @@ public class TwoViewTest extends GdxFFTestAdapter {
         
         assetSystem.loadAssets( GameSystem.GAME_FONT_TEXTURE_KEY.group );
         
-        entitySystem.getEntityBuilderWithAutoActivation()
+        entitySystem.getEntityBuilder()
               .set( ETransform.VIEW_ID, viewSystem.getViewId( "HEADER_VIEW_NAME" ) )
               .set( ETransform.XPOSITION, 0 )
               .set( ETransform.YPOSITION, 0 )
@@ -71,9 +71,7 @@ public class TwoViewTest extends GdxFFTestAdapter {
               .set( ETransform.XPOSITION, 0 )
               .set( ETransform.YPOSITION, 0 )
               .set( ESprite.SPRITE_ID, spriteAssetId )
-          .build();
-
-        
+          .activate();
     }
 
     @Override

@@ -70,8 +70,8 @@ public final class CaveController extends Controller {
     protected CaveController( int id, FFContext context ) {
         super( id );
         this.context = context;
-        caveService = context.getSystem( CaveSystem.CONTEXT_KEY ); 
-        entitySystem = context.getSystem( EntitySystem.CONTEXT_KEY );
+        caveService = context.getSystem( CaveSystem.SYSTEM_KEY ); 
+        entitySystem = context.getSystem( EntitySystem.SYSTEM_KEY );
         secondTimer = context.getTimer().createUpdateScheduler( 1 );
         exitEntityId = UnitType.EXIT.getHandle().getEntityId();
         playerEntityId = UnitType.ROCKFORD.getHandle().getEntityId();
@@ -226,16 +226,16 @@ public final class CaveController extends Controller {
     private void gameOverHeader() {
         clearHeader();
         caveService.caveState = CaveState.GAME_OVER;
-        TextSystem textSystem = context.getSystem( TextSystem.CONTEXT_KEY );
-        ViewSystem viewSystem = context.getSystem( ViewSystem.CONTEXT_KEY );
-        entitySystem.getEntityBuilderWithAutoActivation()
+        TextSystem textSystem = context.getSystem( TextSystem.SYSTEM_KEY );
+        ViewSystem viewSystem = context.getSystem( ViewSystem.SYSTEM_KEY );
+        entitySystem.getEntityBuilder()
             .set( ETransform.VIEW_ID, viewSystem.getViewId( CaveSystem.HEADER_VIEW_NAME ) )
             .set( ETransform.XPOSITION, 100 )
             .set( ETransform.YPOSITION, 8 )
             .set( EText.FONT_ID, textSystem.getFontId( GameSystem.GAME_FONT_TEXTURE_KEY.name ) )
             .set( EText.TEXT_STRING, "%%% GAME OVER %%%" )
             .set( EText.TINT_COLOR, GameSystem.YELLOW_FONT_COLOR )
-        .build();
+        .activate();
     }
     
     private void updatePlayHeader( GameData gameData, CaveData caveData ) {
@@ -291,8 +291,8 @@ public final class CaveController extends Controller {
 
         CaveInitScene( FFContext context ) {
             lowerSystem = context.getSystemInterface();
-            AssetSystem assetSystem = context.getSystem( AssetSystem.CONTEXT_KEY );
-            ViewSystem viewSystem = context.getSystem( ViewSystem.CONTEXT_KEY );
+            AssetSystem assetSystem = context.getSystem( AssetSystem.SYSTEM_KEY );
+            ViewSystem viewSystem = context.getSystem( ViewSystem.SYSTEM_KEY );
             CaveData caveData = caveService.getCaveData();
             
             context.registerListener( UpdateEvent.class, this );
@@ -319,12 +319,12 @@ public final class CaveController extends Controller {
             
             for ( int i = 0; i < 3; i++ ) {
                 int offset = 4 * i;
-                spriteData[ i ] = assetSystem.getAssetBuilderWithAutoLoad()
+                spriteData[ i ] = assetSystem.getAssetBuilder()
                     .set( SpriteAsset.NAME, "introTileSprite" + i )
                     .set( SpriteAsset.ASSET_GROUP, CaveSystem.GAME_UNIT_TEXTURE_KEY.group )
                     .set( SpriteAsset.TEXTURE_ID, assetSystem.getAssetId( CaveSystem.GAME_UNIT_TEXTURE_KEY ) )
                     .set( SpriteAsset.TEXTURE_REGION, new Rectangle( 32 + offset, ( 6 * 32 ) + offset, 16, 16 ) )
-                .build( SpriteAsset.class );
+                .activate( SpriteAsset.class );
             }
             spriteData[ 3 ] = 0;
             tmpSprite.setSpriteId( spriteData[ spriteData[ 3 ] ] );
@@ -374,7 +374,7 @@ public final class CaveController extends Controller {
             context.disposeListener( UpdateEvent.class, this );
             context.disposeListener( RenderEvent.class, this );
             
-            AssetSystem assetSystem = context.getSystem( AssetSystem.CONTEXT_KEY );
+            AssetSystem assetSystem = context.getSystem( AssetSystem.SYSTEM_KEY );
             for ( int i = 0; i < 3; i++ ) {
                 assetSystem.deleteAsset( new AssetTypeKey( spriteData[ i ], SpriteAsset.class ) );
             }

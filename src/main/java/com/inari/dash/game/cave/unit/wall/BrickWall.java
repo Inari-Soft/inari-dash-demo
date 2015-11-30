@@ -44,7 +44,7 @@ public class BrickWall extends UnitHandle {
     public void loadCaveData( FFContext context ) {
         super.loadCaveData( context );
         
-        brickWallEntityId = entitySystem.getEntityBuilderWithAutoActivation()
+        brickWallEntityId = entitySystem.getEntityBuilder()
             .set( ETransform.VIEW_ID, viewSystem.getViewId( CaveSystem.CAVE_VIEW_NAME ) )
             .set( ETile.MULTI_POSITION, true )
             .set( ESprite.SPRITE_ID, assetSystem.getAssetId( BRICK_WALL_SPRITE_ASSET_KEY ) )
@@ -53,7 +53,7 @@ public class BrickWall extends UnitHandle {
                 UnitAspect.ASLOPE, 
                 UnitAspect.DESTRUCTIBLE
             ) )
-        .build();
+        .activate();
     }
 
     @Override

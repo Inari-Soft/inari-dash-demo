@@ -10,7 +10,7 @@ public final class StartGameCondition implements StateChangeCondition {
 
     @Override
     public final boolean check( FFContext context, Workflow workflow, FFTimer timer ) {
-        GameSystem gameSystem = context.getSystem( GameSystem.CONTEXT_KEY );
+        GameSystem gameSystem = context.getSystem( GameSystem.SYSTEM_KEY );
         SelectionMode mode = gameSystem.getMode();
         return ( gameSystem.isSelected() && ( mode == SelectionMode.CAVE_SELECTION || mode == SelectionMode.GAME_SELECTION ) );
     }

@@ -118,7 +118,7 @@ public final class Butterfly extends UnitHandle {
         tile.setGridXPos( xGridPos );
         tile.setGridYPos( yGridPos );
         unit.setMovement( INIT_DIRECTION_OF_TYPE.get( type ) );
-        entitySystem.activate( entityId );
+        entitySystem.activateEntity( entityId );
         return entityId;
     }
 

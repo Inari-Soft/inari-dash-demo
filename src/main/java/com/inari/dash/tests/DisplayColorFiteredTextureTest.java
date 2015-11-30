@@ -30,8 +30,8 @@ public class DisplayColorFiteredTextureTest extends GdxFFTestAdapter {
         DynamicAttribueMapper.addDynamicAttribute( GdxFirefly.DynamicAttributes.TEXTURE_COLOR_FILTER_NAME );
         
         Configuration globalAssetData = new Configuration();
-        AssetSystem assetSystem = context.getSystem( AssetSystem.CONTEXT_KEY );
-        EntitySystem entitySystem = context.getSystem( EntitySystem.CONTEXT_KEY );
+        AssetSystem assetSystem = context.getSystem( AssetSystem.SYSTEM_KEY );
+        EntitySystem entitySystem = context.getSystem( EntitySystem.SYSTEM_KEY );
         
         TypedKey<IColorFilter> colorFilterKey = TypedKey.create( "colorFilterKey", IColorFilter.class );
         ColorReplaceMapFitler colorFilter = new ColorReplaceMapFitler( createColorReplaceMap() );
@@ -57,16 +57,13 @@ public class DisplayColorFiteredTextureTest extends GdxFFTestAdapter {
         
         assetSystem.loadAssets( GameSystem.GAME_FONT_TEXTURE_KEY.group );
         
-        int entityId = entitySystem
+        entitySystem
               .getEntityBuilder()
                   .set( ETransform.VIEW_ID, 0 )
                   .set( ETransform.XPOSITION, 10 )
                   .set( ETransform.YPOSITION, 10 )
                   .set( ESprite.SPRITE_ID, spriteAssetId )
-              .build();
-              
-        entitySystem.activate( entityId );
-
+              .activate();
     }
 
     private Map<Integer, Integer> createColorReplaceMap() {

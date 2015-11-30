@@ -19,11 +19,11 @@ public final class DisposeCave extends Task {
 
     @Override
     public final void run( FFContext context ) {
-        AssetSystem assetSystem = context.getSystem( AssetSystem.CONTEXT_KEY );
-        TileGridSystem tileGridSystem = context.getSystem( TileGridSystem.CONTEXT_KEY );
-        ControllerSystem controllerSystem = context.getSystem( ControllerSystem.CONTEXT_KEY );
-        EntitySystem entitySystem = context.getSystem( EntitySystem.CONTEXT_KEY );
-        ViewSystem viewSystem = context.getSystem( ViewSystem.CONTEXT_KEY );
+        AssetSystem assetSystem = context.getSystem( AssetSystem.SYSTEM_KEY );
+        TileGridSystem tileGridSystem = context.getSystem( TileGridSystem.SYSTEM_KEY );
+        ControllerSystem controllerSystem = context.getSystem( ControllerSystem.SYSTEM_KEY );
+        EntitySystem entitySystem = context.getSystem( EntitySystem.SYSTEM_KEY );
+        ViewSystem viewSystem = context.getSystem( ViewSystem.SYSTEM_KEY );
 
         // dispose all units
         for ( UnitType unitType : UnitType.values() ) {

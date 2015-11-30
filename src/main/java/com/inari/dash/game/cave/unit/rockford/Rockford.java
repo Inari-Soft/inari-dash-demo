@@ -79,22 +79,22 @@ public final class Rockford extends UnitHandle {
     }
 
     private void createSounds() {
-        assetSystem.getAssetBuilderWithAutoLoad()
+        assetSystem.getAssetBuilder()
             .set( SoundAsset.NAME, ROCKFORD_SPACE_SOUND_ASSEET_KEY.name )
             .set( SoundAsset.ASSET_GROUP, ROCKFORD_SPACE_SOUND_ASSEET_KEY.group )
             .set( SoundAsset.RESOURCE_NAME, "original/sound/walkSpace.wav" )
             .set( SoundAsset.STREAMING, false )
-        .buildAndNext( SoundAsset.class )
+        .activateAndNext( SoundAsset.class )
             .set( SoundAsset.NAME, ROCKFORD_SAND_SOUND_ASSEET_KEY.name )
             .set( SoundAsset.ASSET_GROUP, ROCKFORD_SAND_SOUND_ASSEET_KEY.group )
             .set( SoundAsset.RESOURCE_NAME, "original/sound/walkSand.wav" )
             .set( SoundAsset.STREAMING, false )
-        .buildAndNext( SoundAsset.class )
+        .activateAndNext( SoundAsset.class )
             .set( SoundAsset.NAME, ROCKFORD_COLLECT_SOUND_ASSEET_KEY.name )
             .set( SoundAsset.ASSET_GROUP, ROCKFORD_COLLECT_SOUND_ASSEET_KEY.group )
             .set( SoundAsset.RESOURCE_NAME, "original/sound/collectDiamond.wav" )
             .set( SoundAsset.STREAMING, false )
-        .build( SoundAsset.class );
+        .activate( SoundAsset.class );
         
         spaceSoundId = soundSystem.getSoundBuilder()
             .set( Sound.NAME, ROCKFORD_SPACE_SOUND_ASSEET_KEY.name )
@@ -156,7 +156,7 @@ public final class Rockford extends UnitHandle {
 
     @Override
     public final int createOne( int xGridPos, int yGridPos ) {
-        rfEntityId = entitySystem.getEntityBuilderWithAutoActivation()
+        rfEntityId = entitySystem.getEntityBuilder()
             .set( EController.CONTROLLER_IDS, new int[] { controllerId, spriteAnimationHandler.getControllerId() } )
             .set( ETransform.VIEW_ID, viewSystem.getViewId( CaveSystem.CAVE_VIEW_NAME ) )
             .set( ESprite.SPRITE_ID, firstSpriteId )
@@ -164,7 +164,7 @@ public final class Rockford extends UnitHandle {
             .set( ETile.GRID_Y_POSITION, yGridPos )
             .set( EUnit.UNIT_TYPE, type() )
             .set( RFUnit.STATE, RFState.ENTERING )
-        .build();
+        .activate();
         return rfEntityId;
     }
 

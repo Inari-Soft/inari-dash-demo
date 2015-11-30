@@ -3,7 +3,7 @@ package com.inari.dash.game;
 import java.util.Collection;
 
 import com.inari.commons.graphics.RGBColor;
-import com.inari.commons.lang.TypedKey;
+import com.inari.commons.lang.indexed.IndexedTypeKey;
 import com.inari.dash.Configuration;
 import com.inari.dash.game.io.GameInfos;
 import com.inari.firefly.asset.AssetNameKey;
@@ -15,7 +15,7 @@ import com.inari.firefly.system.FFSystem;
 
 public final class GameSystem implements FFSystem {
     
-    public static final TypedKey<GameSystem> CONTEXT_KEY = TypedKey.create( "GameService", GameSystem.class );
+    public static final FFSystemTypeKey<GameSystem> SYSTEM_KEY = FFSystemTypeKey.create( GameSystem.class );
 
     public static final String TITLE_SONG_SOUND_NAME = "titleSongSound";
     public static final String GAME_WORKFLOW_NAME = "gameWorkflow";
@@ -53,10 +53,20 @@ public final class GameSystem implements FFSystem {
     public int caveSelectionTitleId = -1;
     public int caveSelectionId = -1;
     public int exitTitleId = -1;
+
+    @Override
+    public final IndexedTypeKey indexedTypeKey() {
+        return SYSTEM_KEY;
+    }
+
+    @Override
+    public final FFSystemTypeKey<GameSystem> systemTypeKey() {
+        return SYSTEM_KEY;
+    }
     
     @Override
     public final void init( FFContext context ) throws FFInitException {
-        entitySystem = context.getSystem( EntitySystem.CONTEXT_KEY );
+        entitySystem = context.getSystem( EntitySystem.SYSTEM_KEY );
         configuration = context.getComponent( Configuration.CONTEXT_KEY );
         
         gameInfos = new GameInfos();
@@ -190,6 +200,5 @@ public final class GameSystem implements FFSystem {
             selectedCave = 0;
         }
     }
-
 
 }

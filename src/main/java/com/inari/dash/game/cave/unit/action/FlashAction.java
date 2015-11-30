@@ -35,13 +35,13 @@ public final class FlashAction extends UnitAction {
         private int tick = 0;
 
         private FlashAnimation( FFContext context ) {
-            AssetSystem assetSystem = context.getSystem( AssetSystem.CONTEXT_KEY );
-            flashSpriteId = assetSystem.getAssetBuilderWithAutoLoad()
+            AssetSystem assetSystem = context.getSystem( AssetSystem.SYSTEM_KEY );
+            flashSpriteId = assetSystem.getAssetBuilder()
                 .set( SpriteAsset.NAME, FLASH_SPRITE_ASSET.name )
                 .set( SpriteAsset.ASSET_GROUP, FLASH_SPRITE_ASSET.group )
                 .set( SpriteAsset.TEXTURE_ID, assetSystem.getAssetId( CaveSystem.GAME_UNIT_TEXTURE_KEY ) )
                 .set( SpriteAsset.TEXTURE_REGION, new Rectangle( 4 * 32, 0, 32, 32 ) )
-            .build( SpriteAsset.class );
+            .activate( SpriteAsset.class );
         }
 
         @Override
@@ -60,7 +60,7 @@ public final class FlashAction extends UnitAction {
                 ESprite spaceSprite = entitySystem.getComponent( spaceEntityId, ESprite.class );
                 spaceSprite.setSpriteId( spaceSpriteId );
                 // self remove
-                AssetSystem assetSystem = context.getSystem( AssetSystem.CONTEXT_KEY );
+                AssetSystem assetSystem = context.getSystem( AssetSystem.SYSTEM_KEY );
                 assetSystem.deleteAsset( FLASH_SPRITE_ASSET );
                 context.disposeListener( UpdateEvent.class, this );
             }

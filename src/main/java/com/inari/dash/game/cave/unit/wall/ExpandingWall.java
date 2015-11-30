@@ -35,7 +35,7 @@ public final class ExpandingWall extends UnitHandle {
         float updateRate = caveService.getUpdateRate();
         controller.setUpdateResolution( updateRate );
         
-        expandingWallEntityId = entitySystem.getEntityBuilderWithAutoActivation()
+        expandingWallEntityId = entitySystem.getEntityBuilder()
             .set( ETransform.VIEW_ID, viewSystem.getViewId( CaveSystem.CAVE_VIEW_NAME ) )
             .set( EController.CONTROLLER_IDS, new int[] { controllerId } )
             .set( ETile.MULTI_POSITION, true )
@@ -45,7 +45,7 @@ public final class ExpandingWall extends UnitHandle {
                 UnitAspect.ASLOPE, 
                 UnitAspect.DESTRUCTIBLE
             ) )
-        .build();
+        .activate();
     }
 
     @Override

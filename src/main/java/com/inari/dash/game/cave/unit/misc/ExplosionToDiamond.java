@@ -80,7 +80,7 @@ public class ExplosionToDiamond extends AbstractExplosionHandle {
         ETile tile = entitySystem.getComponent( entityId , ETile.class );
         tile.setGridXPos( xGridPos );
         tile.setGridYPos( yGridPos );
-        entitySystem.activate( entityId );
+        entitySystem.activateEntity( entityId );
         return entityId;
     }
 

@@ -44,7 +44,7 @@ public final class Space extends UnitHandle {
     public void loadCaveData( FFContext context ) {
         super.loadCaveData( context );
 
-        spaceEntityId = entitySystem.getEntityBuilderWithAutoActivation()
+        spaceEntityId = entitySystem.getEntityBuilder()
             .set( ETransform.VIEW_ID, viewSystem.getViewId( CaveSystem.CAVE_VIEW_NAME ) )
             .set( ETile.MULTI_POSITION, true )
             .set( ESprite.SPRITE_ID, assetSystem.getAssetId( SPACE_SPRITE_ASSET_KEY ) )
@@ -54,7 +54,7 @@ public final class Space extends UnitHandle {
                 UnitAspect.CONSUMABLE, 
                 UnitAspect.WALKABLE 
             ) )
-        .build();
+        .activate();
     }
 
     @Override

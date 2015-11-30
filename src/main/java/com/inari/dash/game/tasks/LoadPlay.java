@@ -41,7 +41,7 @@ public final class LoadPlay extends Task {
 
     @Override
     public final void run( FFContext context ) {
-        GameSystem gameService = context.getSystem( GameSystem.CONTEXT_KEY );
+        GameSystem gameService = context.getSystem( GameSystem.SYSTEM_KEY );
         
         // stop playing title song
         context.notify( new SoundEvent( GameSystem.TITLE_SONG_SOUND_NAME, SoundEvent.Type.STOP_PLAYING ) );
@@ -55,7 +55,7 @@ public final class LoadPlay extends Task {
         gameData.setCave( selectedCave );
         context.setComponent( gameData );
         // create CaveService
-        context.loadSystem( CaveSystem.CONTEXT_KEY );
+        context.loadSystem( CaveSystem.SYSTEM_KEY );
         // load the selected cave
         initCaveAndUnits( context );
         context.notify( new TaskEvent( Type.RUN_TASK, TaskName.LOAD_CAVE.name() ) );
@@ -63,8 +63,8 @@ public final class LoadPlay extends Task {
     
     private void initCaveAndUnits( FFContext context ) {
         Configuration config = context.getComponent( Configuration.CONTEXT_KEY );
-        ViewSystem viewSystem = context.getSystem( ViewSystem.CONTEXT_KEY );
-        AssetSystem assetSystem = context.getSystem( AssetSystem.CONTEXT_KEY );
+        ViewSystem viewSystem = context.getSystem( ViewSystem.SYSTEM_KEY );
+        AssetSystem assetSystem = context.getSystem( AssetSystem.SYSTEM_KEY );
         
         int screenWidth = context.getScreenWidth();
         int screenHeight = context.getScreenHeight();
@@ -82,21 +82,21 @@ public final class LoadPlay extends Task {
             .set( SimpleCameraController.V_VELOCITY, 3 )
         .build( SimpleCameraController.class );
         
-        viewSystem.getViewBuilderWithAutoActivation()
+        viewSystem.getViewBuilder()
             .set( View.NAME, CaveSystem.HEADER_VIEW_NAME )
             .set( View.LAYERING_ENABLED, false )
             .set( View.BOUNDS, new Rectangle( 0, 0, screenWidth, CaveSystem.HEADER_VIEW_HEIGHT ) )
             .set( View.WORLD_POSITION, new Position( 0, 0 ) )
             .set( View.CLEAR_COLOR, new RGBColor( 0, 0, 0, 1 ) )
-        .build();
-        viewSystem.getViewBuilderWithAutoActivation()
+        .activate();
+        viewSystem.getViewBuilder()
             .set( View.NAME, CaveSystem.CAVE_VIEW_NAME )
             .set( View.LAYERING_ENABLED, false )
             .set( View.BOUNDS, new Rectangle( 20, CaveSystem.HEADER_VIEW_HEIGHT, screenWidth - 40, screenHeight - CaveSystem.HEADER_VIEW_HEIGHT - 20 ) )
             .set( View.WORLD_POSITION, new Position( 0, 0 ) )
             .set( View.CONTROLLER_IDS, new int[]{ cameraControllerId } ) 
             .set( View.CLEAR_COLOR, new RGBColor( 0, 0, 0, 1 ) )
-        .build();
+        .activate();
         
         // create global cave assets and sounds
         context.getComponentBuilder( Asset.TYPE_KEY )
@@ -108,12 +108,12 @@ public final class LoadPlay extends Task {
          .build( TextureAsset.class );
         
         for ( CaveSoundKey caveSoundKey : CaveSoundKey.values() ) {
-            assetSystem.getAssetBuilderWithAutoLoad()
+            assetSystem.getAssetBuilder()
                 .set( SoundAsset.NAME, caveSoundKey.assetKey.name )
                 .set( SoundAsset.ASSET_GROUP, caveSoundKey.assetKey.group )
                 .set( SoundAsset.RESOURCE_NAME, caveSoundKey.fileName )
                 .set( SoundAsset.STREAMING, false )
-            .build( caveSoundKey.id, SoundAsset.class );
+            .activate( caveSoundKey.id, SoundAsset.class );
             context.getComponentBuilder( Sound.TYPE_KEY )
                 .set( Sound.NAME, caveSoundKey.assetKey.name )
                 .set( Sound.ASSET_ID, caveSoundKey.id )
@@ -150,7 +150,7 @@ public final class LoadPlay extends Task {
 
             @Override
             public final void init( FFContext context ) throws FFInitException {
-                caveSystem = context.getSystem( CaveSystem.CONTEXT_KEY );
+                caveSystem = context.getSystem( CaveSystem.SYSTEM_KEY );
                 playerTile = context.getEntityComponent( UnitType.ROCKFORD.getHandle().getEntityId(), ETile.TYPE_KEY );
             }
 

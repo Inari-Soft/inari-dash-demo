@@ -31,13 +31,13 @@ public final class LoadGame extends Task {
     }
     
     public final void loadGlobalAssets( FFContext context ) {
-        AssetSystem assetSystem = context.getSystem( AssetSystem.CONTEXT_KEY );
-        TextSystem textSystem = context.getSystem( TextSystem.CONTEXT_KEY );
-        SoundSystem soundSystem = context.getSystem( SoundSystem.CONTEXT_KEY );
+        AssetSystem assetSystem = context.getSystem( AssetSystem.SYSTEM_KEY );
+        TextSystem textSystem = context.getSystem( TextSystem.SYSTEM_KEY );
+        SoundSystem soundSystem = context.getSystem( SoundSystem.SYSTEM_KEY );
         Configuration configuration = context.getComponent( Configuration.CONTEXT_KEY );
         
         // create and load font
-        textSystem.getFontBuilderWithAutoLoad()
+        textSystem.getFontBuilder()
             .set( Font.NAME, GameSystem.GAME_FONT_TEXTURE_KEY.name )
             .set( Font.FONT_TEXTURE_RESOURCE_NAME, configuration.fontTextureResource )
             .set( Font.CHAR_TEXTURE_MAP, configuration.fontChars )
@@ -46,14 +46,14 @@ public final class LoadGame extends Task {
             .set( Font.CHAR_SPACE, 0 )
             .set( Font.LINE_SPACE, 5 )
             .set( Font.DEFAULT_CHAR, '%' )
-        .build();
+        .activate();
         // create and load intro music
-        assetSystem.getAssetBuilderWithAutoLoad()
+        assetSystem.getAssetBuilder()
             .set( SoundAsset.NAME, GameSystem.INTRO_SONG_KEY.name )
             .set( SoundAsset.ASSET_GROUP, GameSystem.INTRO_SONG_KEY.group )
             .set( SoundAsset.STREAMING, false )
             .set( SoundAsset.RESOURCE_NAME, configuration.titleSongResource )
-        .build( SoundAsset.class );
+        .activate( SoundAsset.class );
         soundSystem.getSoundBuilder()
             .set( Sound.ASSET_ID, assetSystem.getAssetTypeKey( GameSystem.INTRO_SONG_KEY ).id )
             .set( Sound.VOLUME, 10 )

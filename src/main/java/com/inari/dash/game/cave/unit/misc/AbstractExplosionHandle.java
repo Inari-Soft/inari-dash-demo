@@ -23,12 +23,12 @@ public abstract class AbstractExplosionHandle  extends UnitHandle {
             return;
         }
         
-        assetSystem.getAssetBuilderWithAutoLoad()
+        assetSystem.getAssetBuilder()
             .set( SoundAsset.NAME, EXPLOSION_SOUND_ASSEET_KEY.name )
             .set( SoundAsset.ASSET_GROUP, EXPLOSION_SOUND_ASSEET_KEY.group )
             .set( SoundAsset.RESOURCE_NAME, "original/sound/explosion.wav" )
             .set( SoundAsset.STREAMING, false )
-        .build( SoundAsset.class );
+        .activate( SoundAsset.class );
         
         soundId = soundSystem.getSoundBuilder()
             .set( Sound.NAME, EXPLOSION_SOUND_ASSEET_KEY.name )

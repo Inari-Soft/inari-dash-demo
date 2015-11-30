@@ -32,13 +32,13 @@ public final class LoadCave extends Task {
 
     @Override
     public final void run( FFContext context ) {
-        CaveSystem caveSystem = context.getSystem( CaveSystem.CONTEXT_KEY );
+        CaveSystem caveSystem = context.getSystem( CaveSystem.SYSTEM_KEY );
         Configuration config = context.getComponent( Configuration.CONTEXT_KEY );
-        AssetSystem assetSystem = context.getSystem( AssetSystem.CONTEXT_KEY );
-        TextSystem textSystem = context.getSystem( TextSystem.CONTEXT_KEY );
-        ControllerSystem controllerSystem = context.getSystem( ControllerSystem.CONTEXT_KEY );
-        EntitySystem entitySystem = context.getSystem( EntitySystem.CONTEXT_KEY );
-        ViewSystem viewSystem = context.getSystem( ViewSystem.CONTEXT_KEY );
+        AssetSystem assetSystem = context.getSystem( AssetSystem.SYSTEM_KEY );
+        TextSystem textSystem = context.getSystem( TextSystem.SYSTEM_KEY );
+        ControllerSystem controllerSystem = context.getSystem( ControllerSystem.SYSTEM_KEY );
+        EntitySystem entitySystem = context.getSystem( EntitySystem.SYSTEM_KEY );
+        ViewSystem viewSystem = context.getSystem( ViewSystem.SYSTEM_KEY );
 
         caveSystem.reset();
         CaveData caveData = caveSystem.getCaveData();
@@ -100,13 +100,13 @@ public final class LoadCave extends Task {
         );
         cameraController.getPivot().init( context );
         
-        entitySystem.getEntityBuilderWithAutoActivation()
+        entitySystem.getEntityBuilder()
             .set( ETransform.VIEW_ID, viewSystem.getViewId( CaveSystem.HEADER_VIEW_NAME ) )
             .set( ETransform.XPOSITION, 8 )
             .set( ETransform.YPOSITION, 8 )
             .set( EText.FONT_ID, textSystem.getFontId( GameSystem.GAME_FONT_TEXTURE_KEY.name ) )
             .set( EText.TEXT, caveSystem.getHeaderText() )
-        .build();
+        .activate();
         
         // create new CaveController
         context.getComponentBuilder( Controller.TYPE_KEY )

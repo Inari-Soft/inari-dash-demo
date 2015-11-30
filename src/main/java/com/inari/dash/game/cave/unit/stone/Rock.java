@@ -46,12 +46,12 @@ public final class Rock extends UnitHandle {
         .build( SpriteAsset.class );
         super.caveAssetsToReload.add( assetSystem.getAssetTypeKey( ROCK_SPRITE_ASSET_KEY ) );
         
-        assetSystem.getAssetBuilderWithAutoLoad()
+        assetSystem.getAssetBuilder()
             .set( SoundAsset.NAME, ROCK_SOUND_ASSEET_KEY.name )
             .set( SoundAsset.ASSET_GROUP, ROCK_SOUND_ASSEET_KEY.group )
             .set( SoundAsset.RESOURCE_NAME, "original/sound/stone.wav" )
             .set( SoundAsset.STREAMING, false )
-        .build( SoundAsset.class );
+        .activate( SoundAsset.class );
         
         soundId = soundSystem.getSoundBuilder()
             .set( Sound.NAME, ROCK_SOUND_ASSEET_KEY.name )
@@ -122,7 +122,7 @@ public final class Rock extends UnitHandle {
         ETile tile = entitySystem.getComponent( entityId , ETile.class );
         tile.setGridXPos( xGridPos );
         tile.setGridYPos( yGridPos );
-        entitySystem.activate( entityId );
+        entitySystem.activateEntity( entityId );
         return entityId;
     }
 

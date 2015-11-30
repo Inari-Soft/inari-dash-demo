@@ -21,67 +21,67 @@ public final class LoadGameSelection extends Task {
 
     @Override
     public final void run( FFContext context ) {
-        EntitySystem entitySystem = context.getSystem( EntitySystem.CONTEXT_KEY );
-        AssetSystem assetSystem = context.getSystem( AssetSystem.CONTEXT_KEY );
-        TextSystem textSystem = context.getSystem( TextSystem.CONTEXT_KEY );
+        EntitySystem entitySystem = context.getSystem( EntitySystem.SYSTEM_KEY );
+        AssetSystem assetSystem = context.getSystem( AssetSystem.SYSTEM_KEY );
+        TextSystem textSystem = context.getSystem( TextSystem.SYSTEM_KEY );
         
         int fontId = textSystem.getFontId( GameSystem.GAME_FONT_TEXTURE_KEY.name );
         int rockfordTitleId = assetSystem.getAssetId( GameSystem.GAME_FONT_TEXTURE_KEY.group, GameSystem.GAME_FONT_TEXTURE_KEY.name + "_1_2" );
-        entitySystem.getEntityBuilderWithAutoActivation()
+        entitySystem.getEntityBuilder()
             .set( ETransform.VIEW_ID, 0 )
             .set( ETransform.XPOSITION, 320 )
             .set( ETransform.YPOSITION, 50 )
             .set( ETransform.SCALE_X, 4 )
             .set( ETransform.SCALE_Y, 4 )
             .set( ESprite.SPRITE_ID, rockfordTitleId )
-        .buildAndNext()
+        .activateAndNext()
             .set( ETransform.VIEW_ID, 0 )
             .set( ETransform.XPOSITION, 30 )
             .set( ETransform.YPOSITION, 120 )
             .set( EText.FONT_ID, fontId )
             .set( EText.TEXT_STRING, "%%%%%%%%%%%%%%%%%%%%%%%" )
-        .buildAndNext()
+        .activateAndNext()
             .set( ETransform.VIEW_ID, 0 )
             .set( ETransform.XPOSITION, 30 )
             .set( ETransform.YPOSITION, 500 )
             .set( EText.FONT_ID, fontId )
             .set( EText.TEXT_STRING, "%%%%%%%%%%%%%%%%%%%%%%%" )
-        .buildAndNext()
+        .activateAndNext()
             .set( Entity.NAME, GameSystem.ENTITY_NAME_GAME_SELECTION_TITLE )
             .set( ETransform.VIEW_ID, 0 )
             .set( ETransform.XPOSITION, 50 )
             .set( ETransform.YPOSITION, 200 )
             .set( EText.FONT_ID, fontId )
             .set( EText.TEXT_STRING, "GAME:" )
-        .buildAndNext()
+        .activateAndNext()
             .set( Entity.NAME, GameSystem.ENTITY_NAME_GAME_SELECTION )
             .set( ETransform.VIEW_ID, 0 )
             .set( ETransform.XPOSITION, 220 )
             .set( ETransform.YPOSITION, 200 )
             .set( EText.FONT_ID, fontId )
             .set( EText.TEXT_STRING, "XXX" )
-        .buildAndNext()
+        .activateAndNext()
             .set( Entity.NAME, GameSystem.ENTITY_NAME_CAVE_SELECTION_TITLE )
             .set( ETransform.VIEW_ID, 0 )
             .set( ETransform.XPOSITION, 50 )
             .set( ETransform.YPOSITION, 300 )
             .set( EText.FONT_ID, fontId )
             .set( EText.TEXT_STRING, "CAVE:" )
-        .buildAndNext()
+        .activateAndNext()
             .set( Entity.NAME, GameSystem.ENTITY_NAME_CAVE_SELECTION )
             .set( ETransform.VIEW_ID, 0 )
             .set( ETransform.XPOSITION, 220 )
             .set( ETransform.YPOSITION, 300 )
             .set( EText.FONT_ID, fontId )
             .set( EText.TEXT_STRING, "1" )
-        .buildAndNext()
+        .activateAndNext()
             .set( Entity.NAME, GameSystem.ENTITY_NAME_EXIT_TITLE )
             .set( ETransform.VIEW_ID, 0 )
             .set( ETransform.XPOSITION, 50 )
             .set( ETransform.YPOSITION, 400 )
             .set( EText.FONT_ID, fontId )
             .set( EText.TEXT_STRING, "EXIT" )
-        .build();
+        .activate();
         
         context.getComponentBuilder( Controller.TYPE_KEY )
             .set( Controller.NAME, GameSystem.GAME_SELECTION_CONTROLLER_NAME )

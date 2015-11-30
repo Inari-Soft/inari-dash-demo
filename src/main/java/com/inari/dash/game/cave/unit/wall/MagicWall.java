@@ -45,12 +45,12 @@ public final class MagicWall extends UnitHandle {
     public final void init( FFContext context ) throws FFInitException {
         super.init( context );
 
-        assetSystem.getAssetBuilderWithAutoLoad()
+        assetSystem.getAssetBuilder()
             .set( SoundAsset.NAME, MAGIC_WALL_SOUND_ASSEET_KEY.name )
             .set( SoundAsset.ASSET_GROUP, MAGIC_WALL_SOUND_ASSEET_KEY.group )
             .set( SoundAsset.RESOURCE_NAME, "original/sound/" + MAGIC_WALL_NAME + ".wav" )
             .set( SoundAsset.STREAMING, false )
-        .build( SoundAsset.class );
+        .activate( SoundAsset.class );
         
         soundId = soundSystem.getSoundBuilder()
             .set( Sound.NAME, MAGIC_WALL_SOUND_ASSEET_KEY.name )
@@ -103,7 +103,7 @@ public final class MagicWall extends UnitHandle {
         .build();
         prefabSystem.cacheComponents( prefabId, 50 );
         
-        AnimationSystem animationSystem = context.getSystem( AnimationSystem.CONTEXT_KEY );
+        AnimationSystem animationSystem = context.getSystem( AnimationSystem.SYSTEM_KEY );
         MagicWallAnimationController animController = (MagicWallAnimationController) animationSystem.getAnimation( spriteAnimationHandler.getAnimationId() );
         controller.setMagicWallAnimationController( animController );
         animController.setMagicWallState( State.INACTIVE );
@@ -142,7 +142,7 @@ public final class MagicWall extends UnitHandle {
         ETile tile = entitySystem.getComponent( entityId , ETile.class );
         tile.setGridXPos( xGridPos );
         tile.setGridYPos( yGridPos );
-        entitySystem.activate( entityId );
+        entitySystem.activateEntity( entityId );
         return entityId;
     }
     

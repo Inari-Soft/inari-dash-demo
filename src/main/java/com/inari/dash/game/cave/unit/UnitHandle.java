@@ -32,13 +32,13 @@ public abstract class UnitHandle implements FFContextInitiable, Disposable {
     
     @Override
     public void init( FFContext context ) throws FFInitException {
-        entitySystem = context.getSystem( EntitySystem.CONTEXT_KEY );
-        assetSystem = context.getSystem( AssetSystem.CONTEXT_KEY );
-        caveService = context.getSystem( CaveSystem.CONTEXT_KEY );
-        viewSystem = context.getSystem( ViewSystem.CONTEXT_KEY );
-        prefabSystem = context.getSystem( EntityPrefabSystem.CONTEXT_KEY );
-        soundSystem = context.getSystem( SoundSystem.CONTEXT_KEY );
-        controllerSystem = context.getSystem( ControllerSystem.CONTEXT_KEY );
+        entitySystem = context.getSystem( EntitySystem.SYSTEM_KEY );
+        assetSystem = context.getSystem( AssetSystem.SYSTEM_KEY );
+        caveService = context.getSystem( CaveSystem.SYSTEM_KEY );
+        viewSystem = context.getSystem( ViewSystem.SYSTEM_KEY );
+        prefabSystem = context.getSystem( EntityPrefabSystem.SYSTEM_KEY );
+        soundSystem = context.getSystem( SoundSystem.SYSTEM_KEY );
+        controllerSystem = context.getSystem( ControllerSystem.SYSTEM_KEY );
         
         initialized = true;
     }

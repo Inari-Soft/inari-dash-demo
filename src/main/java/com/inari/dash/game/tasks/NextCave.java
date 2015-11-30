@@ -15,7 +15,7 @@ public final class NextCave extends Task {
 
     @Override
     public final void run( FFContext context ) {
-        CaveSystem caveSystem = context.getSystem( CaveSystem.CONTEXT_KEY );
+        CaveSystem caveSystem = context.getSystem( CaveSystem.SYSTEM_KEY );
         
         context.notify( new TaskEvent( Type.RUN_TASK, TaskName.DISPOSE_CAVE.name() ) );
         caveSystem.getGameData().nextCave();

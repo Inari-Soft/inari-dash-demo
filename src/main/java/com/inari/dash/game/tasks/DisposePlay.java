@@ -35,12 +35,12 @@ public final class DisposePlay extends Task {
     }
     
     private final void disposeCaveData( FFContext context ) {
-        ViewSystem viewSystem = context.getSystem( ViewSystem.CONTEXT_KEY );
-        SoundSystem soundSystem = context.getSystem( SoundSystem.CONTEXT_KEY );
-        ControllerSystem controllerSystem = context.getSystem( ControllerSystem.CONTEXT_KEY );
-        AssetSystem assetSystem = context.getSystem( AssetSystem.CONTEXT_KEY );
-        ActionSystem actionSystem = context.getSystem( ActionSystem.CONTEXT_KEY );
-        EntitySystem entitySystem = context.getSystem( EntitySystem.CONTEXT_KEY );
+        ViewSystem viewSystem = context.getSystem( ViewSystem.SYSTEM_KEY );
+        SoundSystem soundSystem = context.getSystem( SoundSystem.SYSTEM_KEY );
+        ControllerSystem controllerSystem = context.getSystem( ControllerSystem.SYSTEM_KEY );
+        AssetSystem assetSystem = context.getSystem( AssetSystem.SYSTEM_KEY );
+        ActionSystem actionSystem = context.getSystem( ActionSystem.SYSTEM_KEY );
+        EntitySystem entitySystem = context.getSystem( EntitySystem.SYSTEM_KEY );
         
         // dispose all units
         for ( UnitType unitType : UnitType.values() ) {
@@ -68,7 +68,7 @@ public final class DisposePlay extends Task {
         }
         
         context.disposeComponent( GameData.CONTEXT_KEY );
-        context.disposeSystem( CaveSystem.CONTEXT_KEY );
+        context.disposeSystem( CaveSystem.SYSTEM_KEY );
     }
 
 }

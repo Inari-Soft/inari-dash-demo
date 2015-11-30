@@ -13,7 +13,7 @@ public final class GameSelectionController extends Controller {
 
     protected GameSelectionController( int id, FFContext context ) {
         super( id );
-        gameSystem = context.getSystem( GameSystem.CONTEXT_KEY );
+        gameSystem = context.getSystem( GameSystem.SYSTEM_KEY );
     }
 
     @Override

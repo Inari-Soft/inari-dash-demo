@@ -20,8 +20,8 @@ public class DisplayTextureTest extends GdxFFTestAdapter {
     @Override
     public void initTest( FFContext context ) {
         Configuration globalAssetData = new Configuration();
-        AssetSystem assetSystem = context.getSystem( AssetSystem.CONTEXT_KEY );
-        EntitySystem entitySystem = context.getSystem( EntitySystem.CONTEXT_KEY );
+        AssetSystem assetSystem = context.getSystem( AssetSystem.SYSTEM_KEY );
+        EntitySystem entitySystem = context.getSystem( EntitySystem.SYSTEM_KEY );
         
 
         assetSystem
@@ -43,16 +43,13 @@ public class DisplayTextureTest extends GdxFFTestAdapter {
         
         assetSystem.loadAssets( GameSystem.GAME_FONT_TEXTURE_KEY.group );
         
-        int entityId = entitySystem
+        entitySystem
               .getEntityBuilder()
                   .set( ETransform.VIEW_ID, 0 )
                   .set( ETransform.XPOSITION, 0 )
                   .set( ETransform.XPOSITION, 0 )
                   .set( ESprite.SPRITE_ID, spriteAssetId )
-              .build();
-              
-        entitySystem.activate( entityId );
-
+              .activate();
     }
 
     @Override

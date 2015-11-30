@@ -45,12 +45,12 @@ public final class Amoeba extends UnitHandle {
         super.init( context );
         
         // sound
-        assetSystem.getAssetBuilderWithAutoLoad()
+        assetSystem.getAssetBuilder()
             .set( SoundAsset.NAME, MOEBA_SOUND_ASSEET_KEY.name )
             .set( SoundAsset.ASSET_GROUP, MOEBA_SOUND_ASSEET_KEY.group )
             .set( SoundAsset.RESOURCE_NAME, "original/sound/amoeba.wav" )
             .set( SoundAsset.STREAMING, false )
-        .build( SoundAsset.class );
+        .activate( SoundAsset.class );
         soundId = soundSystem.getSoundBuilder()
             .set( Sound.NAME, MOEBA_SOUND_ASSEET_KEY.name )
             .set( Sound.ASSET_ID, assetSystem.getAssetId( MOEBA_SOUND_ASSEET_KEY ) )
@@ -89,7 +89,7 @@ public final class Amoeba extends UnitHandle {
         controller.setUpdateResolution( UPDATE_TIME_FACTOR );
         spriteAnimationHandler.setFrameTime( 60 - (int) updateRate * 4 );
         
-        amoebaEntityId = entitySystem.getEntityBuilderWithAutoActivation()
+        amoebaEntityId = entitySystem.getEntityBuilder()
             .set( EController.CONTROLLER_IDS, new int[] { controllerId, spriteAnimationHandler.getControllerId() } )
             .set( ETransform.VIEW_ID, viewSystem.getViewId( CaveSystem.CAVE_VIEW_NAME ) )
             .set( ESprite.SPRITE_ID, firstSpriteId )
@@ -98,7 +98,7 @@ public final class Amoeba extends UnitHandle {
             .set( EUnit.ASPECTS, AspectSetBuilder.create( 
                 UnitAspect.DESTRUCTIBLE
             ) )
-        .build();
+        .activate();
     }
 
     @Override

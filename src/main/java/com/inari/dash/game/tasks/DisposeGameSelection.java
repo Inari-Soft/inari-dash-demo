@@ -14,9 +14,9 @@ public final class DisposeGameSelection extends Task {
 
     @Override
     public void run( FFContext context ) {
-        EntitySystem entitySystem = context.getSystem( EntitySystem.CONTEXT_KEY );
-        ControllerSystem controllerSystem = context.getSystem( ControllerSystem.CONTEXT_KEY );
-        GameSystem gameSystem = context.getSystem( GameSystem.CONTEXT_KEY );
+        EntitySystem entitySystem = context.getSystem( EntitySystem.SYSTEM_KEY );
+        ControllerSystem controllerSystem = context.getSystem( ControllerSystem.SYSTEM_KEY );
+        GameSystem gameSystem = context.getSystem( GameSystem.SYSTEM_KEY );
         
         gameSystem.resetSelection();
         

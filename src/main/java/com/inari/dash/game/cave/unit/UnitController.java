@@ -14,8 +14,8 @@ public abstract class UnitController extends EntityController {
 
     protected UnitController( int id, FFContext context ) {
         super( id, context );
-        caveService = context.getSystem( CaveSystem.CONTEXT_KEY );
-        soundSystem = context.getSystem( SoundSystem.CONTEXT_KEY ); 
+        caveService = context.getSystem( CaveSystem.SYSTEM_KEY );
+        soundSystem = context.getSystem( SoundSystem.SYSTEM_KEY ); 
     }
 
     @Override
