@@ -23,7 +23,7 @@ import com.inari.firefly.system.FireFly;
 
 public final class RFController extends UnitController {
     
-    private static final int ENTERING_ANIMATION_DURATION = 20;
+    private static final int ENTERING_ANIMATION_DURATION = 5;
     private static final int APPEARING_ANIMATION_DURATION = 6;
     private static final int IDLE_BLINKING_DURATION = 6;
     private static final int IDLE_FRETFUL_DURATION = 20;

@@ -7,6 +7,7 @@ import com.inari.firefly.asset.AssetSystem;
 import com.inari.firefly.control.ControllerSystem;
 import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.renderer.tile.TileGridSystem;
+import com.inari.firefly.scene.SceneEvent;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.view.ViewSystem;
 import com.inari.firefly.task.Task;
@@ -25,6 +26,8 @@ public final class DisposeCave extends Task {
         EntitySystem entitySystem = context.getSystem( EntitySystem.SYSTEM_KEY );
         ViewSystem viewSystem = context.getSystem( ViewSystem.SYSTEM_KEY );
 
+        context.notify( new SceneEvent( CaveSystem.CAVE_INIT_SCENE_NAME, SceneEvent.EventType.DELETE ) );
+        
         // dispose all units
         for ( UnitType unitType : UnitType.values() ) {
             if ( unitType.handler != null ) {

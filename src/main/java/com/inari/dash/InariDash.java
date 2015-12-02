@@ -11,6 +11,7 @@ import com.inari.firefly.action.ActionSystem;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.libgdx.GdxFFApplicationAdapter;
 import com.inari.firefly.libgdx.GdxFirefly;
+import com.inari.firefly.scene.SceneSystem;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.task.Task;
 import com.inari.firefly.task.event.TaskEvent;
@@ -49,6 +50,7 @@ public class InariDash extends GdxFFApplicationAdapter {
         context.setComponent( configuration );
         context.loadSystem( ActionSystem.SYSTEM_KEY );
         context.loadSystem( GameSystem.SYSTEM_KEY );
+        context.loadSystem( SceneSystem.SYSTEM_KEY );
         
         int startTaskId = context.getComponentBuilder( Task.TYPE_KEY )
             .set( Task.REMOVE_AFTER_RUN, true )

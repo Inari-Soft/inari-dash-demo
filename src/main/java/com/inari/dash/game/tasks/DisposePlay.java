@@ -50,7 +50,7 @@ public final class DisposePlay extends Task {
         }
         
         entitySystem.deleteAll();
-        
+
         viewSystem.deleteView( CaveSystem.HEADER_VIEW_NAME );
         viewSystem.deleteView( CaveSystem.CAVE_VIEW_NAME );
         

@@ -21,6 +21,7 @@ import com.inari.firefly.control.Controller;
 import com.inari.firefly.controller.view.CameraPivot;
 import com.inari.firefly.controller.view.SimpleCameraController;
 import com.inari.firefly.renderer.TextureAsset;
+import com.inari.firefly.renderer.sprite.SpriteAsset;
 import com.inari.firefly.renderer.tile.ETile;
 import com.inari.firefly.sound.Sound;
 import com.inari.firefly.sound.SoundAsset;
@@ -58,6 +59,17 @@ public final class LoadPlay extends Task {
         context.loadSystem( CaveSystem.SYSTEM_KEY );
         // load the selected cave
         initCaveAndUnits( context );
+        // create init scene assets
+        for ( int i = 0; i < 3; i++ ) {
+            int offset = 4 * i;
+            context.getComponentBuilder( Asset.TYPE_KEY )
+                .set( SpriteAsset.NAME, CaveSystem.INTRO_TILE_SPRITE_NAME + i )
+                .set( SpriteAsset.ASSET_GROUP, CaveSystem.GAME_UNIT_TEXTURE_KEY.group )
+                .set( SpriteAsset.TEXTURE_ID, context.getSystem( AssetSystem.SYSTEM_KEY ).getAssetId( CaveSystem.GAME_UNIT_TEXTURE_KEY ) )
+                .set( SpriteAsset.TEXTURE_REGION, new Rectangle( 32 + offset, ( 6 * 32 ) + offset, 16, 16 ) )
+            .build( SpriteAsset.class );
+        }
+        
         context.notify( new TaskEvent( Type.RUN_TASK, TaskName.LOAD_CAVE.name() ) );
     }
     

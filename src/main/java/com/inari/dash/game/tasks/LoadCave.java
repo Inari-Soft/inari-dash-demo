@@ -5,6 +5,7 @@ import com.inari.dash.Configuration;
 import com.inari.dash.game.GameSystem;
 import com.inari.dash.game.cave.CaveController;
 import com.inari.dash.game.cave.CaveData;
+import com.inari.dash.game.cave.CaveInitScene;
 import com.inari.dash.game.cave.CaveSystem;
 import com.inari.dash.game.cave.unit.UnitType;
 import com.inari.firefly.asset.AssetSystem;
@@ -20,6 +21,7 @@ import com.inari.firefly.renderer.text.EText;
 import com.inari.firefly.renderer.text.TextSystem;
 import com.inari.firefly.renderer.tile.TileGrid;
 import com.inari.firefly.renderer.tile.TileGrid.TileRenderMode;
+import com.inari.firefly.scene.Scene;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.view.ViewSystem;
 import com.inari.firefly.task.Task;
@@ -112,6 +114,14 @@ public final class LoadCave extends Task {
         context.getComponentBuilder( Controller.TYPE_KEY )
             .set( Controller.NAME, CaveSystem.CAVE_CONTROLLER_NAME )
         .build( CaveController.class );
+        
+        // load cave init scene
+        context.getComponentBuilder( Scene.TYPE_KEY )
+            .set( Scene.NAME, CaveSystem.CAVE_INIT_SCENE_NAME )
+            .set( Scene.VIEW_ID, context.getSystem( ViewSystem.SYSTEM_KEY ).getViewId( CaveSystem.CAVE_VIEW_NAME ) )
+            .set( Scene.RUN_ONCE, false )
+            .set( Scene.UPDATE_RESOLUTION, 40 )
+        .build( CaveInitScene.class );
     }
     
   

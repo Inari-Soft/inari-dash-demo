@@ -28,6 +28,8 @@ public class CaveSystem implements FFSystem {
     
     public static final FFSystemTypeKey<CaveSystem> SYSTEM_KEY = FFSystemTypeKey.create( CaveSystem.class );
     public static final Map<String, UnitType> BDCFF_TYPES_MAP = new HashMap<String, UnitType>();
+    public static final String CAVE_INIT_SCENE_NAME = "CaveInitScene";
+    public static final String INTRO_TILE_SPRITE_NAME = "introTileSprite";
     
     public enum SoundChannel {
         CAVE,
