@@ -11,7 +11,7 @@ import com.inari.dash.game.cave.unit.UnitAspect;
 import com.inari.dash.game.cave.unit.UnitHandle;
 import com.inari.dash.game.cave.unit.UnitType;
 import com.inari.firefly.asset.AssetNameKey;
-import com.inari.firefly.control.EController;
+import com.inari.firefly.entity.EEntity;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.Entity;
 import com.inari.firefly.entity.EntityController;
@@ -71,7 +71,7 @@ public final class Rock extends UnitHandle {
         .build( RockController.class );
         
         prefabId = prefabSystem.getEntityPrefabBuilder()
-            .set( EController.CONTROLLER_IDS, new int[] { controllerId } )
+            .set( EEntity.CONTROLLER_IDS, new int[] { controllerId } )
             .set( EntityPrefab.NAME, ROCK_NAME )
             .set( ETransform.VIEW_ID, viewSystem.getViewId( CaveSystem.CAVE_VIEW_NAME ) )
             .set( ESprite.SPRITE_ID, assetSystem.getAssetId( ROCK_SPRITE_ASSET_KEY ) )

@@ -17,7 +17,7 @@ import com.inari.firefly.animation.sprite.SpriteAnimationBuilder.SpriteAnimation
 import com.inari.firefly.asset.AssetNameKey;
 import com.inari.firefly.asset.AssetTypeKey;
 import com.inari.firefly.control.Controller;
-import com.inari.firefly.control.EController;
+import com.inari.firefly.entity.EEntity;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.EntityController;
 import com.inari.firefly.renderer.sprite.ESprite;
@@ -90,7 +90,7 @@ public final class Amoeba extends UnitHandle {
         spriteAnimationHandler.setFrameTime( 60 - (int) updateRate * 4 );
         
         amoebaEntityId = entitySystem.getEntityBuilder()
-            .set( EController.CONTROLLER_IDS, new int[] { controllerId, spriteAnimationHandler.getControllerId() } )
+            .set( EEntity.CONTROLLER_IDS, new int[] { controllerId, spriteAnimationHandler.getControllerId() } )
             .set( ETransform.VIEW_ID, viewSystem.getViewId( CaveSystem.CAVE_VIEW_NAME ) )
             .set( ESprite.SPRITE_ID, firstSpriteId )
             .set( ETile.MULTI_POSITION, true )

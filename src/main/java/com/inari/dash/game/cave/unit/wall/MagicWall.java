@@ -17,7 +17,7 @@ import com.inari.firefly.animation.sprite.SpriteAnimationBuilder;
 import com.inari.firefly.animation.sprite.SpriteAnimationBuilder.SpriteAnimationHandler;
 import com.inari.firefly.asset.AssetNameKey;
 import com.inari.firefly.asset.AssetTypeKey;
-import com.inari.firefly.control.EController;
+import com.inari.firefly.entity.EEntity;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.Entity;
 import com.inari.firefly.entity.EntityController;
@@ -91,8 +91,8 @@ public final class MagicWall extends UnitHandle {
         controller.setUpdateResolution( updateRate );
         
         prefabId = prefabSystem.getEntityPrefabBuilder()
-            .set( EController.CONTROLLER_IDS, new int[] { controllerId, spriteAnimationHandler.getControllerId() } )
             .set( EntityPrefab.NAME, MAGIC_WALL_NAME )
+            .set( EEntity.CONTROLLER_IDS, new int[] { controllerId, spriteAnimationHandler.getControllerId() } )
             .set( ETransform.VIEW_ID, viewSystem.getViewId( CaveSystem.CAVE_VIEW_NAME ) )
             .set( ESprite.SPRITE_ID, firstSpriteId )
             .set( ETile.MULTI_POSITION, false )

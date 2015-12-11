@@ -13,7 +13,7 @@ import com.inari.firefly.animation.sprite.SpriteAnimationBuilder;
 import com.inari.firefly.animation.sprite.SpriteAnimationBuilder.SpriteAnimationHandler;
 import com.inari.firefly.asset.AssetNameKey;
 import com.inari.firefly.asset.AssetTypeKey;
-import com.inari.firefly.control.EController;
+import com.inari.firefly.entity.EEntity;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.renderer.sprite.ESprite;
 import com.inari.firefly.renderer.tile.ETile;
@@ -87,7 +87,7 @@ public final class Exit extends UnitHandle {
     @Override
     public final int createOne( int xGridPos, int yGridPos ) {
         exitEntityId = entitySystem.getEntityBuilder()
-            .set( EController.CONTROLLER_IDS, new int[] { spriteAnimationHandler.getControllerId() } )
+            .set( EEntity.CONTROLLER_IDS, new int[] { spriteAnimationHandler.getControllerId() } )
             .set( ETransform.VIEW_ID, viewSystem.getViewId( CaveSystem.CAVE_VIEW_NAME ) )
             .set( ESprite.SPRITE_ID, firstSpriteId )
             .set( ETile.GRID_X_POSITION, xGridPos )

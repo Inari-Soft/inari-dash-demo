@@ -4,8 +4,8 @@ import com.inari.dash.game.GameSelectionController;
 import com.inari.dash.game.GameSystem;
 import com.inari.firefly.asset.AssetSystem;
 import com.inari.firefly.control.Controller;
+import com.inari.firefly.entity.EEntity;
 import com.inari.firefly.entity.ETransform;
-import com.inari.firefly.entity.Entity;
 import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.renderer.sprite.ESprite;
 import com.inari.firefly.renderer.text.EText;
@@ -47,35 +47,35 @@ public final class LoadGameSelection extends Task {
             .set( EText.FONT_ID, fontId )
             .set( EText.TEXT_STRING, "%%%%%%%%%%%%%%%%%%%%%%%" )
         .activateAndNext()
-            .set( Entity.NAME, GameSystem.ENTITY_NAME_GAME_SELECTION_TITLE )
+            .set( EEntity.ENTITY_NAME, GameSystem.ENTITY_NAME_GAME_SELECTION_TITLE )
             .set( ETransform.VIEW_ID, 0 )
             .set( ETransform.XPOSITION, 50 )
             .set( ETransform.YPOSITION, 200 )
             .set( EText.FONT_ID, fontId )
             .set( EText.TEXT_STRING, "GAME:" )
         .activateAndNext()
-            .set( Entity.NAME, GameSystem.ENTITY_NAME_GAME_SELECTION )
+            .set( EEntity.ENTITY_NAME, GameSystem.ENTITY_NAME_GAME_SELECTION )
             .set( ETransform.VIEW_ID, 0 )
             .set( ETransform.XPOSITION, 220 )
             .set( ETransform.YPOSITION, 200 )
             .set( EText.FONT_ID, fontId )
             .set( EText.TEXT_STRING, "XXX" )
         .activateAndNext()
-            .set( Entity.NAME, GameSystem.ENTITY_NAME_CAVE_SELECTION_TITLE )
+            .set( EEntity.ENTITY_NAME, GameSystem.ENTITY_NAME_CAVE_SELECTION_TITLE )
             .set( ETransform.VIEW_ID, 0 )
             .set( ETransform.XPOSITION, 50 )
             .set( ETransform.YPOSITION, 300 )
             .set( EText.FONT_ID, fontId )
             .set( EText.TEXT_STRING, "CAVE:" )
         .activateAndNext()
-            .set( Entity.NAME, GameSystem.ENTITY_NAME_CAVE_SELECTION )
+            .set( EEntity.ENTITY_NAME, GameSystem.ENTITY_NAME_CAVE_SELECTION )
             .set( ETransform.VIEW_ID, 0 )
             .set( ETransform.XPOSITION, 220 )
             .set( ETransform.YPOSITION, 300 )
             .set( EText.FONT_ID, fontId )
             .set( EText.TEXT_STRING, "1" )
         .activateAndNext()
-            .set( Entity.NAME, GameSystem.ENTITY_NAME_EXIT_TITLE )
+            .set( EEntity.ENTITY_NAME, GameSystem.ENTITY_NAME_EXIT_TITLE )
             .set( ETransform.VIEW_ID, 0 )
             .set( ETransform.XPOSITION, 50 )
             .set( ETransform.YPOSITION, 400 )

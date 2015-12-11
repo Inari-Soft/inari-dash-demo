@@ -11,7 +11,7 @@ import com.inari.dash.game.cave.unit.UnitType;
 import com.inari.firefly.animation.sprite.SpriteAnimationBuilder;
 import com.inari.firefly.animation.sprite.SpriteAnimationBuilder.SpriteAnimationHandler;
 import com.inari.firefly.asset.AssetTypeKey;
-import com.inari.firefly.control.EController;
+import com.inari.firefly.entity.EEntity;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.Entity;
 import com.inari.firefly.entity.EntityPrefab;
@@ -44,7 +44,7 @@ public final class Explosion extends AbstractExplosionHandle {
         caveAssetsToReload.addAll( allSpriteAssetKeys );
 
         prefabId = prefabSystem.getEntityPrefabBuilder()
-            .set( EController.CONTROLLER_IDS, new int[] { CONTROLLER_ID, spriteAnimationHandler.getControllerId() } )
+            .set( EEntity.CONTROLLER_IDS, new int[] { CONTROLLER_ID, spriteAnimationHandler.getControllerId() } )
             .set( EntityPrefab.NAME, EXPLOSION_NAME )
             .set( ETransform.VIEW_ID, viewSystem.getViewId( CaveSystem.CAVE_VIEW_NAME ) )
             .set( ESprite.SPRITE_ID, allSpriteAssetKeys.iterator().next().id )
