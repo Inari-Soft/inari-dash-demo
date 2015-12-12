@@ -17,7 +17,6 @@ import com.inari.firefly.animation.sprite.SpriteAnimationBuilder.SpriteAnimation
 import com.inari.firefly.asset.AssetTypeKey;
 import com.inari.firefly.entity.EEntity;
 import com.inari.firefly.entity.ETransform;
-import com.inari.firefly.entity.Entity;
 import com.inari.firefly.entity.EntityController;
 import com.inari.firefly.entity.EntityPrefab;
 import com.inari.firefly.renderer.sprite.ESprite;
@@ -111,8 +110,7 @@ public final class Butterfly extends UnitHandle {
     
     @Override
     public final int createOne( String type, int xGridPos, int yGridPos ) {
-        Entity entity = prefabSystem.buildOne( prefabId );
-        int entityId = entity.getId();
+        int entityId = prefabSystem.buildOne( prefabId );
         ETile tile = entitySystem.getComponent( entityId, ETile.class );
         EUnit unit = entitySystem.getComponent( entityId, EUnit.class );
         tile.setGridXPos( xGridPos );

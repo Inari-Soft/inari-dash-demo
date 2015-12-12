@@ -13,7 +13,6 @@ import com.inari.dash.game.cave.unit.UnitType;
 import com.inari.firefly.asset.AssetNameKey;
 import com.inari.firefly.entity.EEntity;
 import com.inari.firefly.entity.ETransform;
-import com.inari.firefly.entity.Entity;
 import com.inari.firefly.entity.EntityController;
 import com.inari.firefly.entity.EntityPrefab;
 import com.inari.firefly.renderer.sprite.ESprite;
@@ -117,8 +116,7 @@ public final class Rock extends UnitHandle {
 
     @Override
     public final int createOne( int xGridPos, int yGridPos ) {
-        Entity entity = prefabSystem.buildOne( prefabId );
-        int entityId = entity.getId();
+        int entityId = prefabSystem.buildOne( prefabId );
         ETile tile = entitySystem.getComponent( entityId , ETile.class );
         tile.setGridXPos( xGridPos );
         tile.setGridYPos( yGridPos );

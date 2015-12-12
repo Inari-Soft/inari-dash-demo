@@ -13,7 +13,6 @@ import com.inari.firefly.animation.sprite.SpriteAnimationBuilder.SpriteAnimation
 import com.inari.firefly.asset.AssetTypeKey;
 import com.inari.firefly.entity.EEntity;
 import com.inari.firefly.entity.ETransform;
-import com.inari.firefly.entity.Entity;
 import com.inari.firefly.entity.EntityPrefab;
 import com.inari.firefly.renderer.sprite.ESprite;
 import com.inari.firefly.renderer.tile.ETile;
@@ -76,8 +75,7 @@ public final class Explosion extends AbstractExplosionHandle {
 
     @Override
     public final int createOne( int xGridPos, int yGridPos ) {
-        Entity entity = prefabSystem.buildOne( prefabId );
-        int entityId = entity.getId();
+        int entityId = prefabSystem.buildOne( prefabId );
         ETile tile = entitySystem.getComponent( entityId , ETile.class );
         tile.setGridXPos( xGridPos );
         tile.setGridYPos( yGridPos );
