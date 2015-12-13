@@ -15,7 +15,7 @@ import com.inari.dash.game.cave.unit.UnitType;
 import com.inari.firefly.animation.sprite.SpriteAnimationBuilder;
 import com.inari.firefly.animation.sprite.SpriteAnimationBuilder.SpriteAnimationHandler;
 import com.inari.firefly.asset.AssetNameKey;
-import com.inari.firefly.asset.AssetTypeKey;
+import com.inari.firefly.asset.AssetId;
 import com.inari.firefly.control.Controller;
 import com.inari.firefly.entity.EEntity;
 import com.inari.firefly.entity.ETransform;
@@ -66,7 +66,7 @@ public final class Amoeba extends UnitHandle {
             .setTextureAssetKey( CaveSystem.GAME_UNIT_TEXTURE_KEY )
             .addSpritesToAnimation( 0, new Rectangle( 0, 8 * 32, 32, 32 ), 8, true )
         .build();
-        Collection<AssetTypeKey> allSpriteAssetKeys = spriteAnimationHandler.getAllSpriteAssetKeys();
+        Collection<AssetId> allSpriteAssetKeys = spriteAnimationHandler.getAllSpriteAssetKeys();
         caveAssetsToReload.addAll( allSpriteAssetKeys );
         firstSpriteId = allSpriteAssetKeys.iterator().next().id;
         
@@ -125,9 +125,9 @@ public final class Amoeba extends UnitHandle {
 
     @Override
     public final int createOne( int xGridPos, int yGridPos ) {
-        ETile tile = entitySystem.getComponent( amoebaEntityId, ETile.class );
+        ETile tile = entitySystem.getComponent( amoebaEntityId, ETile.TYPE_KEY );
         if ( tile.getGridPositions().isEmpty() ) {
-            EUnit unit = entitySystem.getComponent( amoebaEntityId, EUnit.class );
+            EUnit unit = entitySystem.getComponent( amoebaEntityId, EUnit.TYPE_KEY );
             unit.setAspect( UnitAspect.ACTIVE );
         }
         tile.getGridPositions().add( new Position( xGridPos, yGridPos ) );

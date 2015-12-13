@@ -72,7 +72,7 @@ public final class SolidWall extends UnitHandle {
 
     @Override
     public final int createOne( int xGridPos, int yGridPos ) {
-        ETile tile = entitySystem.getComponent( solidWallEntityId, ETile.class );
+        ETile tile = entitySystem.getComponent( solidWallEntityId, ETile.TYPE_KEY );
         tile.getGridPositions().add( new Position( xGridPos, yGridPos ) );
         caveService.setEntityId( solidWallEntityId, xGridPos, yGridPos );
         return solidWallEntityId;

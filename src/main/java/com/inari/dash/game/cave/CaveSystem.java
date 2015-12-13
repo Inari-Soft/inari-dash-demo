@@ -14,11 +14,9 @@ import com.inari.dash.game.cave.unit.EUnit;
 import com.inari.dash.game.cave.unit.UnitAspect;
 import com.inari.dash.game.cave.unit.UnitType;
 import com.inari.firefly.asset.AssetNameKey;
-import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.filter.IColorFilter;
 import com.inari.firefly.renderer.tile.ETile;
 import com.inari.firefly.renderer.tile.TileGrid;
-import com.inari.firefly.renderer.tile.TileGridSystem;
 import com.inari.firefly.sound.SoundAsset;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FFInitException;
@@ -87,8 +85,7 @@ public class CaveSystem implements FFSystem {
         }
     }
     
-    private EntitySystem entitySystem;
-    private TileGridSystem tileGridSystem;
+    private FFContext context;
     
     CaveState caveState;
 
@@ -110,9 +107,8 @@ public class CaveSystem implements FFSystem {
     
     @Override
     public final void init( FFContext context ) throws FFInitException {
-        gameData = context.getComponent( GameData.CONTEXT_KEY );
-        entitySystem = context.getSystem( EntitySystem.SYSTEM_KEY );
-        tileGridSystem = context.getSystem( TileGridSystem.SYSTEM_KEY );
+        gameData = context.getDataComponent( GameData.CONTEXT_KEY );
+        this.context = context;
     }
 
     @Override
@@ -206,8 +202,8 @@ public class CaveSystem implements FFSystem {
     }
     
     public final void deleteUnit( int entityId, int x, int y ) {
-        ETile tile = entitySystem.getComponent( entityId, ETile.class );
-        EUnit unit = entitySystem.getComponent( entityId, EUnit.class );
+        ETile tile = context.getEntityComponent( entityId, ETile.TYPE_KEY );
+        EUnit unit = context.getEntityComponent( entityId, EUnit.TYPE_KEY );
         if ( unit.getUnitType() == UnitType.ROCKFORD ) {
             caveState = CaveState.LOOSE;
         }
@@ -217,27 +213,27 @@ public class CaveSystem implements FFSystem {
         if ( tile.isMultiPosition() ) {
             tile.getGridPositions().remove( new Position( x, y ) );
         } else {
-            entitySystem.delete( entityId );
+            context.deleteEntity( entityId );
         }
     }
     
     public final UnitType getUnitType( int x, int y ) {
         int entityId = getEntityId( x, y );
-        return entitySystem.getComponent( entityId, EUnit.class ).getUnitType();
+        return context.getEntityComponent( entityId, EUnit.TYPE_KEY ).getUnitType();
     }
     
     public final UnitType getUnitType( int x, int y, Direction tileOnDirection ) {
         int entityId = getEntityId( x, y, tileOnDirection );
-        return entitySystem.getComponent( entityId, EUnit.class ).getUnitType();
+        return context.getEntityComponent( entityId, EUnit.TYPE_KEY ).getUnitType();
     }
     
     public final boolean isOfType( int entityId, UnitType type ) {
-        EUnit unit = entitySystem.getComponent( entityId, EUnit.class );
+        EUnit unit = context.getEntityComponent( entityId, EUnit.TYPE_KEY );
         return unit.getUnitType() == type;
     }
     
     public boolean isOfType( int entityId, Direction tileOnDirection, UnitType type ) {
-        ETile tile = entitySystem.getComponent( entityId, ETile.class );
+        ETile tile = context.getEntityComponent( entityId, ETile.TYPE_KEY );
         return isOfType( getEntityId( tile.getGridXPos(), tile.getGridYPos(), tileOnDirection ), type );
     }
     
@@ -254,7 +250,7 @@ public class CaveSystem implements FFSystem {
     }
     
     public final boolean hasInSurrounding( int entityId, UnitType type ) {
-        ETile tile = entitySystem.getComponent( entityId, ETile.class );
+        ETile tile = context.getEntityComponent( entityId, ETile.TYPE_KEY );
         int x = tile.getGridXPos();
         int y = tile.getGridYPos();
         return 
@@ -265,7 +261,7 @@ public class CaveSystem implements FFSystem {
     }
     
     public boolean hasInSurrounding( int entityId, UnitType type, UnitAspect aspect ) {
-        ETile tile = entitySystem.getComponent( entityId, ETile.class );
+        ETile tile = context.getEntityComponent( entityId, ETile.TYPE_KEY );
         int x = tile.getGridXPos();
         int y = tile.getGridYPos();
         return 
@@ -276,7 +272,7 @@ public class CaveSystem implements FFSystem {
     }
 
     public final boolean hasAspect( int entityId, Aspect aspect ) {
-        EUnit unit = entitySystem.getComponent( entityId, EUnit.class );
+        EUnit unit = context.getEntityComponent( entityId, EUnit.TYPE_KEY );
         return unit.has( aspect );
     }
 
@@ -289,7 +285,7 @@ public class CaveSystem implements FFSystem {
     }
     
     public final boolean isMoving( int entityId, Direction moveDirection ) {
-        EUnit unit = entitySystem.getComponent( entityId, EUnit.class );
+        EUnit unit = context.getEntityComponent( entityId, EUnit.TYPE_KEY );
         return unit.getMovement() == moveDirection;
     }
     
@@ -298,7 +294,7 @@ public class CaveSystem implements FFSystem {
     }
     
     public final boolean isMoving( int x, int y, Direction tileOnDirection, Direction moveDirection ) {
-        EUnit unit = entitySystem.getComponent( getEntityId( x, y, tileOnDirection ), EUnit.class );
+        EUnit unit = context.getEntityComponent( getEntityId( x, y, tileOnDirection ), EUnit.TYPE_KEY );
         return unit.getMovement() == moveDirection;
     }
     
@@ -329,7 +325,7 @@ public class CaveSystem implements FFSystem {
             return;
         }
         
-        tileGrid = tileGridSystem.getTileGrid( CaveSystem.CAVE_TILE_GRID_NAME );
+        tileGrid = context.getSystemComponent( TileGrid.TYPE_KEY, CaveSystem.CAVE_TILE_GRID_NAME );
     }
 
 }

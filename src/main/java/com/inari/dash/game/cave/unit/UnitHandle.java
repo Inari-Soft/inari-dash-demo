@@ -7,7 +7,7 @@ import java.util.Map;
 import com.inari.dash.game.cave.CaveSystem;
 import com.inari.firefly.Disposable;
 import com.inari.firefly.asset.AssetSystem;
-import com.inari.firefly.asset.AssetTypeKey;
+import com.inari.firefly.asset.AssetId;
 import com.inari.firefly.control.ControllerSystem;
 import com.inari.firefly.entity.EntityPrefabSystem;
 import com.inari.firefly.entity.EntitySystem;
@@ -19,7 +19,7 @@ import com.inari.firefly.system.view.ViewSystem;
 
 public abstract class UnitHandle implements FFContextInitiable, Disposable {
 
-    protected final List<AssetTypeKey> caveAssetsToReload = new ArrayList<AssetTypeKey>();
+    protected final List<AssetId> caveAssetsToReload = new ArrayList<AssetId>();
     protected boolean initialized = false;
     
     protected EntitySystem entitySystem;
@@ -52,7 +52,7 @@ public abstract class UnitHandle implements FFContextInitiable, Disposable {
             throw new FFInitException( "UnitHandle: " + getClass().getName() + " not initialized" );
         }
         
-        for ( AssetTypeKey assetKey : caveAssetsToReload ) {
+        for ( AssetId assetKey : caveAssetsToReload ) {
             assetSystem.loadAsset( assetKey );
         }
     }
@@ -62,7 +62,7 @@ public abstract class UnitHandle implements FFContextInitiable, Disposable {
             throw new FFInitException( "UnitHandle: " + getClass().getName() + " not initialized" );
         }
         
-        for ( AssetTypeKey assetKey : caveAssetsToReload ) {
+        for ( AssetId assetKey : caveAssetsToReload ) {
             assetSystem.disposeAsset( assetKey );
         }
     }

@@ -21,8 +21,8 @@ public final class ExplosionAction extends UnitAction {
 
     @Override
     public final void performAction( int entityId ) {
-        ETile tile = entitySystem.getComponent( entityId, ETile.class );
-        EUnit unit = entitySystem.getComponent( entityId, EUnit.class );
+        ETile tile = entitySystem.getComponent( entityId, ETile.TYPE_KEY );
+        EUnit unit = entitySystem.getComponent( entityId, EUnit.TYPE_KEY );
         tmpPos.x = tile.getGridXPos();
         tmpPos.y = tile.getGridYPos();
         
@@ -59,7 +59,7 @@ public final class ExplosionAction extends UnitAction {
         if ( caveService.hasAspect( entityId, UnitAspect.DESTRUCTIBLE ) ) {
             caveService.deleteUnit( entityId, tmpPos.x, tmpPos.y );
             int newEntityId = explosionType.handler.createOne( tmpPos.x, tmpPos.y );
-            EUnit unit = entitySystem.getComponent( newEntityId, EUnit.class );
+            EUnit unit = entitySystem.getComponent( newEntityId, EUnit.TYPE_KEY );
             unit.setChangeTo( explodeTo );
         }
     }

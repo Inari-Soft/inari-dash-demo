@@ -75,7 +75,7 @@ public class BrickWall extends UnitHandle {
 
     @Override
     public int createOne( int xGridPos, int yGridPos ) {
-        ETile tile = entitySystem.getComponent( brickWallEntityId, ETile.class );
+        ETile tile = entitySystem.getComponent( brickWallEntityId, ETile.TYPE_KEY );
         tile.getGridPositions().add( new Position( xGridPos, yGridPos ) );
         caveService.setEntityId( brickWallEntityId, xGridPos, yGridPos );
         return brickWallEntityId;

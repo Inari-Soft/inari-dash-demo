@@ -48,12 +48,6 @@ public final class GameSystem implements FFSystem {
     private int selectedCave = 0;
     private boolean selected = false;
 
-    public int gameSelectionTitleId = -1;
-    public int gameSelectionId = -1;
-    public int caveSelectionTitleId = -1;
-    public int caveSelectionId = -1;
-    public int exitTitleId = -1;
-
     @Override
     public final IndexedTypeKey indexedTypeKey() {
         return SYSTEM_KEY;
@@ -67,7 +61,7 @@ public final class GameSystem implements FFSystem {
     @Override
     public final void init( FFContext context ) throws FFInitException {
         entitySystem = context.getSystem( EntitySystem.SYSTEM_KEY );
-        configuration = context.getComponent( Configuration.CONTEXT_KEY );
+        configuration = context.getDataComponent( Configuration.CONTEXT_KEY );
         
         gameInfos = new GameInfos();
         gameInfos.load( context );
@@ -76,16 +70,6 @@ public final class GameSystem implements FFSystem {
     @Override
     public final void dispose( FFContext context ) {
 
-    }
-    
-    private void initEntityIds() {
-        if ( gameSelectionTitleId == -1 ) {
-            gameSelectionTitleId = entitySystem.getEntityId( ENTITY_NAME_GAME_SELECTION_TITLE );
-            gameSelectionId = entitySystem.getEntityId( ENTITY_NAME_GAME_SELECTION );
-            caveSelectionTitleId = entitySystem.getEntityId( ENTITY_NAME_CAVE_SELECTION_TITLE );
-            caveSelectionId = entitySystem.getEntityId( ENTITY_NAME_CAVE_SELECTION );
-            exitTitleId = entitySystem.getEntityId( ENTITY_NAME_EXIT_TITLE );
-        }
     }
 
     public final Configuration getConfiguration() {
@@ -113,18 +97,16 @@ public final class GameSystem implements FFSystem {
     }
     
     final void update() {
-        initEntityIds();
-        
-        entitySystem.getComponent( gameSelectionTitleId, EText.class )
+        entitySystem.getComponent( ENTITY_NAME_GAME_SELECTION_TITLE, EText.TYPE_KEY )
             .setTintColor( ( mode == SelectionMode.GAME_SELECTION )? GameSystem.YELLOW_FONT_COLOR : GameSystem.WHITE_FONT_COLOR );
-        entitySystem.getComponent( caveSelectionTitleId, EText.class )
+        entitySystem.getComponent( ENTITY_NAME_CAVE_SELECTION_TITLE, EText.TYPE_KEY )
             .setTintColor( ( mode == SelectionMode.CAVE_SELECTION )? GameSystem.YELLOW_FONT_COLOR : GameSystem.WHITE_FONT_COLOR );
-        entitySystem.getComponent( exitTitleId, EText.class )
+        entitySystem.getComponent( ENTITY_NAME_EXIT_TITLE, EText.TYPE_KEY )
             .setTintColor( ( mode == SelectionMode.EXIT )? GameSystem.YELLOW_FONT_COLOR : GameSystem.WHITE_FONT_COLOR );
         
-        entitySystem.getComponent( gameSelectionId, EText.class )
+        entitySystem.getComponent( ENTITY_NAME_GAME_SELECTION, EText.TYPE_KEY )
             .setText( getSelectedGame().getName().toCharArray() );
-        entitySystem.getComponent( caveSelectionId, EText.class )
+        entitySystem.getComponent( ENTITY_NAME_CAVE_SELECTION, EText.TYPE_KEY )
             .setText( String.valueOf( getSelectedCave() ).toCharArray() );
     }
 

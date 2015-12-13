@@ -13,7 +13,7 @@ import com.inari.firefly.entity.EntityComponent;
 
 public final class EUnit extends EntityComponent {
     
-    public static final EntityComponentTypeKey TYPE_KEY = createTypeKey( EUnit.class );
+    public static final EntityComponentTypeKey<EUnit> TYPE_KEY = EntityComponentTypeKey.create( EUnit.class );
     
     public static final AttributeKey<UnitType> UNIT_TYPE = new AttributeKey<UnitType>( "unitType", UnitType.class, EUnit.class );
     public static final AttributeKey<Direction> MOVEMENT = new AttributeKey<Direction>( "movement", Direction.class, EUnit.class );

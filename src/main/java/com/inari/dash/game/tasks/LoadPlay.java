@@ -54,7 +54,7 @@ public final class LoadPlay extends Task {
         // load selected game data
         GameData gameData = ( new BDCFFGameDataLoader() ).load( selectedGame.getGameConfigResource() );
         gameData.setCave( selectedCave );
-        context.setComponent( gameData );
+        context.setDataComponent( gameData );
         // create CaveService
         context.loadSystem( CaveSystem.SYSTEM_KEY );
         // load the selected cave
@@ -74,7 +74,7 @@ public final class LoadPlay extends Task {
     }
     
     private void initCaveAndUnits( FFContext context ) {
-        Configuration config = context.getComponent( Configuration.CONTEXT_KEY );
+        Configuration config = context.getDataComponent( Configuration.CONTEXT_KEY );
         ViewSystem viewSystem = context.getSystem( ViewSystem.SYSTEM_KEY );
         AssetSystem assetSystem = context.getSystem( AssetSystem.SYSTEM_KEY );
         

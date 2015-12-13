@@ -11,7 +11,7 @@ public final class CollectAction extends UnitAction {
 
     @Override
     public final void performAction( int entityId ) {
-        EUnit unit = entitySystem.getComponent( entityId, EUnit.class );
+        EUnit unit = entitySystem.getComponent( entityId, EUnit.TYPE_KEY );
         if ( unit.getUnitType() == UnitType.DIAMOND ) {
             caveService.collectDiamond();
         }

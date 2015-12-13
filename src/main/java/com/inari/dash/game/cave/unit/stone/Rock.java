@@ -117,7 +117,7 @@ public final class Rock extends UnitHandle {
     @Override
     public final int createOne( int xGridPos, int yGridPos ) {
         int entityId = prefabSystem.buildOne( prefabId );
-        ETile tile = entitySystem.getComponent( entityId , ETile.class );
+        ETile tile = entitySystem.getComponent( entityId , ETile.TYPE_KEY );
         tile.setGridXPos( xGridPos );
         tile.setGridYPos( yGridPos );
         entitySystem.activateEntity( entityId );

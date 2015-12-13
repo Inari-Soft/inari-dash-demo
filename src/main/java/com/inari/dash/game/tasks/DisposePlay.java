@@ -67,7 +67,7 @@ public final class DisposePlay extends Task {
             actionSystem.deleteAction( actionType.index() );
         }
         
-        context.disposeComponent( GameData.CONTEXT_KEY );
+        context.disposeDataComponent( GameData.CONTEXT_KEY );
         context.disposeSystem( CaveSystem.SYSTEM_KEY );
     }
 

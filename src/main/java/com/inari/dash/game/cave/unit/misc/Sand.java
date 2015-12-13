@@ -81,7 +81,7 @@ public final class Sand extends UnitHandle {
 
     @Override
     public final int createOne( int xGridPos, int yGridPos ) {
-        ETile tile = entitySystem.getComponent( sandEntityId, ETile.class );
+        ETile tile = entitySystem.getComponent( sandEntityId, ETile.TYPE_KEY );
         tile.getGridPositions().add( new Position( xGridPos, yGridPos ) );
         caveService.setEntityId( sandEntityId, xGridPos, yGridPos );
         return sandEntityId;

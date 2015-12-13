@@ -34,7 +34,7 @@ public final class LoadGame extends Task {
         AssetSystem assetSystem = context.getSystem( AssetSystem.SYSTEM_KEY );
         TextSystem textSystem = context.getSystem( TextSystem.SYSTEM_KEY );
         SoundSystem soundSystem = context.getSystem( SoundSystem.SYSTEM_KEY );
-        Configuration configuration = context.getComponent( Configuration.CONTEXT_KEY );
+        Configuration configuration = context.getDataComponent( Configuration.CONTEXT_KEY );
         
         // create and load font
         textSystem.getFontBuilder()

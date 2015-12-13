@@ -10,7 +10,7 @@ import com.inari.firefly.entity.EntityComponent;
 
 public final class RFUnit extends EntityComponent {
     
-    public static final EntityComponentTypeKey TYPE_KEY = createTypeKey( RFUnit.class );
+    public static final EntityComponentTypeKey<RFUnit> TYPE_KEY = EntityComponentTypeKey.create( RFUnit.class );
     
     public enum RFState {
         ENTERING,

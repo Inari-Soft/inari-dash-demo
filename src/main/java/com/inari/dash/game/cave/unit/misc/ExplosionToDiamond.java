@@ -9,7 +9,7 @@ import com.inari.dash.game.cave.unit.EUnit;
 import com.inari.dash.game.cave.unit.UnitType;
 import com.inari.firefly.animation.sprite.SpriteAnimationBuilder;
 import com.inari.firefly.animation.sprite.SpriteAnimationBuilder.SpriteAnimationHandler;
-import com.inari.firefly.asset.AssetTypeKey;
+import com.inari.firefly.asset.AssetId;
 import com.inari.firefly.entity.EEntity;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.EntityPrefab;
@@ -38,7 +38,7 @@ public class ExplosionToDiamond extends AbstractExplosionHandle {
             .addSpritesToAnimation( 0, new Rectangle( 2 * 32, 7 * 32, 32, 32 ), 6, true )
         .build();
         
-        Collection<AssetTypeKey> allSpriteAssetKeys = spriteAnimationHandler.getAllSpriteAssetKeys();
+        Collection<AssetId> allSpriteAssetKeys = spriteAnimationHandler.getAllSpriteAssetKeys();
         caveAssetsToReload.addAll( allSpriteAssetKeys );
     
         prefabId = prefabSystem.getEntityPrefabBuilder()
@@ -75,7 +75,7 @@ public class ExplosionToDiamond extends AbstractExplosionHandle {
     @Override
     public int createOne( int xGridPos, int yGridPos ) {
         int entityId = prefabSystem.buildOne( prefabId );
-        ETile tile = entitySystem.getComponent( entityId , ETile.class );
+        ETile tile = entitySystem.getComponent( entityId , ETile.TYPE_KEY );
         tile.setGridXPos( xGridPos );
         tile.setGridYPos( yGridPos );
         entitySystem.activateEntity( entityId );

@@ -81,7 +81,7 @@ public final class Space extends UnitHandle {
 
     @Override
     public final int createOne( int xGridPos, int yGridPos ) {
-        ETile tile = entitySystem.getComponent( spaceEntityId, ETile.class );
+        ETile tile = entitySystem.getComponent( spaceEntityId, ETile.TYPE_KEY );
         tile.getGridPositions().add( new Position( xGridPos, yGridPos ) );
         caveService.setEntityId( spaceEntityId, xGridPos, yGridPos );
         return spaceEntityId;

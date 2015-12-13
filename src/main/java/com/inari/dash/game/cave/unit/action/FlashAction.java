@@ -48,7 +48,7 @@ public final class FlashAction extends UnitAction {
         public void update( UpdateEvent event ) {
             int spaceEntityId = UnitType.SPACE.handler.getEntityId();
             if ( tick == 0 ) {
-                ESprite spaceSprite = entitySystem.getComponent( spaceEntityId, ESprite.class );
+                ESprite spaceSprite = entitySystem.getComponent( spaceEntityId, ESprite.TYPE_KEY );
                 spaceSpriteId = spaceSprite.getSpriteId();
                 spaceSprite.setSpriteId( flashSpriteId );
 
@@ -57,7 +57,7 @@ public final class FlashAction extends UnitAction {
             tick++;
 
             if ( tick > 6 ) {
-                ESprite spaceSprite = entitySystem.getComponent( spaceEntityId, ESprite.class );
+                ESprite spaceSprite = entitySystem.getComponent( spaceEntityId, ESprite.TYPE_KEY );
                 spaceSprite.setSpriteId( spaceSpriteId );
                 // self remove
                 AssetSystem assetSystem = context.getSystem( AssetSystem.SYSTEM_KEY );

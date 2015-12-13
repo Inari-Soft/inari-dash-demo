@@ -74,7 +74,7 @@ public final class ExpandingWall extends UnitHandle {
 
     @Override
     public final int createOne( int xGridPos, int yGridPos ) {
-        ETile tile = entitySystem.getComponent( expandingWallEntityId, ETile.class );
+        ETile tile = entitySystem.getComponent( expandingWallEntityId, ETile.TYPE_KEY );
         tile.getGridPositions().add( new Position( xGridPos, yGridPos ) );
         caveService.setEntityId( expandingWallEntityId, xGridPos, yGridPos );
         return expandingWallEntityId;
