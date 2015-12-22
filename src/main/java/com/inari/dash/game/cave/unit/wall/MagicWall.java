@@ -91,7 +91,8 @@ public final class MagicWall extends UnitHandle {
         
         prefabId = prefabSystem.getEntityPrefabBuilder()
             .set( EntityPrefab.NAME, MAGIC_WALL_NAME )
-            .set( EEntity.CONTROLLER_IDS, new int[] { controllerId, spriteAnimationHandler.getControllerId() } )
+            .add( EEntity.CONTROLLER_IDS, controllerId )
+            .add( EEntity.CONTROLLER_IDS, spriteAnimationHandler.getControllerId() )
             .set( ETransform.VIEW_ID, viewSystem.getViewId( CaveSystem.CAVE_VIEW_NAME ) )
             .set( ESprite.SPRITE_ID, firstSpriteId )
             .set( ETile.MULTI_POSITION, false )

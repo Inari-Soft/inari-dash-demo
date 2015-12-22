@@ -70,7 +70,7 @@ public final class Rock extends UnitHandle {
         .build( RockController.class );
         
         prefabId = prefabSystem.getEntityPrefabBuilder()
-            .set( EEntity.CONTROLLER_IDS, new int[] { controllerId } )
+            .add( EEntity.CONTROLLER_IDS, controllerId )
             .set( EntityPrefab.NAME, ROCK_NAME )
             .set( ETransform.VIEW_ID, viewSystem.getViewId( CaveSystem.CAVE_VIEW_NAME ) )
             .set( ESprite.SPRITE_ID, assetSystem.getAssetId( ROCK_SPRITE_ASSET_KEY ) )

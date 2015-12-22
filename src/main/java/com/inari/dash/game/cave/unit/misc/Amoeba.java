@@ -90,7 +90,8 @@ public final class Amoeba extends UnitHandle {
         spriteAnimationHandler.setFrameTime( 60 - (int) updateRate * 4 );
         
         amoebaEntityId = entitySystem.getEntityBuilder()
-            .set( EEntity.CONTROLLER_IDS, new int[] { controllerId, spriteAnimationHandler.getControllerId() } )
+            .add( EEntity.CONTROLLER_IDS, controllerId )
+            .add( EEntity.CONTROLLER_IDS, spriteAnimationHandler.getControllerId() )
             .set( ETransform.VIEW_ID, viewSystem.getViewId( CaveSystem.CAVE_VIEW_NAME ) )
             .set( ESprite.SPRITE_ID, firstSpriteId )
             .set( ETile.MULTI_POSITION, true )

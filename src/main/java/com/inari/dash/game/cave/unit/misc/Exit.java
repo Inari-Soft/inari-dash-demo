@@ -87,7 +87,7 @@ public final class Exit extends UnitHandle {
     @Override
     public final int createOne( int xGridPos, int yGridPos ) {
         exitEntityId = entitySystem.getEntityBuilder()
-            .set( EEntity.CONTROLLER_IDS, new int[] { spriteAnimationHandler.getControllerId() } )
+            .add( EEntity.CONTROLLER_IDS, spriteAnimationHandler.getControllerId() )
             .set( ETransform.VIEW_ID, viewSystem.getViewId( CaveSystem.CAVE_VIEW_NAME ) )
             .set( ESprite.SPRITE_ID, firstSpriteId )
             .set( ETile.GRID_X_POSITION, xGridPos )

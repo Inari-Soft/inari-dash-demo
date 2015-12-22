@@ -43,7 +43,8 @@ public final class Explosion extends AbstractExplosionHandle {
         caveAssetsToReload.addAll( allSpriteAssetKeys );
 
         prefabId = prefabSystem.getEntityPrefabBuilder()
-            .set( EEntity.CONTROLLER_IDS, new int[] { CONTROLLER_ID, spriteAnimationHandler.getControllerId() } )
+            .add( EEntity.CONTROLLER_IDS, CONTROLLER_ID )
+            .add( EEntity.CONTROLLER_IDS, spriteAnimationHandler.getControllerId() )
             .set( EntityPrefab.NAME, EXPLOSION_NAME )
             .set( ETransform.VIEW_ID, viewSystem.getViewId( CaveSystem.CAVE_VIEW_NAME ) )
             .set( ESprite.SPRITE_ID, allSpriteAssetKeys.iterator().next().id )

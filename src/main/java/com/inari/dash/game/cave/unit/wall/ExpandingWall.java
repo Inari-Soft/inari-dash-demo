@@ -37,7 +37,7 @@ public final class ExpandingWall extends UnitHandle {
         
         expandingWallEntityId = entitySystem.getEntityBuilder()
             .set( ETransform.VIEW_ID, viewSystem.getViewId( CaveSystem.CAVE_VIEW_NAME ) )
-            .set( EEntity.CONTROLLER_IDS, new int[] { controllerId } )
+            .add( EEntity.CONTROLLER_IDS, controllerId )
             .set( ETile.MULTI_POSITION, true )
             .set( ESprite.SPRITE_ID, assetSystem.getAssetId( BrickWall.BRICK_WALL_SPRITE_ASSET_KEY ) )
             .set( EUnit.UNIT_TYPE, type() )

@@ -53,7 +53,8 @@ public final class Firefly extends UnitHandle {
         .build( FireflyController.class );
         
         prefabId = prefabSystem.getEntityPrefabBuilder()
-            .set( EEntity.CONTROLLER_IDS, new int[] { controllerId, spriteAnimationHandler.getControllerId() } )
+            .add( EEntity.CONTROLLER_IDS, controllerId )
+            .add( EEntity.CONTROLLER_IDS, spriteAnimationHandler.getControllerId() )
             .set( EntityPrefab.NAME, FIREFLY_NAME )
             .set( ETransform.VIEW_ID, viewSystem.getViewId( CaveSystem.CAVE_VIEW_NAME ) )
             .set( ESprite.SPRITE_ID, allSpriteAssetKeys.iterator().next().id )
