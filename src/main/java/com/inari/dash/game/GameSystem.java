@@ -2,16 +2,19 @@ package com.inari.dash.game;
 
 import java.util.Collection;
 
+import com.badlogic.gdx.Input;
 import com.inari.commons.graphics.RGBColor;
 import com.inari.commons.lang.indexed.IndexedTypeKey;
 import com.inari.dash.Configuration;
 import com.inari.dash.game.io.GameInfos;
+import com.inari.firefly.FFInitException;
 import com.inari.firefly.asset.AssetNameKey;
 import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.renderer.text.EText;
 import com.inari.firefly.system.FFContext;
-import com.inari.firefly.system.FFInitException;
 import com.inari.firefly.system.FFSystem;
+import com.inari.firefly.system.external.FFInput;
+import com.inari.firefly.system.external.FFInput.ButtonType;
 
 public final class GameSystem implements FFSystem {
     
@@ -65,6 +68,16 @@ public final class GameSystem implements FFSystem {
         
         gameInfos = new GameInfos();
         gameInfos.load( context );
+        
+        // TODO this should be configurable via UI
+        FFInput input = context.getInput();
+        input.mapKeyInput( ButtonType.UP, Input.Keys.W );
+        input.mapKeyInput( ButtonType.DOWN, Input.Keys.S );
+        input.mapKeyInput( ButtonType.RIGHT, Input.Keys.D );
+        input.mapKeyInput( ButtonType.LEFT, Input.Keys.A );
+        input.mapKeyInput( ButtonType.FIRE_1, Input.Keys.SPACE );
+        input.mapKeyInput( ButtonType.ENTER, Input.Keys.ENTER );
+        input.mapKeyInput( ButtonType.QUIT, Input.Keys.ESCAPE );
     }
 
     @Override

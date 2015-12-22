@@ -6,7 +6,7 @@ import java.io.InputStreamReader;
 import com.badlogic.gdx.files.FileHandle;
 import com.inari.commons.StringUtils;
 import com.inari.dash.game.GameData;
-import com.inari.firefly.system.FFInitException;
+import com.inari.firefly.FFInitException;
 
 public class BDCFFGameDataLoader {
     

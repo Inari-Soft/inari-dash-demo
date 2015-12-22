@@ -5,7 +5,7 @@ import com.inari.dash.game.cave.unit.UnitController;
 import com.inari.dash.game.cave.unit.UnitType;
 import com.inari.firefly.renderer.tile.ETile;
 import com.inari.firefly.system.FFContext;
-import com.inari.firefly.system.FFTimer;
+import com.inari.firefly.system.external.FFTimer;
 
 public final class ExplosionController extends UnitController {
 

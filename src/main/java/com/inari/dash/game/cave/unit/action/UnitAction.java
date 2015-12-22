@@ -1,10 +1,10 @@
 package com.inari.dash.game.cave.unit.action;
 
 import com.inari.dash.game.cave.CaveSystem;
+import com.inari.firefly.FFInitException;
 import com.inari.firefly.action.Action;
 import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.system.FFContext;
-import com.inari.firefly.system.FFInitException;
 
 public abstract class UnitAction extends Action {
     

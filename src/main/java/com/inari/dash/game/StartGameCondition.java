@@ -4,7 +4,7 @@ import com.inari.dash.game.GameSystem.SelectionMode;
 import com.inari.firefly.state.StateChangeCondition;
 import com.inari.firefly.state.Workflow;
 import com.inari.firefly.system.FFContext;
-import com.inari.firefly.system.FFTimer;
+import com.inari.firefly.system.external.FFTimer;
 
 public final class StartGameCondition implements StateChangeCondition {
 

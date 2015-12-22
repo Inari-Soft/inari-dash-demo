@@ -10,6 +10,7 @@ import com.inari.dash.game.cave.unit.EUnit;
 import com.inari.dash.game.cave.unit.UnitHandle;
 import com.inari.dash.game.cave.unit.UnitType;
 import com.inari.dash.game.cave.unit.rockford.RFUnit.RFState;
+import com.inari.firefly.FFInitException;
 import com.inari.firefly.animation.sprite.SpriteAnimationBuilder;
 import com.inari.firefly.animation.sprite.SpriteAnimationBuilder.SpriteAnimationHandler;
 import com.inari.firefly.asset.AssetNameKey;
@@ -23,7 +24,6 @@ import com.inari.firefly.renderer.tile.ETile;
 import com.inari.firefly.sound.Sound;
 import com.inari.firefly.sound.SoundAsset;
 import com.inari.firefly.system.FFContext;
-import com.inari.firefly.system.FFInitException;
 
 public final class Rockford extends UnitHandle {
     

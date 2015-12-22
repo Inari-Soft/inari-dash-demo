@@ -1,7 +1,5 @@
 package com.inari.dash.game.cave.unit.rockford;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.inari.commons.GeomUtils;
 import com.inari.commons.geom.Direction;
 import com.inari.commons.geom.Position;
@@ -18,8 +16,10 @@ import com.inari.firefly.renderer.tile.ETile;
 import com.inari.firefly.sound.event.SoundEvent;
 import com.inari.firefly.sound.event.SoundEvent.Type;
 import com.inari.firefly.system.FFContext;
-import com.inari.firefly.system.FFTimer;
 import com.inari.firefly.system.FireFly;
+import com.inari.firefly.system.external.FFInput;
+import com.inari.firefly.system.external.FFInput.ButtonType;
+import com.inari.firefly.system.external.FFTimer;
 
 public final class RFController extends UnitController {
     
@@ -27,12 +27,15 @@ public final class RFController extends UnitController {
     private static final int APPEARING_ANIMATION_DURATION = 6;
     private static final int IDLE_BLINKING_DURATION = 6;
     private static final int IDLE_FRETFUL_DURATION = 20;
+    
+    private final FFInput input;
 
     private Position currentPos = new Position();
     private Position nextPos = new Position();
 
     protected RFController( int id, FFContext context ) {
         super( id, context );
+        input = context.getInput();
     }
 
     @Override
@@ -75,13 +78,13 @@ public final class RFController extends UnitController {
             return;
         }
         
-        if ( Gdx.input.isKeyPressed( Input.Keys.W ) ) {
+        if ( input.isPressed( ButtonType.UP ) ) {
             unit.setMovement( Direction.NORTH );
-        } else if ( Gdx.input.isKeyPressed( Input.Keys.D ) ) {
+        } else if ( input.isPressed( ButtonType.RIGHT ) ) {
             unit.setMovement( Direction.EAST );
-        } else if ( Gdx.input.isKeyPressed( Input.Keys.S ) ) {
+        } else if ( input.isPressed( ButtonType.DOWN ) ) {
             unit.setMovement( Direction.SOUTH );
-        } else if ( Gdx.input.isKeyPressed( Input.Keys.A ) ) {
+        } else if ( input.isPressed( ButtonType.LEFT ) ) {
             unit.setMovement( Direction.WEST );
         } else {
             unit.setMovement( Direction.NONE );
@@ -121,7 +124,7 @@ public final class RFController extends UnitController {
         nextPos.x = currentPos.x;
         nextPos.y = currentPos.y;
         Direction move = unit.getMovement();
-        boolean grabbing = Gdx.input.isKeyPressed( Input.Keys.SPACE );
+        boolean grabbing = input.isPressed( ButtonType.FIRE_1 );
         
         if ( move == Direction.WEST || move == Direction.NORTH ) {
             rockford.setState( RFState.LEFT );

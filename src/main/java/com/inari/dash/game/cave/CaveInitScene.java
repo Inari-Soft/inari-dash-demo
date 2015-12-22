@@ -11,8 +11,8 @@ import com.inari.firefly.scene.Scene;
 import com.inari.firefly.sound.event.SoundEvent;
 import com.inari.firefly.sound.event.SoundEvent.Type;
 import com.inari.firefly.system.FFContext;
-import com.inari.firefly.system.FFTimer.UpdateScheduler;
 import com.inari.firefly.system.FireFly;
+import com.inari.firefly.system.external.FFTimer.UpdateScheduler;
 import com.inari.firefly.system.view.View;
 import com.inari.firefly.system.view.ViewSystem;
 
@@ -109,7 +109,7 @@ public class CaveInitScene extends Scene {
         for ( int y = 0; y < height; y++ ) {
             for ( int x = 0; x < width; x++ ) {
                 if ( introTiles.get( x * y ) ) {
-                    context.getSystemInterface().renderSprite( tmpSprite, x * 16 + worldPosition.x , y * 16 + worldPosition.y );
+                    context.getGraphics().renderSprite( tmpSprite, x * 16 + worldPosition.x , y * 16 + worldPosition.y );
                 }
             }
         }

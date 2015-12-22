@@ -8,7 +8,7 @@ import com.inari.dash.game.cave.unit.UnitType;
 import com.inari.dash.game.cave.unit.action.UnitActionType;
 import com.inari.firefly.action.event.ActionEvent;
 import com.inari.firefly.system.FFContext;
-import com.inari.firefly.system.FFTimer;
+import com.inari.firefly.system.external.FFTimer;
 
 public abstract class FlyController extends UnitController {
 

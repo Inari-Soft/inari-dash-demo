@@ -10,7 +10,7 @@ import com.inari.firefly.renderer.tile.ETile;
 import com.inari.firefly.sound.event.SoundEvent;
 import com.inari.firefly.sound.event.SoundEvent.Type;
 import com.inari.firefly.system.FFContext;
-import com.inari.firefly.system.FFTimer;
+import com.inari.firefly.system.external.FFTimer;
 
 public final class ExpandingWallController extends UnitController {
 

@@ -24,8 +24,8 @@ import com.inari.firefly.sound.event.SoundEvent;
 import com.inari.firefly.sound.event.SoundEvent.Type;
 import com.inari.firefly.state.event.WorkflowEvent;
 import com.inari.firefly.system.FFContext;
-import com.inari.firefly.system.FFTimer;
-import com.inari.firefly.system.FFTimer.UpdateScheduler;
+import com.inari.firefly.system.external.FFTimer;
+import com.inari.firefly.system.external.FFTimer.UpdateScheduler;
 import com.inari.firefly.system.view.ViewSystem;
 import com.inari.firefly.task.event.TaskEvent;
 

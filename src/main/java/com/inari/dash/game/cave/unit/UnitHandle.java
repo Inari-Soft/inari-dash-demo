@@ -6,6 +6,7 @@ import java.util.Map;
 
 import com.inari.dash.game.cave.CaveSystem;
 import com.inari.firefly.Disposable;
+import com.inari.firefly.FFInitException;
 import com.inari.firefly.asset.AssetSystem;
 import com.inari.firefly.asset.AssetId;
 import com.inari.firefly.control.ControllerSystem;
@@ -14,7 +15,6 @@ import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.sound.SoundSystem;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FFContextInitiable;
-import com.inari.firefly.system.FFInitException;
 import com.inari.firefly.system.view.ViewSystem;
 
 public abstract class UnitHandle implements FFContextInitiable, Disposable {
