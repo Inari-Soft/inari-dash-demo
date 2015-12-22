@@ -7,11 +7,11 @@ import java.util.Set;
 import com.inari.commons.lang.TypedKey;
 import com.inari.dash.game.GameInfo.CodeType;
 import com.inari.dash.game.cave.CaveData;
-import com.inari.firefly.component.DataComponent;
+import com.inari.firefly.component.ContextComponent;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 
-public class GameData extends DataComponent {
+public class GameData extends ContextComponent {
     
     public static final TypedKey<GameData> CONTEXT_KEY = TypedKey.create( "GameData", GameData.class );
 
@@ -120,11 +120,6 @@ public class GameData extends DataComponent {
     }
 
     @Override
-    public Class<GameData> componentType() {
-        return GameData.class;
-    }
-
-    @Override
     public Set<AttributeKey<?>> attributeKeys() {
         // TODO Auto-generated method stub
         return null;
@@ -141,7 +136,7 @@ public class GameData extends DataComponent {
     }
 
     @Override
-    public final TypedKey<? extends DataComponent> componentKey() {
+    public final TypedKey<? extends ContextComponent> contextKey() {
         return CONTEXT_KEY;
     }
 

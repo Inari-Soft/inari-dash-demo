@@ -36,7 +36,7 @@ public final class LoadCave extends Task {
     @Override
     public final void run( FFContext context ) {
         CaveSystem caveSystem = context.getSystem( CaveSystem.SYSTEM_KEY );
-        Configuration config = context.getDataComponent( Configuration.CONTEXT_KEY );
+        Configuration config = context.getContextComponent( Configuration.CONTEXT_KEY );
 
         caveSystem.reset();
         CaveData caveData = caveSystem.getCaveData();

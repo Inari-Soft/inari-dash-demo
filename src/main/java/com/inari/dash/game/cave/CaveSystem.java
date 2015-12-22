@@ -107,7 +107,7 @@ public class CaveSystem implements FFSystem {
     
     @Override
     public final void init( FFContext context ) throws FFInitException {
-        gameData = context.getDataComponent( GameData.CONTEXT_KEY );
+        gameData = context.getContextComponent( GameData.CONTEXT_KEY );
         this.context = context;
     }
 

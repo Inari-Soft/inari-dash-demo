@@ -55,11 +55,6 @@ public final class EUnit extends EntityComponent {
         changeTo = null;
     }
     
-    @Override
-    public final Class<EUnit> componentType() {
-        return EUnit.class;
-    }
-    
     public final UnitType getUnitType() {
         return unitType;
     }

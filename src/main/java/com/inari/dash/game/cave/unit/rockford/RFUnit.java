@@ -41,11 +41,6 @@ public final class RFUnit extends EntityComponent {
     public final void resetAttributes() {
         state = RFState.ENTERING;
     }
-    
-    @Override
-    public final Class<RFUnit> componentType() {
-        return RFUnit.class;
-    }
 
     public final RFState getState() {
         return state;

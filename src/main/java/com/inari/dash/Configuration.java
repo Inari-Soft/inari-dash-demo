@@ -3,11 +3,11 @@ package com.inari.dash;
 import java.util.Set;
 
 import com.inari.commons.lang.TypedKey;
-import com.inari.firefly.component.DataComponent;
+import com.inari.firefly.component.ContextComponent;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 
-public final class Configuration extends DataComponent {
+public final class Configuration extends ContextComponent {
     
     public static final TypedKey<Configuration> CONTEXT_KEY = TypedKey.create( "InariDashConfiguration", Configuration.class );
 
@@ -61,11 +61,6 @@ public final class Configuration extends DataComponent {
     }
 
     @Override
-    public final Class<Configuration> componentType() {
-        return Configuration.class;
-    }
-
-    @Override
     public final Set<AttributeKey<?>> attributeKeys() {
         // TODO Auto-generated method stub
         return null;
@@ -84,7 +79,7 @@ public final class Configuration extends DataComponent {
     }
 
     @Override
-    public final TypedKey<? extends DataComponent> componentKey() {
+    public final TypedKey<? extends ContextComponent> contextKey() {
         return CONTEXT_KEY;
     }
 

@@ -47,7 +47,7 @@ public class InariDash extends GdxFFApplicationAdapter {
     protected final void init( FFContext context ) {
         // TODO load from attribute map
         Configuration configuration = new Configuration();
-        context.setDataComponent( configuration );
+        context.setContextComponent( configuration );
         context.loadSystem( ActionSystem.SYSTEM_KEY );
         context.loadSystem( GameSystem.SYSTEM_KEY );
         context.loadSystem( SceneSystem.SYSTEM_KEY );

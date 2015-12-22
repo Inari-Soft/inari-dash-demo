@@ -64,7 +64,7 @@ public final class GameSystem implements FFSystem {
     @Override
     public final void init( FFContext context ) throws FFInitException {
         entitySystem = context.getSystem( EntitySystem.SYSTEM_KEY );
-        configuration = context.getDataComponent( Configuration.CONTEXT_KEY );
+        configuration = context.getContextComponent( Configuration.CONTEXT_KEY );
         
         gameInfos = new GameInfos();
         gameInfos.load( context );
