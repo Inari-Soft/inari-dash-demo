@@ -1,6 +1,5 @@
 package com.inari.dash.game.cave.unit.enemy;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,7 +14,6 @@ import com.inari.dash.game.cave.unit.UnitType;
 import com.inari.firefly.FFInitException;
 import com.inari.firefly.animation.sprite.SpriteAnimationBuilder;
 import com.inari.firefly.animation.sprite.SpriteAnimationBuilder.SpriteAnimationHandler;
-import com.inari.firefly.asset.AssetId;
 import com.inari.firefly.entity.EEntity;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.EntityController;
@@ -36,28 +34,31 @@ public final class Butterfly extends UnitHandle {
     @Override
     public final void init( FFContext context ) throws FFInitException {
         super.init( context );
-        
-        spriteAnimationHandler = new SpriteAnimationBuilder( context )
-            .setGroup( CaveSystem.GAME_UNIT_TEXTURE_KEY.group )
-            .setLooping( true )
-            .setNamePrefix( BUTTERFLY_NAME )
-            .setTextureAssetKey( CaveSystem.GAME_UNIT_TEXTURE_KEY )
-            .addSpritesToAnimation( 0, new Rectangle( 0, 11 * 32, 32, 32 ), 8, true )
-        .build();
-        
-        Collection<AssetId> allSpriteAssetKeys = spriteAnimationHandler.getAllSpriteAssetKeys();
-        caveAssetsToReload.addAll( allSpriteAssetKeys );
-        
+
         controllerId = controllerSystem.getControllerBuilder()
             .set( EntityController.NAME, BUTTERFLY_NAME )
         .build( FireflyController.class );
+
+        initialized = true;
+    }
+
+    @Override
+    public final void loadCaveData( FFContext context ) {
+        super.loadCaveData( context );
+        
+        spriteAnimationHandler = new SpriteAnimationBuilder( context )
+            .setLooping( true )
+            .setNamePrefix( BUTTERFLY_NAME )
+            .setTextureAssetName( CaveSystem.GAME_UNIT_TEXTURE_NAME )
+            .addSpritesToAnimation( 0, new Rectangle( 0, 11 * 32, 32, 32 ), 8, true )
+        .build();
         
         prefabId = prefabSystem.getEntityPrefabBuilder()
             .add( EEntity.CONTROLLER_IDS, controllerId )
             .add( EEntity.CONTROLLER_IDS, spriteAnimationHandler.getControllerId() )
             .set( EntityPrefab.NAME, BUTTERFLY_NAME )
             .set( ETransform.VIEW_ID, viewSystem.getViewId( CaveSystem.CAVE_VIEW_NAME ) )
-            .set( ESprite.SPRITE_ID, allSpriteAssetKeys.iterator().next().id )
+            .set( ESprite.SPRITE_ID, spriteAnimationHandler.getStartSpriteId() )
             .set( ETile.MULTI_POSITION, false )
             .set( EUnit.UNIT_TYPE, type() )
             .set( EUnit.MOVEMENT, Direction.SOUTH )
@@ -71,16 +72,17 @@ public final class Butterfly extends UnitHandle {
         .build();
         prefabSystem.cacheComponents( prefabId, 200 );
         
-        initialized = true;
-    }
-
-    @Override
-    public final void loadCaveData( FFContext context ) {
-        super.loadCaveData( context );
-        
         float updateRate = caveService.getUpdateRate();
         controllerSystem.getController( controllerId ).setUpdateResolution( updateRate );
         spriteAnimationHandler.setFrameTime( 80 - (int) updateRate * 4 );
+    }
+
+    @Override
+    public void disposeCaveData( FFContext context ) {
+        super.disposeCaveData( context );
+        
+        prefabSystem.deletePrefab( BUTTERFLY_NAME );
+        spriteAnimationHandler.dispose( context );
     }
 
     @Override
@@ -127,9 +129,7 @@ public final class Butterfly extends UnitHandle {
     
     @Override
     public final void dispose( FFContext context ) {
-        prefabSystem.deletePrefab( BUTTERFLY_NAME );
         controllerSystem.deleteController( controllerId );
-        spriteAnimationHandler.dispose( context );
     }
 
 }

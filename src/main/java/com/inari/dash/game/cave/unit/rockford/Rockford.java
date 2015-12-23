@@ -1,6 +1,5 @@
 package com.inari.dash.game.cave.unit.rockford;
 
-import java.util.Collection;
 import java.util.Map;
 
 import com.inari.commons.geom.Rectangle;
@@ -13,8 +12,6 @@ import com.inari.dash.game.cave.unit.rockford.RFUnit.RFState;
 import com.inari.firefly.FFInitException;
 import com.inari.firefly.animation.sprite.SpriteAnimationBuilder;
 import com.inari.firefly.animation.sprite.SpriteAnimationBuilder.SpriteAnimationHandler;
-import com.inari.firefly.asset.AssetNameKey;
-import com.inari.firefly.asset.AssetId;
 import com.inari.firefly.control.Controller;
 import com.inari.firefly.entity.EEntity;
 import com.inari.firefly.entity.ETransform;
@@ -28,14 +25,13 @@ import com.inari.firefly.system.FFContext;
 public final class Rockford extends UnitHandle {
     
     public static final String ROCKFORD_NAME = "rockford";
-    public static final AssetNameKey ROCKFORD_SPRITE_ASSET_KEY = new AssetNameKey( CaveSystem.GAME_UNIT_TEXTURE_KEY.group, ROCKFORD_NAME );
-    public static final AssetNameKey ROCKFORD_SPACE_SOUND_ASSEET_KEY = new AssetNameKey( CaveSystem.CAVE_SOUND_GROUP_NAME, ROCKFORD_NAME + "_space" );
-    public static final AssetNameKey ROCKFORD_SAND_SOUND_ASSEET_KEY = new AssetNameKey( CaveSystem.CAVE_SOUND_GROUP_NAME, ROCKFORD_NAME + "_sand" );
-    public static final AssetNameKey ROCKFORD_COLLECT_SOUND_ASSEET_KEY = new AssetNameKey( CaveSystem.CAVE_SOUND_GROUP_NAME, ROCKFORD_NAME + "_collect" );
+    public static final String ROCKFORD_SPRITE_ASSET_NAME = ROCKFORD_NAME + "_sprite";
+    public static final String ROCKFORD_SPACE_SOUND_ASSEET_NAME = ROCKFORD_NAME + "_space";
+    public static final String ROCKFORD_SAND_SOUND_ASSEET_NAME = ROCKFORD_NAME + "_sand";
+    public static final String ROCKFORD_COLLECT_SOUND_ASSEET_NAME = ROCKFORD_NAME + "_collect";
     
     private SpriteAnimationHandler spriteAnimationHandler;
     private int controllerId;
-    private int firstSpriteId;
     private int rfEntityId;
     
     int spaceSoundId;
@@ -49,11 +45,53 @@ public final class Rockford extends UnitHandle {
 
         createSounds();
         
+        initialized = true;
+    }
+
+    private void createSounds() {
+        int soundAssetIdSpace = assetSystem.getAssetBuilder()
+            .set( SoundAsset.NAME, ROCKFORD_SPACE_SOUND_ASSEET_NAME )
+            .set( SoundAsset.RESOURCE_NAME, "original/sound/walkSpace.wav" )
+            .set( SoundAsset.STREAMING, false )
+        .activate( SoundAsset.class );
+        int soundAssetIdSand = assetSystem.getAssetBuilder()
+            .set( SoundAsset.NAME, ROCKFORD_SAND_SOUND_ASSEET_NAME )
+            .set( SoundAsset.RESOURCE_NAME, "original/sound/walkSand.wav" )
+            .set( SoundAsset.STREAMING, false )
+        .activate( SoundAsset.class );
+        int soundAssetIdCollect = assetSystem.getAssetBuilder()
+            .set( SoundAsset.NAME, ROCKFORD_COLLECT_SOUND_ASSEET_NAME )
+            .set( SoundAsset.RESOURCE_NAME, "original/sound/collectDiamond.wav" )
+            .set( SoundAsset.STREAMING, false )
+        .activate( SoundAsset.class );
+        
+        spaceSoundId = soundSystem.getSoundBuilder()
+            .set( Sound.NAME, ROCKFORD_SPACE_SOUND_ASSEET_NAME )
+            .set( Sound.SOUND_ASSET_ID, soundAssetIdSpace )
+            .set( Sound.LOOPING, false )
+        .build();
+        sandSoundId = soundSystem.getSoundBuilder()
+            .set( Sound.NAME, ROCKFORD_SAND_SOUND_ASSEET_NAME )
+            .set( Sound.SOUND_ASSET_ID, soundAssetIdSand )
+            .set( Sound.LOOPING, false )
+        .build();
+        collectSoundId = soundSystem.getSoundBuilder()
+            .set( Sound.NAME, ROCKFORD_COLLECT_SOUND_ASSEET_NAME )
+            .set( Sound.SOUND_ASSET_ID, soundAssetIdCollect )
+            .set( Sound.LOOPING, false )
+            .set( Sound.CHANNEL, SoundChannel.COLLECT.ordinal() )
+        .build();
+        inSoundId = soundSystem.getSoundId( CaveSystem.CaveSoundKey.CRACK.name() );
+    }
+
+    @Override
+    public final void loadCaveData( FFContext context ) {
+        super.loadCaveData( context );
+        
         spriteAnimationHandler = new SpriteAnimationBuilder( context )
-            .setGroup( CaveSystem.GAME_UNIT_TEXTURE_KEY.group )
             .setLooping( true )
             .setNamePrefix( ROCKFORD_NAME )
-            .setTextureAssetKey( CaveSystem.GAME_UNIT_TEXTURE_KEY )
+            .setTextureAssetName( CaveSystem.GAME_UNIT_TEXTURE_NAME )
             .setStatedAnimationType( RFSpriteAnimation.class )
             .setState( RFState.ENTERING.ordinal() )
             .addSpritesToAnimation( 0, new Rectangle( 32, 6 * 32, 32, 32 ), 2, true )
@@ -70,54 +108,6 @@ public final class Rockford extends UnitHandle {
             .setState( RFState.RIGHT.ordinal() )
             .addSpritesToAnimation( 0, new Rectangle( 0, 5 * 32, 32, 32 ), 8, true )
         .build();
-        
-        Collection<AssetId> allSpriteAssetKeys = spriteAnimationHandler.getAllSpriteAssetKeys();
-        caveAssetsToReload.addAll( allSpriteAssetKeys );
-        firstSpriteId = allSpriteAssetKeys.iterator().next().id;
-        
-        initialized = true;
-    }
-
-    private void createSounds() {
-        assetSystem.getAssetBuilder()
-            .set( SoundAsset.NAME, ROCKFORD_SPACE_SOUND_ASSEET_KEY.name )
-            .set( SoundAsset.ASSET_GROUP, ROCKFORD_SPACE_SOUND_ASSEET_KEY.group )
-            .set( SoundAsset.RESOURCE_NAME, "original/sound/walkSpace.wav" )
-            .set( SoundAsset.STREAMING, false )
-        .activateAndNext( SoundAsset.class )
-            .set( SoundAsset.NAME, ROCKFORD_SAND_SOUND_ASSEET_KEY.name )
-            .set( SoundAsset.ASSET_GROUP, ROCKFORD_SAND_SOUND_ASSEET_KEY.group )
-            .set( SoundAsset.RESOURCE_NAME, "original/sound/walkSand.wav" )
-            .set( SoundAsset.STREAMING, false )
-        .activateAndNext( SoundAsset.class )
-            .set( SoundAsset.NAME, ROCKFORD_COLLECT_SOUND_ASSEET_KEY.name )
-            .set( SoundAsset.ASSET_GROUP, ROCKFORD_COLLECT_SOUND_ASSEET_KEY.group )
-            .set( SoundAsset.RESOURCE_NAME, "original/sound/collectDiamond.wav" )
-            .set( SoundAsset.STREAMING, false )
-        .activate( SoundAsset.class );
-        
-        spaceSoundId = soundSystem.getSoundBuilder()
-            .set( Sound.NAME, ROCKFORD_SPACE_SOUND_ASSEET_KEY.name )
-            .set( Sound.ASSET_ID, assetSystem.getAssetId( ROCKFORD_SPACE_SOUND_ASSEET_KEY ) )
-            .set( Sound.LOOPING, false )
-        .build();
-        sandSoundId = soundSystem.getSoundBuilder()
-            .set( Sound.NAME, ROCKFORD_SAND_SOUND_ASSEET_KEY.name )
-            .set( Sound.ASSET_ID, assetSystem.getAssetId( ROCKFORD_SAND_SOUND_ASSEET_KEY ) )
-            .set( Sound.LOOPING, false )
-        .build();
-        collectSoundId = soundSystem.getSoundBuilder()
-            .set( Sound.NAME, ROCKFORD_COLLECT_SOUND_ASSEET_KEY.name )
-            .set( Sound.ASSET_ID, assetSystem.getAssetId( ROCKFORD_COLLECT_SOUND_ASSEET_KEY ) )
-            .set( Sound.LOOPING, false )
-            .set( Sound.CHANNEL, SoundChannel.COLLECT.ordinal() )
-        .build();
-        inSoundId = CaveSystem.CaveSoundKey.CRACK.id;
-    }
-
-    @Override
-    public final void loadCaveData( FFContext context ) {
-        super.loadCaveData( context );
         
         float updateRate = caveService.getUpdateRate();
         controllerId = controllerSystem.getControllerBuilder()
@@ -160,7 +150,7 @@ public final class Rockford extends UnitHandle {
             .add( EEntity.CONTROLLER_IDS, controllerId )
             .add( EEntity.CONTROLLER_IDS, spriteAnimationHandler.getControllerId() )
             .set( ETransform.VIEW_ID, viewSystem.getViewId( CaveSystem.CAVE_VIEW_NAME ) )
-            .set( ESprite.SPRITE_ID, firstSpriteId )
+            .set( ESprite.SPRITE_ID, spriteAnimationHandler.getStartSpriteId() )
             .set( ETile.GRID_X_POSITION, xGridPos )
             .set( ETile.GRID_Y_POSITION, yGridPos )
             .set( EUnit.UNIT_TYPE, type() )

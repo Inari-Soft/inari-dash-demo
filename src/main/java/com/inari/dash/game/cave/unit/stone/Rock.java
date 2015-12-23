@@ -11,7 +11,6 @@ import com.inari.dash.game.cave.unit.UnitAspect;
 import com.inari.dash.game.cave.unit.UnitHandle;
 import com.inari.dash.game.cave.unit.UnitType;
 import com.inari.firefly.FFInitException;
-import com.inari.firefly.asset.AssetNameKey;
 import com.inari.firefly.entity.EEntity;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.EntityController;
@@ -26,8 +25,8 @@ import com.inari.firefly.system.FFContext;
 public final class Rock extends UnitHandle {
     
     public static final String ROCK_NAME = "rock";
-    public static final AssetNameKey ROCK_SPRITE_ASSET_KEY = new AssetNameKey( CaveSystem.GAME_UNIT_TEXTURE_KEY.group, ROCK_NAME );
-    public static final AssetNameKey ROCK_SOUND_ASSEET_KEY = new AssetNameKey( CaveSystem.CAVE_SOUND_GROUP_NAME, ROCK_NAME );
+    public static final String ROCK_SPRITE_ASSET_NAME = ROCK_NAME + "_sprite";
+    public static final String ROCK_SOUND_ASSEET_NAME = ROCK_NAME + "_sound";
     
     private int prefabId;
     private int controllerId;
@@ -37,24 +36,15 @@ public final class Rock extends UnitHandle {
     public final void init( FFContext context ) throws FFInitException {
         super.init( context );
         
-        assetSystem.getAssetBuilder()
-            .set( SpriteAsset.NAME, ROCK_SPRITE_ASSET_KEY.name )
-            .set( SpriteAsset.ASSET_GROUP, ROCK_SPRITE_ASSET_KEY.group )
-            .set( SpriteAsset.TEXTURE_ID, assetSystem.getAssetId( CaveSystem.GAME_UNIT_TEXTURE_KEY ) )
-            .set( SpriteAsset.TEXTURE_REGION, new Rectangle( 0, 7 * 32, 32, 32 ) )
-        .build( SpriteAsset.class );
-        super.caveAssetsToReload.add( assetSystem.getAssetTypeKey( ROCK_SPRITE_ASSET_KEY ) );
-        
-        assetSystem.getAssetBuilder()
-            .set( SoundAsset.NAME, ROCK_SOUND_ASSEET_KEY.name )
-            .set( SoundAsset.ASSET_GROUP, ROCK_SOUND_ASSEET_KEY.group )
+        int soundAssetId = assetSystem.getAssetBuilder()
+            .set( SoundAsset.NAME, ROCK_SOUND_ASSEET_NAME )
             .set( SoundAsset.RESOURCE_NAME, "original/sound/stone.wav" )
             .set( SoundAsset.STREAMING, false )
         .activate( SoundAsset.class );
         
         soundId = soundSystem.getSoundBuilder()
-            .set( Sound.NAME, ROCK_SOUND_ASSEET_KEY.name )
-            .set( Sound.ASSET_ID, assetSystem.getAssetId( ROCK_SOUND_ASSEET_KEY ) )
+            .set( Sound.NAME, ROCK_SOUND_ASSEET_NAME )
+            .set( Sound.SOUND_ASSET_ID, soundAssetId )
             .set( Sound.LOOPING, false )
             .set( Sound.CHANNEL, SoundChannel.ROCK.ordinal() )
         .build();
@@ -65,6 +55,14 @@ public final class Rock extends UnitHandle {
     @Override
     public final void loadCaveData( FFContext context ) {
         super.loadCaveData( context );
+        
+        assetSystem.getAssetBuilder()
+            .set( SpriteAsset.NAME, ROCK_SPRITE_ASSET_NAME )
+            .set( SpriteAsset.TEXTURE_ASSET_ID, assetSystem.getAssetId( CaveSystem.GAME_UNIT_TEXTURE_NAME ) )
+            .set( SpriteAsset.TEXTURE_REGION, new Rectangle( 0, 7 * 32, 32, 32 ) )
+        .activate( SpriteAsset.class );
+        
+        
         controllerId = controllerSystem.getControllerBuilder()
             .set( EntityController.NAME, "RockController" )
         .build( RockController.class );
@@ -73,7 +71,7 @@ public final class Rock extends UnitHandle {
             .add( EEntity.CONTROLLER_IDS, controllerId )
             .set( EntityPrefab.NAME, ROCK_NAME )
             .set( ETransform.VIEW_ID, viewSystem.getViewId( CaveSystem.CAVE_VIEW_NAME ) )
-            .set( ESprite.SPRITE_ID, assetSystem.getAssetId( ROCK_SPRITE_ASSET_KEY ) )
+            .set( ESprite.SPRITE_ID, assetSystem.getAssetInstanceId( ROCK_SPRITE_ASSET_NAME ) )
             .set( ETile.MULTI_POSITION, false )
             .set( EUnit.UNIT_TYPE, type() )
             .set( EUnit.CHANGE_TO, UnitType.DIAMOND )
@@ -95,12 +93,13 @@ public final class Rock extends UnitHandle {
         
         controllerSystem.deleteController( controllerId );
         prefabSystem.deletePrefab( prefabId );
+        assetSystem.deleteAsset( ROCK_SPRITE_ASSET_NAME );
     }
 
     @Override
     public final void dispose( FFContext context ) {
         prefabSystem.deletePrefab( ROCK_NAME );
-        assetSystem.disposeAsset( ROCK_SPRITE_ASSET_KEY );
+        assetSystem.disposeAsset( ROCK_SPRITE_ASSET_NAME );
         controllerSystem.deleteController( controllerId );
     }
 

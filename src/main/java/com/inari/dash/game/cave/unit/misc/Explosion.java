@@ -1,6 +1,5 @@
 package com.inari.dash.game.cave.unit.misc;
 
-import java.util.Collection;
 import java.util.Map;
 
 import com.inari.commons.geom.Rectangle;
@@ -11,7 +10,6 @@ import com.inari.dash.game.cave.unit.UnitType;
 import com.inari.firefly.FFInitException;
 import com.inari.firefly.animation.sprite.SpriteAnimationBuilder;
 import com.inari.firefly.animation.sprite.SpriteAnimationBuilder.SpriteAnimationHandler;
-import com.inari.firefly.asset.AssetId;
 import com.inari.firefly.entity.EEntity;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.EntityPrefab;
@@ -30,38 +28,43 @@ public final class Explosion extends AbstractExplosionHandle {
     public final void init( FFContext context ) throws FFInitException {
         super.init( context );
         initGeneralExplosion();
-        
-        spriteAnimationHandler = new SpriteAnimationBuilder( context )
-            .setGroup( CaveSystem.GAME_UNIT_TEXTURE_KEY.group )
-            .setLooping( true )
-            .setNamePrefix( EXPLOSION_NAME )
-            .setTextureAssetKey( CaveSystem.GAME_UNIT_TEXTURE_KEY )
-            .addSpritesToAnimation( 0, new Rectangle( 32, 0, 32, 32 ), 3, true )
-        .build();
-        
-        Collection<AssetId> allSpriteAssetKeys = spriteAnimationHandler.getAllSpriteAssetKeys();
-        caveAssetsToReload.addAll( allSpriteAssetKeys );
 
-        prefabId = prefabSystem.getEntityPrefabBuilder()
-            .add( EEntity.CONTROLLER_IDS, CONTROLLER_ID )
-            .add( EEntity.CONTROLLER_IDS, spriteAnimationHandler.getControllerId() )
-            .set( EntityPrefab.NAME, EXPLOSION_NAME )
-            .set( ETransform.VIEW_ID, viewSystem.getViewId( CaveSystem.CAVE_VIEW_NAME ) )
-            .set( ESprite.SPRITE_ID, allSpriteAssetKeys.iterator().next().id )
-            .set( ETile.MULTI_POSITION, false )
-            .set( EUnit.UNIT_TYPE, type() )
-            .set( EUnit.ASPECTS, AspectSetBuilder.create() )
-        .build();
-        prefabSystem.cacheComponents( prefabId, 100 );
-        
         initialized = true;
     }
 
     @Override
     public final void loadCaveData( FFContext context ) {
         super.loadCaveData( context );
+        
+        spriteAnimationHandler = new SpriteAnimationBuilder( context )
+            .setLooping( true )
+            .setNamePrefix( EXPLOSION_NAME )
+            .setTextureAssetName( CaveSystem.GAME_UNIT_TEXTURE_NAME )
+            .addSpritesToAnimation( 0, new Rectangle( 32, 0, 32, 32 ), 3, true )
+        .build();
+        
+        prefabId = prefabSystem.getEntityPrefabBuilder()
+            .add( EEntity.CONTROLLER_IDS, CONTROLLER_ID )
+            .add( EEntity.CONTROLLER_IDS, spriteAnimationHandler.getControllerId() )
+            .set( EntityPrefab.NAME, EXPLOSION_NAME )
+            .set( ETransform.VIEW_ID, viewSystem.getViewId( CaveSystem.CAVE_VIEW_NAME ) )
+            .set( ESprite.SPRITE_ID, spriteAnimationHandler.getStartSpriteId() )
+            .set( ETile.MULTI_POSITION, false )
+            .set( EUnit.UNIT_TYPE, type() )
+            .set( EUnit.ASPECTS, AspectSetBuilder.create() )
+        .build();
+        prefabSystem.cacheComponents( prefabId, 100 );
+        
         float updateRate = caveService.getUpdateRate();
         spriteAnimationHandler.setFrameTime( 300 - (int) updateRate * 4 );
+    }
+
+    @Override
+    public void disposeCaveData( FFContext context ) {
+        super.disposeCaveData( context );
+        
+        prefabSystem.deletePrefab( prefabId );
+        spriteAnimationHandler.dispose( context );
     }
 
     @Override
@@ -86,8 +89,6 @@ public final class Explosion extends AbstractExplosionHandle {
     
     @Override
     public final void dispose( FFContext context ) {
-        spriteAnimationHandler.dispose( context );
-        prefabSystem.deletePrefab( prefabId );
         disposeGeneralExplosion();
     }
 

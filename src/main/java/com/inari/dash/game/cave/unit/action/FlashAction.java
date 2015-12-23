@@ -3,7 +3,6 @@ package com.inari.dash.game.cave.unit.action;
 import com.inari.commons.geom.Rectangle;
 import com.inari.dash.game.cave.CaveSystem;
 import com.inari.dash.game.cave.unit.UnitType;
-import com.inari.firefly.asset.AssetNameKey;
 import com.inari.firefly.asset.AssetSystem;
 import com.inari.firefly.renderer.sprite.ESprite;
 import com.inari.firefly.renderer.sprite.SpriteAsset;
@@ -13,8 +12,7 @@ import com.inari.firefly.system.UpdateEventListener;
 
 public final class FlashAction extends UnitAction {
     
-    private static final String FLASH_NAME = "flash";
-    private static final AssetNameKey FLASH_SPRITE_ASSET = new AssetNameKey( FLASH_NAME, CaveSystem.GAME_UNIT_TEXTURE_KEY.group );
+    private static final String FLASH_SPRITE_ASSET_NAME = CaveSystem.GAME_UNIT_TEXTURE_NAME + "_flash";
     
     private final FFContext context;
 
@@ -36,12 +34,12 @@ public final class FlashAction extends UnitAction {
 
         private FlashAnimation( FFContext context ) {
             AssetSystem assetSystem = context.getSystem( AssetSystem.SYSTEM_KEY );
-            flashSpriteId = assetSystem.getAssetBuilder()
-                .set( SpriteAsset.NAME, FLASH_SPRITE_ASSET.name )
-                .set( SpriteAsset.ASSET_GROUP, FLASH_SPRITE_ASSET.group )
-                .set( SpriteAsset.TEXTURE_ID, assetSystem.getAssetId( CaveSystem.GAME_UNIT_TEXTURE_KEY ) )
+            assetSystem.getAssetBuilder()
+                .set( SpriteAsset.NAME, FLASH_SPRITE_ASSET_NAME )
+                .set( SpriteAsset.TEXTURE_ASSET_ID, assetSystem.getAssetId( CaveSystem.GAME_UNIT_TEXTURE_NAME ) )
                 .set( SpriteAsset.TEXTURE_REGION, new Rectangle( 4 * 32, 0, 32, 32 ) )
             .activate( SpriteAsset.class );
+            flashSpriteId = assetSystem.getAssetInstanceId( FLASH_SPRITE_ASSET_NAME );
         }
 
         @Override
@@ -61,7 +59,7 @@ public final class FlashAction extends UnitAction {
                 spaceSprite.setSpriteId( spaceSpriteId );
                 // self remove
                 AssetSystem assetSystem = context.getSystem( AssetSystem.SYSTEM_KEY );
-                assetSystem.deleteAsset( FLASH_SPRITE_ASSET );
+                assetSystem.deleteAsset( FLASH_SPRITE_ASSET_NAME );
                 context.disposeListener( UpdateEvent.class, this );
             }
         }

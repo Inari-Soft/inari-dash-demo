@@ -17,8 +17,8 @@ import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.filter.IColorFilter;
 import com.inari.firefly.libgdx.GdxFirefly;
 import com.inari.firefly.renderer.TextureAsset;
+import com.inari.firefly.renderer.sprite.SpriteAsset;
 import com.inari.firefly.renderer.text.EText;
-import com.inari.firefly.renderer.text.Font;
 import com.inari.firefly.renderer.tile.TileGrid;
 import com.inari.firefly.renderer.tile.TileGrid.TileRenderMode;
 import com.inari.firefly.scene.Scene;
@@ -43,11 +43,22 @@ public final class LoadCave extends Task {
         caveData.resetPlayerData();
 
         // load unit texture asset with cave colors
-        TextureAsset unitTextureAsset = context.getSystemComponent( Asset.TYPE_KEY, CaveSystem.GAME_UNIT_TEXTURE_KEY.name, TextureAsset.class );
+        TextureAsset unitTextureAsset = context.getSystemComponent( Asset.TYPE_KEY, CaveSystem.GAME_UNIT_TEXTURE_NAME, TextureAsset.class );
         IColorFilter colorFilter = caveData.getColorFilter();
         context.addProperty( CaveSystem.COLOR_FILTER_KEY, colorFilter );
         unitTextureAsset.setDynamicAttribute( GdxFirefly.DynamicAttributes.TEXTURE_COLOR_FILTER_NAME, CaveSystem.COLOR_FILTER_KEY.id() );
-        context.getSystem( AssetSystem.SYSTEM_KEY ).loadAsset( CaveSystem.GAME_UNIT_TEXTURE_KEY );
+        context.getSystem( AssetSystem.SYSTEM_KEY ).loadAsset( CaveSystem.GAME_UNIT_TEXTURE_NAME );
+        
+        // create init scene assets
+        AssetSystem assetSystem = context.getSystem( AssetSystem.SYSTEM_KEY );
+        for ( int i = 0; i < 3; i++ ) {
+            int offset = 4 * i;
+            context.getComponentBuilder( Asset.TYPE_KEY )
+                .set( SpriteAsset.NAME, CaveSystem.INTRO_TILE_SPRITE_NAME + i )
+                .set( SpriteAsset.TEXTURE_ASSET_ID, assetSystem.getAssetId( CaveSystem.GAME_UNIT_TEXTURE_NAME ) )
+                .set( SpriteAsset.TEXTURE_REGION, new Rectangle( 32 + offset, ( 6 * 32 ) + offset, 16, 16 ) )
+            .build( SpriteAsset.class );
+        }
 
         // create tileGrid and cave entities
         int caveViewId = context.getSystemComponentId( View.TYPE_KEY, CaveSystem.CAVE_VIEW_NAME );
@@ -99,11 +110,12 @@ public final class LoadCave extends Task {
         );
         cameraController.getPivot().init( context );
         
+        // create header text entity
         context.getComponentBuilder( EntitySystem.Entity.ENTITY_TYPE_KEY )
             .set( ETransform.VIEW_ID, context.getSystemComponentId( View.TYPE_KEY, CaveSystem.HEADER_VIEW_NAME ) )
             .set( ETransform.XPOSITION, 8 )
             .set( ETransform.YPOSITION, 8 )
-            .set( EText.FONT_ID, context.getSystemComponentId( Font.TYPE_KEY, GameSystem.GAME_FONT_TEXTURE_KEY.name ) )
+            .set( EText.FONT_ID, context.getSystem( AssetSystem.SYSTEM_KEY ).getAssetId( GameSystem.GAME_FONT_TEXTURE_NAME ) )
             .set( EText.TEXT, caveSystem.getHeaderText() )
         .activate();
         

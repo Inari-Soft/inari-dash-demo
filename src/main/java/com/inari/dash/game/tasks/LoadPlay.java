@@ -22,7 +22,6 @@ import com.inari.firefly.control.Controller;
 import com.inari.firefly.controller.view.CameraPivot;
 import com.inari.firefly.controller.view.SimpleCameraController;
 import com.inari.firefly.renderer.TextureAsset;
-import com.inari.firefly.renderer.sprite.SpriteAsset;
 import com.inari.firefly.renderer.tile.ETile;
 import com.inari.firefly.sound.Sound;
 import com.inari.firefly.sound.SoundAsset;
@@ -59,17 +58,7 @@ public final class LoadPlay extends Task {
         context.loadSystem( CaveSystem.SYSTEM_KEY );
         // load the selected cave
         initCaveAndUnits( context );
-        // create init scene assets
-        for ( int i = 0; i < 3; i++ ) {
-            int offset = 4 * i;
-            context.getComponentBuilder( Asset.TYPE_KEY )
-                .set( SpriteAsset.NAME, CaveSystem.INTRO_TILE_SPRITE_NAME + i )
-                .set( SpriteAsset.ASSET_GROUP, CaveSystem.GAME_UNIT_TEXTURE_KEY.group )
-                .set( SpriteAsset.TEXTURE_ID, context.getSystem( AssetSystem.SYSTEM_KEY ).getAssetId( CaveSystem.GAME_UNIT_TEXTURE_KEY ) )
-                .set( SpriteAsset.TEXTURE_REGION, new Rectangle( 32 + offset, ( 6 * 32 ) + offset, 16, 16 ) )
-            .build( SpriteAsset.class );
-        }
-        
+
         context.notify( new TaskEvent( Type.RUN_TASK, TaskName.LOAD_CAVE.name() ) );
     }
     
@@ -112,26 +101,23 @@ public final class LoadPlay extends Task {
         
         // create global cave assets and sounds
         context.getComponentBuilder( Asset.TYPE_KEY )
-            .set( TextureAsset.NAME, CaveSystem.GAME_UNIT_TEXTURE_KEY.name )
-            .set( TextureAsset.ASSET_GROUP, CaveSystem.GAME_UNIT_TEXTURE_KEY.group )
+            .set( TextureAsset.NAME, CaveSystem.GAME_UNIT_TEXTURE_NAME )
             .set( TextureAsset.RESOURCE_NAME, config.unitTextureResource )
-            .set( TextureAsset.TEXTURE_WIDTH, config.unitTextureWidth )
-            .set( TextureAsset.TEXTURE_HEIGHT, config.unitTextureHeight )
          .build( TextureAsset.class );
         
         for ( CaveSoundKey caveSoundKey : CaveSoundKey.values() ) {
-            assetSystem.getAssetBuilder()
-                .set( SoundAsset.NAME, caveSoundKey.assetKey.name )
-                .set( SoundAsset.ASSET_GROUP, caveSoundKey.assetKey.group )
+            int soundAssetId = assetSystem.getAssetBuilder()
+                .set( SoundAsset.NAME, caveSoundKey.name() )
                 .set( SoundAsset.RESOURCE_NAME, caveSoundKey.fileName )
                 .set( SoundAsset.STREAMING, false )
-            .activate( caveSoundKey.id, SoundAsset.class );
+            .activate( SoundAsset.class );
+            
             context.getComponentBuilder( Sound.TYPE_KEY )
-                .set( Sound.NAME, caveSoundKey.assetKey.name )
-                .set( Sound.ASSET_ID, caveSoundKey.id )
+                .set( Sound.NAME, caveSoundKey.name() )
+                .set( Sound.SOUND_ASSET_ID, soundAssetId )
                 .set( Sound.LOOPING, caveSoundKey.looping )
                 .set( Sound.CHANNEL, SoundChannel.CAVE.ordinal() )
-            .build( caveSoundKey.id );
+            .build( soundAssetId );
         }
         
         // create unit actions

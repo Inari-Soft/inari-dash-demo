@@ -55,13 +55,12 @@ public final class DisposePlay extends Task {
         viewSystem.deleteView( CaveSystem.CAVE_VIEW_NAME );
         
         for ( CaveSoundKey caveSoundKey : CaveSoundKey.values() ) {
-            soundSystem.deleteSound( caveSoundKey.id );
+            soundSystem.deleteSound( caveSoundKey.name() );
+            assetSystem.deleteAsset( caveSoundKey.name() );
         }
         
-        assetSystem.deleteAssets( CaveSystem.CAVE_SOUND_GROUP_NAME );
-        
         controllerSystem.deleteController( CaveSystem.CAVE_CAMERA_CONTROLLER_NAME );
-        assetSystem.deleteAsset( CaveSystem.GAME_UNIT_TEXTURE_KEY );
+        assetSystem.deleteAsset( CaveSystem.GAME_UNIT_TEXTURE_NAME );
         
         for ( UnitActionType actionType : UnitActionType.values() ) {
             actionSystem.deleteAction( actionType.index() );

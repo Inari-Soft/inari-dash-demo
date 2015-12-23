@@ -4,9 +4,9 @@ import java.util.BitSet;
 
 import com.inari.commons.geom.Position;
 import com.inari.commons.geom.Rectangle;
-import com.inari.firefly.asset.AssetNameKey;
 import com.inari.firefly.asset.AssetSystem;
 import com.inari.firefly.renderer.sprite.ESprite;
+import com.inari.firefly.renderer.sprite.SpriteAsset;
 import com.inari.firefly.scene.Scene;
 import com.inari.firefly.sound.event.SoundEvent;
 import com.inari.firefly.sound.event.SoundEvent.Type;
@@ -39,8 +39,8 @@ public class CaveInitScene extends Scene {
     public void dispose( FFContext context ) {
         AssetSystem assetSystem = context.getSystem( AssetSystem.SYSTEM_KEY );
         for ( int i = 0; i < 3; i++ ) {
-            AssetNameKey assetKey = new AssetNameKey( CaveSystem.GAME_UNIT_TEXTURE_KEY.group, CaveSystem.INTRO_TILE_SPRITE_NAME + i );
-            assetSystem.disposeAsset( assetKey );
+            String assetName = CaveSystem.INTRO_TILE_SPRITE_NAME + i;
+            assetSystem.disposeAsset( assetName );
         }
     }
 
@@ -53,9 +53,9 @@ public class CaveInitScene extends Scene {
         CaveData caveData = context.getSystem( CaveSystem.SYSTEM_KEY ).getCaveData();
         AssetSystem assetSystem = context.getSystem( AssetSystem.SYSTEM_KEY );
         for ( int i = 0; i < 3; i++ ) {
-            AssetNameKey assetKey = new AssetNameKey( CaveSystem.GAME_UNIT_TEXTURE_KEY.group, CaveSystem.INTRO_TILE_SPRITE_NAME + i );
-            spriteData[ i ] = assetSystem.getAssetId( assetKey );
-            assetSystem.loadAsset( assetKey );
+            String assetName = CaveSystem.INTRO_TILE_SPRITE_NAME + i;
+            assetSystem.loadAsset( assetName );
+            spriteData[ i ] = assetSystem.getAssetAs( assetName, SpriteAsset.class ).getSpriteId();
         }
         spriteData[ 3 ] = 0;
         tmpSprite.setSpriteId( spriteData[ spriteData[ 3 ] ] );
@@ -80,7 +80,7 @@ public class CaveInitScene extends Scene {
             introTiles.set( i );
         }
 
-        context.notify( new SoundEvent( CaveSystem.CaveSoundKey.COVER.id, Type.PLAY_SOUND ) );
+        context.notify( new SoundEvent( CaveSystem.CaveSoundKey.COVER.name(), Type.PLAY_SOUND ) );
     }
 
     @Override

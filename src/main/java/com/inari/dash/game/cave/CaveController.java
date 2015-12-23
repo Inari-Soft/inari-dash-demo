@@ -14,11 +14,11 @@ import com.inari.dash.game.cave.unit.action.UnitActionType;
 import com.inari.dash.game.tasks.InitGameWorkflow.StateChangeName;
 import com.inari.dash.game.tasks.InitGameWorkflow.TaskName;
 import com.inari.firefly.action.event.ActionEvent;
+import com.inari.firefly.asset.AssetSystem;
 import com.inari.firefly.control.Controller;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.renderer.text.EText;
-import com.inari.firefly.renderer.text.TextSystem;
 import com.inari.firefly.scene.SceneEvent;
 import com.inari.firefly.sound.event.SoundEvent;
 import com.inari.firefly.sound.event.SoundEvent.Type;
@@ -101,7 +101,7 @@ public final class CaveController extends Controller {
                 int caveTime = caveData.getTime();
                 if ( caveTime < 10 && caveTime > 0 ) {
                     String soundName = "TIMEOUT" + caveTime;
-                    context.notify( new SoundEvent( CaveSoundKey.valueOf( soundName ).id, Type.PLAY_SOUND ) );
+                    context.notify( new SoundEvent( CaveSoundKey.valueOf( soundName ).name(), Type.PLAY_SOUND ) );
                 }
                 
                 if ( caveTime == 0 ) {
@@ -119,7 +119,7 @@ public final class CaveController extends Controller {
                 if ( enough ) {
                     exitUnit.setAspects( AspectSetBuilder.create( UnitAspect.ACTIVE, UnitAspect.WALKABLE ) );
                     context.notify( new ActionEvent( UnitActionType.FLASH.index(), exitEntityId ) );
-                    context.notify( new SoundEvent( CaveSoundKey.CRACK.id, Type.PLAY_SOUND ) );
+                    context.notify( new SoundEvent( CaveSoundKey.CRACK.name(), Type.PLAY_SOUND ) );
                 }
             }
             
@@ -134,7 +134,7 @@ public final class CaveController extends Controller {
             if ( initSeconds <= 0 ) {
                 EUnit playerUnit = entitySystem.getComponent( playerEntityId, EUnit.TYPE_KEY );
                 playerUnit.resetAspect( UnitAspect.ALIVE );
-                context.notify( new SoundEvent( CaveSystem.CaveSoundKey.FINISHED.id, Type.PLAY_SOUND ) );
+                context.notify( new SoundEvent( CaveSystem.CaveSoundKey.FINISHED.name(), Type.PLAY_SOUND ) );
                 initSeconds++;
             }
             int time = caveData.getTime();
@@ -142,7 +142,7 @@ public final class CaveController extends Controller {
                 caveData.tick();
                 updatePlayHeader( gameData, caveData );
             } else {
-                context.notify( new SoundEvent( CaveSystem.CaveSoundKey.FINISHED.id, Type.STOP_PLAYING ) );
+                context.notify( new SoundEvent( CaveSystem.CaveSoundKey.FINISHED.name(), Type.STOP_PLAYING ) );
                 if ( gameData.hasNextCave() ) {
                     context.notify( new TaskEvent( TaskEvent.Type.RUN_TASK, TaskName.NEXT_CAVE.name() ) );
                 } else {
@@ -210,13 +210,13 @@ public final class CaveController extends Controller {
     private void gameOverHeader() {
         clearHeader();
         caveService.caveState = CaveState.GAME_OVER;
-        TextSystem textSystem = context.getSystem( TextSystem.SYSTEM_KEY );
+        AssetSystem assetSystem = context.getSystem( AssetSystem.SYSTEM_KEY );
         ViewSystem viewSystem = context.getSystem( ViewSystem.SYSTEM_KEY );
         entitySystem.getEntityBuilder()
             .set( ETransform.VIEW_ID, viewSystem.getViewId( CaveSystem.HEADER_VIEW_NAME ) )
             .set( ETransform.XPOSITION, 100 )
             .set( ETransform.YPOSITION, 8 )
-            .set( EText.FONT_ID, textSystem.getFontId( GameSystem.GAME_FONT_TEXTURE_KEY.name ) )
+            .set( EText.FONT_ID, assetSystem.getAssetId( GameSystem.GAME_FONT_TEXTURE_NAME ) )
             .set( EText.TEXT_STRING, "%%% GAME OVER %%%" )
             .set( EText.TINT_COLOR, GameSystem.YELLOW_FONT_COLOR )
         .activate();

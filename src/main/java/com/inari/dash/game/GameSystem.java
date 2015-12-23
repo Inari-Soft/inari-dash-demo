@@ -8,7 +8,6 @@ import com.inari.commons.lang.indexed.IndexedTypeKey;
 import com.inari.dash.Configuration;
 import com.inari.dash.game.io.GameInfos;
 import com.inari.firefly.FFInitException;
-import com.inari.firefly.asset.AssetNameKey;
 import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.renderer.text.EText;
 import com.inari.firefly.system.FFContext;
@@ -33,8 +32,8 @@ public final class GameSystem implements FFSystem {
     public static final RGBColor YELLOW_FONT_COLOR = new RGBColor( .98f, .9f, .16f, 1f );
     public static final RGBColor WHITE_FONT_COLOR = new RGBColor( 1, 1, 1, 1 );
 
-    public static final AssetNameKey GAME_FONT_TEXTURE_KEY = new AssetNameKey( "gameFontTexturKey", "gameFontTexturKey" );
-    public static final AssetNameKey INTRO_SONG_KEY = new AssetNameKey( "sounds", "INTRO_SONG" );
+    public static final String GAME_FONT_TEXTURE_NAME = "gameFontTexturKey";
+    public static final String INTRO_SONG_NAME = "INTRO_SONG";
     
     public static enum SelectionMode {
         GAME_SELECTION,

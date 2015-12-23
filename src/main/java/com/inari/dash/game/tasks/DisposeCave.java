@@ -36,7 +36,7 @@ public final class DisposeCave extends Task {
         }
         
         entitySystem.deleteAll();
-        assetSystem.disposeAsset( CaveSystem.GAME_UNIT_TEXTURE_KEY );
+        assetSystem.disposeAsset( CaveSystem.GAME_UNIT_TEXTURE_NAME );
         
         int caveViewId = viewSystem.getViewId( CaveSystem.CAVE_VIEW_NAME );
         tileGridSystem.deleteAllTileGrid( caveViewId );

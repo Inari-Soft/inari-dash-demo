@@ -8,17 +8,14 @@ import com.inari.commons.geom.Position;
 import com.inari.commons.lang.TypedKey;
 import com.inari.commons.lang.aspect.Aspect;
 import com.inari.commons.lang.indexed.IndexedTypeKey;
-import com.inari.commons.lang.indexed.Indexer;
 import com.inari.dash.game.GameData;
 import com.inari.dash.game.cave.unit.EUnit;
 import com.inari.dash.game.cave.unit.UnitAspect;
 import com.inari.dash.game.cave.unit.UnitType;
 import com.inari.firefly.FFInitException;
-import com.inari.firefly.asset.AssetNameKey;
 import com.inari.firefly.filter.IColorFilter;
 import com.inari.firefly.renderer.tile.ETile;
 import com.inari.firefly.renderer.tile.TileGrid;
-import com.inari.firefly.sound.SoundAsset;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FFSystem;
 
@@ -47,8 +44,7 @@ public class CaveSystem implements FFSystem {
         GAME_OVER
     }
     
-    public static final String CAVE_SOUND_GROUP_NAME = "caveSound";
-    public static final AssetNameKey GAME_UNIT_TEXTURE_KEY = new AssetNameKey( "gameUnitTexturKey", "gameUnitTexturKey" );
+    public static final String GAME_UNIT_TEXTURE_NAME = "gameUnitTexturKey";
     public static final String HEADER_VIEW_NAME = "HeaderView";
     public static final int HEADER_VIEW_HEIGHT = 32;
     public static final String CAVE_VIEW_NAME = "GameView";
@@ -72,15 +68,11 @@ public class CaveSystem implements FFSystem {
         FINISHED( "original/sound/finished.wav", false )
         ;
         
-        public final int id;
         public final String fileName;
-        public final AssetNameKey assetKey;
         public final boolean looping;
         
         private CaveSoundKey( String fileName, boolean looping ) {
-            id = Indexer.getIndexedObjectSize( SoundAsset.class ) + ordinal();
             this.fileName = fileName;
-            assetKey = new AssetNameKey( CAVE_SOUND_GROUP_NAME, name() );
             this.looping = looping;
         }
     }

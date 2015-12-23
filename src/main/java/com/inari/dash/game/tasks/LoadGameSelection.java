@@ -9,7 +9,7 @@ import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.renderer.sprite.ESprite;
 import com.inari.firefly.renderer.text.EText;
-import com.inari.firefly.renderer.text.TextSystem;
+import com.inari.firefly.renderer.text.FontAsset;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.task.Task;
 
@@ -23,10 +23,10 @@ public final class LoadGameSelection extends Task {
     public final void run( FFContext context ) {
         EntitySystem entitySystem = context.getSystem( EntitySystem.SYSTEM_KEY );
         AssetSystem assetSystem = context.getSystem( AssetSystem.SYSTEM_KEY );
-        TextSystem textSystem = context.getSystem( TextSystem.SYSTEM_KEY );
-        
-        int fontId = textSystem.getFontId( GameSystem.GAME_FONT_TEXTURE_KEY.name );
-        int rockfordTitleId = assetSystem.getAssetId( GameSystem.GAME_FONT_TEXTURE_KEY.group, GameSystem.GAME_FONT_TEXTURE_KEY.name + "_1_2" );
+
+        FontAsset fontAsset = assetSystem.getAssetAs( GameSystem.GAME_FONT_TEXTURE_NAME, FontAsset.class );
+        int fontId = fontAsset.getId();
+        int rockfordTitleId = fontAsset.getSpriteId( '&' );
         entitySystem.getEntityBuilder()
             .set( ETransform.VIEW_ID, 0 )
             .set( ETransform.XPOSITION, 320 )

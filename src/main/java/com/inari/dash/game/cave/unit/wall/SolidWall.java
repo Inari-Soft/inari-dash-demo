@@ -10,7 +10,6 @@ import com.inari.dash.game.cave.unit.EUnit;
 import com.inari.dash.game.cave.unit.UnitHandle;
 import com.inari.dash.game.cave.unit.UnitType;
 import com.inari.firefly.FFInitException;
-import com.inari.firefly.asset.AssetNameKey;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.renderer.sprite.ESprite;
 import com.inari.firefly.renderer.sprite.SpriteAsset;
@@ -20,22 +19,12 @@ import com.inari.firefly.system.FFContext;
 public final class SolidWall extends UnitHandle {
     
     public static final String SOLID_WALL_NAME = "solidWall";
-    public static final AssetNameKey SOLID_WALL_SPRITE_ASSET_KEY = new AssetNameKey( CaveSystem.GAME_UNIT_TEXTURE_KEY.group, SOLID_WALL_NAME );
     
-
     private int solidWallEntityId;
 
     @Override
     public final void init( FFContext context ) throws FFInitException {
         super.init( context );
-        
-        assetSystem.getAssetBuilder()
-            .set( SpriteAsset.NAME, SOLID_WALL_NAME )
-            .set( SpriteAsset.ASSET_GROUP, SOLID_WALL_SPRITE_ASSET_KEY.group )
-            .set( SpriteAsset.TEXTURE_ID, assetSystem.getAssetId( CaveSystem.GAME_UNIT_TEXTURE_KEY ) )
-            .set( SpriteAsset.TEXTURE_REGION, new Rectangle( 32, 6 * 32, 32, 32 ) )
-        .build( SpriteAsset.class );
-        super.caveAssetsToReload.add( assetSystem.getAssetTypeKey( SOLID_WALL_SPRITE_ASSET_KEY ) );
 
         initialized = true;
     }
@@ -44,10 +33,16 @@ public final class SolidWall extends UnitHandle {
     public void loadCaveData( FFContext context ) {
         super.loadCaveData( context );
         
+        assetSystem.getAssetBuilder()
+            .set( SpriteAsset.NAME, SOLID_WALL_NAME )
+            .set( SpriteAsset.TEXTURE_ASSET_ID, assetSystem.getAssetId( CaveSystem.GAME_UNIT_TEXTURE_NAME ) )
+            .set( SpriteAsset.TEXTURE_REGION, new Rectangle( 32, 6 * 32, 32, 32 ) )
+        .activate( SpriteAsset.class );
+        
         solidWallEntityId = entitySystem.getEntityBuilder()
             .set( ETransform.VIEW_ID, viewSystem.getViewId( CaveSystem.CAVE_VIEW_NAME ) )
             .set( ETile.MULTI_POSITION, true )
-            .set( ESprite.SPRITE_ID, assetSystem.getAssetId( SOLID_WALL_SPRITE_ASSET_KEY ) )
+            .set( ESprite.SPRITE_ID, assetSystem.getAssetInstanceId( SOLID_WALL_NAME ) )
             .set( EUnit.UNIT_TYPE, type() )
             .set( EUnit.ASPECTS, AspectSetBuilder.create() )
         .activate();
@@ -58,6 +53,7 @@ public final class SolidWall extends UnitHandle {
         super.disposeCaveData( context );
         entitySystem.delete( solidWallEntityId );
         solidWallEntityId = -1;
+        assetSystem.deleteAsset( SOLID_WALL_NAME );
     }
 
     @Override
@@ -80,7 +76,7 @@ public final class SolidWall extends UnitHandle {
     
     @Override
     public final void dispose( FFContext context ) {
-        assetSystem.disposeAsset( SOLID_WALL_SPRITE_ASSET_KEY );
+        assetSystem.disposeAsset( SOLID_WALL_NAME );
     }
 
 }
