@@ -19,8 +19,9 @@ import com.inari.firefly.libgdx.GdxFirefly;
 import com.inari.firefly.renderer.TextureAsset;
 import com.inari.firefly.renderer.sprite.SpriteAsset;
 import com.inari.firefly.renderer.text.EText;
+import com.inari.firefly.renderer.tile.NormalFastTileGridRenderer;
 import com.inari.firefly.renderer.tile.TileGrid;
-import com.inari.firefly.renderer.tile.TileGrid.TileRenderMode;
+import com.inari.firefly.renderer.tile.TileGridSystem;
 import com.inari.firefly.scene.Scene;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.view.View;
@@ -71,7 +72,7 @@ public final class LoadCave extends Task {
             .set( TileGrid.HEIGHT, caveHeight )
             .set( TileGrid.CELL_WIDTH, config.unitWidth )
             .set( TileGrid.CELL_HEIGHT, config.unitHeight )
-            .set( TileGrid.RENDER_MODE, TileRenderMode.FAST_RENDERING )
+            .set( TileGrid.RENDERER_ID, context.getSystem( TileGridSystem.SYSTEM_KEY ).getRendererId( NormalFastTileGridRenderer.NAME ) )
         .build();
         
         // load all units
