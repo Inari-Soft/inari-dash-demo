@@ -7,9 +7,9 @@ import com.inari.firefly.control.Controller;
 import com.inari.firefly.entity.EEntity;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.EntitySystem;
-import com.inari.firefly.renderer.sprite.ESprite;
-import com.inari.firefly.renderer.text.EText;
-import com.inari.firefly.renderer.text.FontAsset;
+import com.inari.firefly.graphics.sprite.ESprite;
+import com.inari.firefly.graphics.text.EText;
+import com.inari.firefly.graphics.text.FontAsset;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.task.Task;
 

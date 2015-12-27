@@ -8,8 +8,8 @@ import com.inari.dash.game.cave.unit.UnitController;
 import com.inari.dash.game.cave.unit.UnitType;
 import com.inari.dash.game.cave.unit.action.UnitActionType;
 import com.inari.firefly.action.event.ActionEvent;
-import com.inari.firefly.renderer.tile.ETile;
-import com.inari.firefly.sound.event.SoundEvent;
+import com.inari.firefly.audio.event.AudioEvent;
+import com.inari.firefly.graphics.tile.ETile;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.external.FFTimer;
 
@@ -112,7 +112,7 @@ public abstract class StoneController extends UnitController {
             if ( soundId < 0 ) {
                 return;
             }
-            context.notify( new SoundEvent( soundId, SoundEvent.Type.PLAY_SOUND ) );
+            context.notify( new AudioEvent( soundId, AudioEvent.Type.PLAY_SOUND ) );
             currentUpdate = update;
         }
     }

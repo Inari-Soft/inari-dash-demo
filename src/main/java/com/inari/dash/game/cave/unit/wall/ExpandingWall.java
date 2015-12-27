@@ -13,8 +13,8 @@ import com.inari.firefly.control.Controller;
 import com.inari.firefly.entity.EEntity;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.EntityController;
-import com.inari.firefly.renderer.sprite.ESprite;
-import com.inari.firefly.renderer.tile.ETile;
+import com.inari.firefly.graphics.sprite.ESprite;
+import com.inari.firefly.graphics.tile.ETile;
 import com.inari.firefly.system.FFContext;
 
 public final class ExpandingWall extends UnitHandle {

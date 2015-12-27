@@ -6,10 +6,10 @@ import com.inari.dash.game.cave.CaveSystem;
 import com.inari.firefly.Disposable;
 import com.inari.firefly.FFInitException;
 import com.inari.firefly.asset.AssetSystem;
+import com.inari.firefly.audio.AudioSystem;
 import com.inari.firefly.control.ControllerSystem;
 import com.inari.firefly.entity.EntityPrefabSystem;
 import com.inari.firefly.entity.EntitySystem;
-import com.inari.firefly.sound.SoundSystem;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FFContextInitiable;
 import com.inari.firefly.system.view.ViewSystem;
@@ -23,7 +23,7 @@ public abstract class UnitHandle implements FFContextInitiable, Disposable {
     protected CaveSystem caveService;
     protected AssetSystem assetSystem;
     protected ViewSystem viewSystem;
-    protected SoundSystem soundSystem;
+    protected AudioSystem soundSystem;
     protected ControllerSystem controllerSystem;
     
     @Override
@@ -33,7 +33,7 @@ public abstract class UnitHandle implements FFContextInitiable, Disposable {
         caveService = context.getSystem( CaveSystem.SYSTEM_KEY );
         viewSystem = context.getSystem( ViewSystem.SYSTEM_KEY );
         prefabSystem = context.getSystem( EntityPrefabSystem.SYSTEM_KEY );
-        soundSystem = context.getSystem( SoundSystem.SYSTEM_KEY );
+        soundSystem = context.getSystem( AudioSystem.SYSTEM_KEY );
         controllerSystem = context.getSystem( ControllerSystem.SYSTEM_KEY );
         
         initialized = true;

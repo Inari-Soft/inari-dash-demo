@@ -3,7 +3,7 @@ package com.inari.dash.game.cave.unit.misc;
 import com.inari.dash.game.cave.unit.EUnit;
 import com.inari.dash.game.cave.unit.UnitController;
 import com.inari.dash.game.cave.unit.UnitType;
-import com.inari.firefly.renderer.tile.ETile;
+import com.inari.firefly.graphics.tile.ETile;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.external.FFTimer;
 

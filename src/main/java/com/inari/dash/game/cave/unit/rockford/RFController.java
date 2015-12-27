@@ -12,9 +12,9 @@ import com.inari.dash.game.cave.unit.UnitType;
 import com.inari.dash.game.cave.unit.action.UnitActionType;
 import com.inari.dash.game.cave.unit.rockford.RFUnit.RFState;
 import com.inari.firefly.action.event.ActionEvent;
-import com.inari.firefly.renderer.tile.ETile;
-import com.inari.firefly.sound.event.SoundEvent;
-import com.inari.firefly.sound.event.SoundEvent.Type;
+import com.inari.firefly.audio.event.AudioEvent;
+import com.inari.firefly.audio.event.AudioEvent.Type;
+import com.inari.firefly.graphics.tile.ETile;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FireFly;
 import com.inari.firefly.system.external.FFInput;
@@ -56,7 +56,7 @@ public final class RFController extends UnitController {
             if ( state == RFState.ENTERING && animationCount > ENTERING_ANIMATION_DURATION ) {
                 rockford.setState( RFState.APPEARING );
                 unit.resetAnimationCount();
-                context.notify( new SoundEvent( rfHandle.inSoundId, Type.PLAY_SOUND ) );
+                context.notify( new AudioEvent( rfHandle.inSoundId, Type.PLAY_SOUND ) );
                 return;
             }
             if ( state == RFState.APPEARING && animationCount > APPEARING_ANIMATION_DURATION ) {
@@ -140,13 +140,13 @@ public final class RFController extends UnitController {
         if ( nextUnit.has( UnitAspect.WALKABLE ) ) {
            if ( nextType == UnitType.DIAMOND ) {
                context.notify( new ActionEvent( UnitActionType.COLLECT.index(), nextEntityId ) );
-               context.notify( new SoundEvent( rfHandle.collectSoundId, Type.PLAY_SOUND ) ); 
+               context.notify( new AudioEvent( rfHandle.collectSoundId, Type.PLAY_SOUND ) ); 
            } else if ( nextType == UnitType.SPACE ) {
                if ( !grabbing ) {
-                   context.notify( new SoundEvent( rfHandle.spaceSoundId, Type.PLAY_SOUND ) ); 
+                   context.notify( new AudioEvent( rfHandle.spaceSoundId, Type.PLAY_SOUND ) ); 
                }
            } else {
-               context.notify( new SoundEvent( rfHandle.sandSoundId, Type.PLAY_SOUND ) ); 
+               context.notify( new AudioEvent( rfHandle.sandSoundId, Type.PLAY_SOUND ) ); 
            }
            
            if ( grabbing ) {
@@ -181,7 +181,7 @@ public final class RFController extends UnitController {
                 context.notify( new ActionEvent( UnitActionType.MOVE.index(), rockfordId ) );
             }
             unit.setMovement( Direction.NONE );
-            context.notify( new SoundEvent( UnitType.ROCK.handler.getSoundId(), Type.PLAY_SOUND ) ); 
+            context.notify( new AudioEvent( UnitType.ROCK.handler.getSoundId(), Type.PLAY_SOUND ) ); 
         }
     }
 

@@ -9,10 +9,10 @@ import com.inari.dash.game.cave.unit.action.UnitActionType;
 import com.inari.dash.game.tasks.InitGameWorkflow.TaskName;
 import com.inari.firefly.action.ActionSystem;
 import com.inari.firefly.asset.AssetSystem;
+import com.inari.firefly.audio.AudioSystem;
+import com.inari.firefly.audio.event.AudioEvent;
 import com.inari.firefly.control.ControllerSystem;
 import com.inari.firefly.entity.EntitySystem;
-import com.inari.firefly.sound.SoundSystem;
-import com.inari.firefly.sound.event.SoundEvent;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.view.ViewSystem;
 import com.inari.firefly.task.Task;
@@ -31,12 +31,12 @@ public final class DisposePlay extends Task {
         context.notify( new TaskEvent( Type.RUN_TASK, TaskName.DISPOSE_CAVE.name() ) ); 
         disposeCaveData( context );
         context.notify( new TaskEvent( Type.RUN_TASK, TaskName.LOAD_GAME_SELECTION.name() ) ); 
-        context.notify( new SoundEvent( GameSystem.TITLE_SONG_SOUND_NAME, SoundEvent.Type.PLAY_SOUND ) );
+        context.notify( new AudioEvent( GameSystem.TITLE_SONG_SOUND_NAME, AudioEvent.Type.PLAY_SOUND ) );
     }
     
     private final void disposeCaveData( FFContext context ) {
         ViewSystem viewSystem = context.getSystem( ViewSystem.SYSTEM_KEY );
-        SoundSystem soundSystem = context.getSystem( SoundSystem.SYSTEM_KEY );
+        AudioSystem soundSystem = context.getSystem( AudioSystem.SYSTEM_KEY );
         ControllerSystem controllerSystem = context.getSystem( ControllerSystem.SYSTEM_KEY );
         AssetSystem assetSystem = context.getSystem( AssetSystem.SYSTEM_KEY );
         ActionSystem actionSystem = context.getSystem( ActionSystem.SYSTEM_KEY );

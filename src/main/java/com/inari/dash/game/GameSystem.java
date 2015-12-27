@@ -9,7 +9,7 @@ import com.inari.dash.Configuration;
 import com.inari.dash.game.io.GameInfos;
 import com.inari.firefly.FFInitException;
 import com.inari.firefly.entity.EntitySystem;
-import com.inari.firefly.renderer.text.EText;
+import com.inari.firefly.graphics.text.EText;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FFSystem;
 import com.inari.firefly.system.external.FFInput;

@@ -5,7 +5,7 @@ import com.inari.commons.geom.Direction;
 import com.inari.commons.geom.Position;
 import com.inari.dash.game.cave.unit.EUnit;
 import com.inari.dash.game.cave.unit.UnitType;
-import com.inari.firefly.renderer.tile.ETile;
+import com.inari.firefly.graphics.tile.ETile;
 
 public final class MoveAction extends UnitAction {
 

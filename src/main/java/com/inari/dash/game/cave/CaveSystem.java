@@ -14,8 +14,8 @@ import com.inari.dash.game.cave.unit.UnitAspect;
 import com.inari.dash.game.cave.unit.UnitType;
 import com.inari.firefly.FFInitException;
 import com.inari.firefly.filter.IColorFilter;
-import com.inari.firefly.renderer.tile.ETile;
-import com.inari.firefly.renderer.tile.TileGrid;
+import com.inari.firefly.graphics.tile.ETile;
+import com.inari.firefly.graphics.tile.TileGrid;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FFSystem;
 

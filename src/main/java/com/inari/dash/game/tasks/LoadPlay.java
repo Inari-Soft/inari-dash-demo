@@ -18,14 +18,14 @@ import com.inari.firefly.FFInitException;
 import com.inari.firefly.action.Action;
 import com.inari.firefly.asset.Asset;
 import com.inari.firefly.asset.AssetSystem;
+import com.inari.firefly.audio.Sound;
+import com.inari.firefly.audio.SoundAsset;
+import com.inari.firefly.audio.event.AudioEvent;
 import com.inari.firefly.control.Controller;
 import com.inari.firefly.controller.view.CameraPivot;
 import com.inari.firefly.controller.view.SimpleCameraController;
-import com.inari.firefly.renderer.TextureAsset;
-import com.inari.firefly.renderer.tile.ETile;
-import com.inari.firefly.sound.Sound;
-import com.inari.firefly.sound.SoundAsset;
-import com.inari.firefly.sound.event.SoundEvent;
+import com.inari.firefly.graphics.TextureAsset;
+import com.inari.firefly.graphics.tile.ETile;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.view.View;
 import com.inari.firefly.system.view.ViewSystem;
@@ -44,7 +44,7 @@ public final class LoadPlay extends Task {
         GameSystem gameService = context.getSystem( GameSystem.SYSTEM_KEY );
         
         // stop playing title song
-        context.notify( new SoundEvent( GameSystem.TITLE_SONG_SOUND_NAME, SoundEvent.Type.STOP_PLAYING ) );
+        context.notify( new AudioEvent( GameSystem.TITLE_SONG_SOUND_NAME, AudioEvent.Type.STOP_PLAYING ) );
         // dispose game selection screen
         context.notify( new TaskEvent( Type.RUN_TASK, TaskName.DISPOSE_GAME_SELECTION.name() ) );
         // get selection data

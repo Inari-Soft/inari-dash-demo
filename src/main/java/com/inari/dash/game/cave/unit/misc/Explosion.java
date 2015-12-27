@@ -13,8 +13,8 @@ import com.inari.firefly.animation.sprite.SpriteAnimationBuilder.SpriteAnimation
 import com.inari.firefly.entity.EEntity;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.EntityPrefab;
-import com.inari.firefly.renderer.sprite.ESprite;
-import com.inari.firefly.renderer.tile.ETile;
+import com.inari.firefly.graphics.sprite.ESprite;
+import com.inari.firefly.graphics.tile.ETile;
 import com.inari.firefly.system.FFContext;
 
 public final class Explosion extends AbstractExplosionHandle {

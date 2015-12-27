@@ -15,16 +15,16 @@ import com.inari.firefly.FFInitException;
 import com.inari.firefly.animation.AnimationSystem;
 import com.inari.firefly.animation.sprite.SpriteAnimationBuilder;
 import com.inari.firefly.animation.sprite.SpriteAnimationBuilder.SpriteAnimationHandler;
+import com.inari.firefly.audio.Sound;
+import com.inari.firefly.audio.SoundAsset;
+import com.inari.firefly.audio.event.AudioEvent;
+import com.inari.firefly.audio.event.AudioEvent.Type;
 import com.inari.firefly.entity.EEntity;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.EntityController;
 import com.inari.firefly.entity.EntityPrefab;
-import com.inari.firefly.renderer.sprite.ESprite;
-import com.inari.firefly.renderer.tile.ETile;
-import com.inari.firefly.sound.Sound;
-import com.inari.firefly.sound.SoundAsset;
-import com.inari.firefly.sound.event.SoundEvent;
-import com.inari.firefly.sound.event.SoundEvent.Type;
+import com.inari.firefly.graphics.sprite.ESprite;
+import com.inari.firefly.graphics.tile.ETile;
 import com.inari.firefly.system.FFContext;
 
 public final class MagicWall extends UnitHandle {
@@ -111,7 +111,7 @@ public final class MagicWall extends UnitHandle {
         controllerId = -1;
         prefabSystem.deletePrefab( prefabId );
         spriteAnimationHandler.dispose( context );
-        context.notify( new SoundEvent( soundId, Type.STOP_PLAYING ) );
+        context.notify( new AudioEvent( soundId, Type.STOP_PLAYING ) );
     }
 
     @Override

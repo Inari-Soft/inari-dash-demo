@@ -15,13 +15,13 @@ import com.inari.dash.game.tasks.InitGameWorkflow.StateChangeName;
 import com.inari.dash.game.tasks.InitGameWorkflow.TaskName;
 import com.inari.firefly.action.event.ActionEvent;
 import com.inari.firefly.asset.AssetSystem;
+import com.inari.firefly.audio.event.AudioEvent;
+import com.inari.firefly.audio.event.AudioEvent.Type;
 import com.inari.firefly.control.Controller;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.EntitySystem;
-import com.inari.firefly.renderer.text.EText;
+import com.inari.firefly.graphics.text.EText;
 import com.inari.firefly.scene.SceneEvent;
-import com.inari.firefly.sound.event.SoundEvent;
-import com.inari.firefly.sound.event.SoundEvent.Type;
 import com.inari.firefly.state.event.WorkflowEvent;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.external.FFTimer;
@@ -101,7 +101,7 @@ public final class CaveController extends Controller {
                 int caveTime = caveData.getTime();
                 if ( caveTime < 10 && caveTime > 0 ) {
                     String soundName = "TIMEOUT" + caveTime;
-                    context.notify( new SoundEvent( CaveSoundKey.valueOf( soundName ).name(), Type.PLAY_SOUND ) );
+                    context.notify( new AudioEvent( CaveSoundKey.valueOf( soundName ).name(), Type.PLAY_SOUND ) );
                 }
                 
                 if ( caveTime == 0 ) {
@@ -119,7 +119,7 @@ public final class CaveController extends Controller {
                 if ( enough ) {
                     exitUnit.setAspects( AspectSetBuilder.create( UnitAspect.ACTIVE, UnitAspect.WALKABLE ) );
                     context.notify( new ActionEvent( UnitActionType.FLASH.index(), exitEntityId ) );
-                    context.notify( new SoundEvent( CaveSoundKey.CRACK.name(), Type.PLAY_SOUND ) );
+                    context.notify( new AudioEvent( CaveSoundKey.CRACK.name(), Type.PLAY_SOUND ) );
                 }
             }
             
@@ -134,7 +134,7 @@ public final class CaveController extends Controller {
             if ( initSeconds <= 0 ) {
                 EUnit playerUnit = entitySystem.getComponent( playerEntityId, EUnit.TYPE_KEY );
                 playerUnit.resetAspect( UnitAspect.ALIVE );
-                context.notify( new SoundEvent( CaveSystem.CaveSoundKey.FINISHED.name(), Type.PLAY_SOUND ) );
+                context.notify( new AudioEvent( CaveSystem.CaveSoundKey.FINISHED.name(), Type.PLAY_SOUND ) );
                 initSeconds++;
             }
             int time = caveData.getTime();
@@ -142,7 +142,7 @@ public final class CaveController extends Controller {
                 caveData.tick();
                 updatePlayHeader( gameData, caveData );
             } else {
-                context.notify( new SoundEvent( CaveSystem.CaveSoundKey.FINISHED.name(), Type.STOP_PLAYING ) );
+                context.notify( new AudioEvent( CaveSystem.CaveSoundKey.FINISHED.name(), Type.STOP_PLAYING ) );
                 if ( gameData.hasNextCave() ) {
                     context.notify( new TaskEvent( TaskEvent.Type.RUN_TASK, TaskName.NEXT_CAVE.name() ) );
                 } else {

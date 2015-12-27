@@ -12,9 +12,9 @@ import com.inari.dash.game.cave.unit.UnitHandle;
 import com.inari.dash.game.cave.unit.UnitType;
 import com.inari.firefly.FFInitException;
 import com.inari.firefly.entity.ETransform;
-import com.inari.firefly.renderer.sprite.ESprite;
-import com.inari.firefly.renderer.sprite.SpriteAsset;
-import com.inari.firefly.renderer.tile.ETile;
+import com.inari.firefly.graphics.sprite.ESprite;
+import com.inari.firefly.graphics.sprite.SpriteAsset;
+import com.inari.firefly.graphics.tile.ETile;
 import com.inari.firefly.system.FFContext;
 
 public final class Sand extends UnitHandle {

@@ -11,15 +11,15 @@ import com.inari.dash.game.cave.unit.UnitAspect;
 import com.inari.dash.game.cave.unit.UnitHandle;
 import com.inari.dash.game.cave.unit.UnitType;
 import com.inari.firefly.FFInitException;
+import com.inari.firefly.audio.Sound;
+import com.inari.firefly.audio.SoundAsset;
 import com.inari.firefly.entity.EEntity;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.EntityController;
 import com.inari.firefly.entity.EntityPrefab;
-import com.inari.firefly.renderer.sprite.ESprite;
-import com.inari.firefly.renderer.sprite.SpriteAsset;
-import com.inari.firefly.renderer.tile.ETile;
-import com.inari.firefly.sound.Sound;
-import com.inari.firefly.sound.SoundAsset;
+import com.inari.firefly.graphics.sprite.ESprite;
+import com.inari.firefly.graphics.sprite.SpriteAsset;
+import com.inari.firefly.graphics.tile.ETile;
 import com.inari.firefly.system.FFContext;
 
 public final class Rock extends UnitHandle {

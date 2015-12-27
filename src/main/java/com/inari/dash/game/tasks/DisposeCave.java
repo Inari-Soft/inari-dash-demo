@@ -6,7 +6,7 @@ import com.inari.dash.game.cave.unit.UnitType;
 import com.inari.firefly.asset.AssetSystem;
 import com.inari.firefly.control.ControllerSystem;
 import com.inari.firefly.entity.EntitySystem;
-import com.inari.firefly.renderer.tile.TileGridSystem;
+import com.inari.firefly.graphics.tile.TileGridSystem;
 import com.inari.firefly.scene.SceneEvent;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.view.ViewSystem;
