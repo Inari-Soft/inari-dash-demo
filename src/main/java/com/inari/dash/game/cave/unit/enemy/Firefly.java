@@ -11,14 +11,12 @@ import com.inari.dash.game.cave.unit.EUnit;
 import com.inari.dash.game.cave.unit.UnitAspect;
 import com.inari.dash.game.cave.unit.UnitHandle;
 import com.inari.dash.game.cave.unit.UnitType;
-import com.inari.firefly.FFInitException;
-import com.inari.firefly.animation.sprite.SpriteAnimationBuilder;
-import com.inari.firefly.animation.sprite.SpriteAnimationBuilder.SpriteAnimationHandler;
+import com.inari.firefly.asset.AnimatedSpriteAsset;
+import com.inari.firefly.asset.AnimatedSpriteData;
 import com.inari.firefly.entity.EEntity;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.EntityController;
 import com.inari.firefly.entity.EntityPrefab;
-import com.inari.firefly.graphics.sprite.ESprite;
 import com.inari.firefly.graphics.tile.ETile;
 import com.inari.firefly.system.FFContext;
 
@@ -29,36 +27,33 @@ public final class Firefly extends UnitHandle {
     
     private int prefabId;
     private int controllerId;
-    private SpriteAnimationHandler spriteAnimationHandler;
-
-    @Override
-    public final void init( FFContext context ) throws FFInitException {
-        super.init( context );
-        
-        controllerId = controllerSystem.getControllerBuilder()
-            .set( EntityController.NAME, FIREFLY_NAME )
-        .build( FireflyController.class );
-
-        initialized = true;
-    }
+    private int animationAssetId;
 
     @Override
     public final void loadCaveData( FFContext context ) {
         super.loadCaveData( context );
         
-        spriteAnimationHandler = new SpriteAnimationBuilder( context )
-            .setLooping( true )
-            .setNamePrefix( FIREFLY_NAME )
-            .setTextureAssetName( CaveSystem.GAME_UNIT_TEXTURE_NAME )
-            .addSpritesToAnimation( 0, new Rectangle( 0, 9 * 32, 32, 32 ), 8, true )
-        .build();
+        float updateRate = caveService.getUpdateRate();
+        AnimatedSpriteData[] animationData = AnimatedSpriteData.create( 80 - (int) updateRate * 4, new Rectangle( 0, 9 * 32, 32, 32 ), 8, Direction.EAST );
+        animationAssetId = assetSystem.getAssetBuilder()
+            .set( AnimatedSpriteAsset.NAME, FIREFLY_NAME )
+            .set( AnimatedSpriteAsset.LOOPING, true )
+            .set( AnimatedSpriteAsset.UPDATE_RESOLUTION, updateRate )
+            .set( AnimatedSpriteAsset.TEXTURE_ASSET_ID, assetSystem.getAssetId( CaveSystem.GAME_UNIT_TEXTURE_NAME ) )
+            .set( AnimatedSpriteAsset.ANIMATED_SPRITE_DATA, animationData )
+        .activate( AnimatedSpriteAsset.class );
+        int animatioControllerId = assetSystem.getAssetInstaceId( animationAssetId );
+        
+        controllerId = controllerSystem.getControllerBuilder()
+            .set( EntityController.NAME, FIREFLY_NAME )
+            .set( EntityController.UPDATE_RESOLUTION, updateRate )
+        .build( FireflyController.class );
         
         prefabId = prefabSystem.getEntityPrefabBuilder()
             .add( EEntity.CONTROLLER_IDS, controllerId )
-            .add( EEntity.CONTROLLER_IDS, spriteAnimationHandler.getControllerId() )
+            .add( EEntity.CONTROLLER_IDS, animatioControllerId )
             .set( EntityPrefab.NAME, FIREFLY_NAME )
             .set( ETransform.VIEW_ID, viewSystem.getViewId( CaveSystem.CAVE_VIEW_NAME ) )
-            .set( ESprite.SPRITE_ID, spriteAnimationHandler.getStartSpriteId() )
             .set( ETile.MULTI_POSITION, false )
             .set( EUnit.UNIT_TYPE, type() )
             .set( EUnit.MOVEMENT, Direction.SOUTH )
@@ -71,10 +66,6 @@ public final class Firefly extends UnitHandle {
             ) )
         .build();
         prefabSystem.cacheComponents( prefabId, 200 );
-
-        float updateRate = caveService.getUpdateRate();
-        controllerSystem.getController( controllerId ).setUpdateResolution( updateRate );
-        spriteAnimationHandler.setFrameTime( 80 - (int) updateRate * 4 );
     }
 
     @Override
@@ -82,7 +73,7 @@ public final class Firefly extends UnitHandle {
         super.disposeCaveData( context );
         
         prefabSystem.deletePrefab( FIREFLY_NAME );
-        spriteAnimationHandler.dispose( context );
+        assetSystem.deleteAsset( animationAssetId );
     }
 
     @Override

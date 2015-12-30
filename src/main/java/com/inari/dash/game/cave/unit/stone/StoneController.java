@@ -22,7 +22,7 @@ public abstract class StoneController extends UnitController {
     }
 
     @Override
-    protected void update( FFTimer timer, int entityId ) {
+    protected final void update( FFTimer timer, int entityId ) {
         long update = timer.getTime();
         EUnit unit = context.getEntityComponent( entityId, EUnit.TYPE_KEY );
         ETile tile = context.getEntityComponent( entityId, ETile.TYPE_KEY );

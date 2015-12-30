@@ -2,7 +2,6 @@ package com.inari.dash.game.cave;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.inari.commons.lang.aspect.AspectSetBuilder;
 import com.inari.dash.game.GameData;
 import com.inari.dash.game.GameSystem;
 import com.inari.dash.game.cave.CaveSystem.CaveSoundKey;
@@ -11,6 +10,7 @@ import com.inari.dash.game.cave.unit.EUnit;
 import com.inari.dash.game.cave.unit.UnitAspect;
 import com.inari.dash.game.cave.unit.UnitType;
 import com.inari.dash.game.cave.unit.action.UnitActionType;
+import com.inari.dash.game.cave.unit.misc.Exit;
 import com.inari.dash.game.tasks.InitGameWorkflow.StateChangeName;
 import com.inari.dash.game.tasks.InitGameWorkflow.TaskName;
 import com.inari.firefly.action.event.ActionEvent;
@@ -117,9 +117,10 @@ public final class CaveController extends Controller {
             if ( !exitUnit.has( UnitAspect.ACTIVE ) ) {
                 boolean enough = caveData.getDiamondsToCollect() == caveData.getDiamondsCollected();
                 if ( enough ) {
-                    exitUnit.setAspects( AspectSetBuilder.create( UnitAspect.ACTIVE, UnitAspect.WALKABLE ) );
+                    context.notify( WorkflowEvent.createDoStateChangeEvent( Exit.getStateChangeName() ) );
                     context.notify( new ActionEvent( UnitActionType.FLASH.index(), exitEntityId ) );
                     context.notify( new AudioEvent( CaveSoundKey.CRACK.name(), Type.PLAY_SOUND ) );
+                    exitUnit.setAspect( UnitAspect.ACTIVE );
                 }
             }
             
@@ -179,11 +180,7 @@ public final class CaveController extends Controller {
     }
 
     private void exitPlay() {
-        context.notify( new WorkflowEvent( 
-            GameSystem.GAME_WORKFLOW_NAME, 
-            StateChangeName.EXIT_PLAY.name(), 
-            WorkflowEvent.Type.DO_STATE_CHANGE ) 
-        );
+        context.notify( WorkflowEvent.createDoStateChangeEvent( StateChangeName.EXIT_PLAY.name() ) );
     }
 
     

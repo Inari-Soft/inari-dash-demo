@@ -2,6 +2,7 @@ package com.inari.dash.game.cave.unit.stone;
 
 import java.util.Map;
 
+import com.inari.commons.geom.Direction;
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.aspect.AspectSetBuilder;
 import com.inari.dash.game.cave.CaveSystem;
@@ -11,15 +12,14 @@ import com.inari.dash.game.cave.unit.UnitAspect;
 import com.inari.dash.game.cave.unit.UnitHandle;
 import com.inari.dash.game.cave.unit.UnitType;
 import com.inari.firefly.FFInitException;
-import com.inari.firefly.animation.sprite.SpriteAnimationBuilder;
-import com.inari.firefly.animation.sprite.SpriteAnimationBuilder.SpriteAnimationHandler;
+import com.inari.firefly.asset.AnimatedSpriteAsset;
+import com.inari.firefly.asset.AnimatedSpriteData;
 import com.inari.firefly.audio.Sound;
 import com.inari.firefly.audio.SoundAsset;
 import com.inari.firefly.entity.EEntity;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.EntityController;
 import com.inari.firefly.entity.EntityPrefab;
-import com.inari.firefly.graphics.sprite.ESprite;
 import com.inari.firefly.graphics.tile.ETile;
 import com.inari.firefly.system.FFContext;
 
@@ -29,7 +29,7 @@ public final class Diamond extends UnitHandle {
     
     private int prefabId;
     private int controllerId;
-    private SpriteAnimationHandler spriteAnimationHandler;
+    private int animationAssetId;
     private int[] soundIds;
     private int soundIndex = 0;
     
@@ -53,7 +53,7 @@ public final class Diamond extends UnitHandle {
                 .set( Sound.CHANNEL, SoundChannel.DIAMOND.ordinal() )
             .build();
         }
-
+        
         initialized = true;
     }
 
@@ -61,23 +61,27 @@ public final class Diamond extends UnitHandle {
     public final void loadCaveData( FFContext context ) {
         super.loadCaveData( context );
         
-        spriteAnimationHandler = new SpriteAnimationBuilder( context )
-            .setLooping( true )
-            .setNamePrefix( DIAMOND_NAME )
-            .setTextureAssetName( CaveSystem.GAME_UNIT_TEXTURE_NAME )
-            .addSpritesToAnimation( 0, new Rectangle( 0, 10 * 32, 32, 32 ), 8, true )
-        .build();
+        float updateRate = caveService.getUpdateRate();
+        AnimatedSpriteData[] animationData = AnimatedSpriteData.create( 80 - (int) updateRate * 4, new Rectangle( 0, 10 * 32, 32, 32 ), 8, Direction.EAST );
+        animationAssetId = assetSystem.getAssetBuilder()
+            .set( AnimatedSpriteAsset.NAME, DIAMOND_NAME )
+            .set( AnimatedSpriteAsset.LOOPING, true )
+            .set( AnimatedSpriteAsset.UPDATE_RESOLUTION, updateRate )
+            .set( AnimatedSpriteAsset.TEXTURE_ASSET_ID, assetSystem.getAssetId( CaveSystem.GAME_UNIT_TEXTURE_NAME ) )
+            .set( AnimatedSpriteAsset.ANIMATED_SPRITE_DATA, animationData )
+        .activate( AnimatedSpriteAsset.class );
+        int animatioControllerId = assetSystem.getAssetInstaceId( animationAssetId );
         
         controllerId = controllerSystem.getControllerBuilder()
             .set( EntityController.NAME, DIAMOND_NAME )
+            .set( EntityController.UPDATE_RESOLUTION, updateRate )
         .build( DiamondController.class );
         
         prefabId = prefabSystem.getEntityPrefabBuilder()
             .add( EEntity.CONTROLLER_IDS, controllerId )
-            .add( EEntity.CONTROLLER_IDS, spriteAnimationHandler.getControllerId() )
+            .add( EEntity.CONTROLLER_IDS, animatioControllerId )
             .set( EntityPrefab.NAME, DIAMOND_NAME )
             .set( ETransform.VIEW_ID, viewSystem.getViewId( CaveSystem.CAVE_VIEW_NAME ) )
-            .set( ESprite.SPRITE_ID, spriteAnimationHandler.getStartSpriteId() )
             .set( ETile.MULTI_POSITION, false )
             .set( EUnit.UNIT_TYPE, type() )
             .set( EUnit.CHANGE_TO, UnitType.ROCK )
@@ -89,10 +93,6 @@ public final class Diamond extends UnitHandle {
             ) )
         .build();
         prefabSystem.cacheComponents( prefabId, 200 );
-            
-        float updateRate = caveService.getUpdateRate();
-        controllerSystem.getController( controllerId ).setUpdateResolution( updateRate );
-        spriteAnimationHandler.setFrameTime( 80 - (int) updateRate * 4 );
     }
 
     @Override
@@ -101,7 +101,7 @@ public final class Diamond extends UnitHandle {
         
         controllerSystem.deleteController( controllerId );
         prefabSystem.deletePrefab( prefabId );
-        spriteAnimationHandler.dispose( context );
+        assetSystem.deleteAsset( animationAssetId );
     }
 
     @Override

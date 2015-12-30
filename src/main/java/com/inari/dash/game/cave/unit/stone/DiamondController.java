@@ -3,7 +3,7 @@ package com.inari.dash.game.cave.unit.stone;
 import com.inari.dash.game.cave.unit.UnitType;
 import com.inari.firefly.system.FFContext;
 
-public class DiamondController extends StoneController {
+public final class DiamondController extends StoneController {
     
     private final Diamond diamondHandle;
 
@@ -13,10 +13,8 @@ public class DiamondController extends StoneController {
     }
 
     @Override
-    protected int getSoundId() {
+    protected final int getSoundId() {
         return diamondHandle.getSoundId();
     }
-
-
 
 }

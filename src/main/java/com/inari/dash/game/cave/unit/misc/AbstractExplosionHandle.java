@@ -9,7 +9,7 @@ import com.inari.firefly.system.FFContext;
 
 public abstract class AbstractExplosionHandle  extends UnitHandle {
     
-    public static final String EXPLOSION_SOUND_ASSEET_NAME =  "explosion";
+    public static final String EXPLOSION_SOUND_ASSEET_NAME =  "explosionSound";
     private static boolean GENERAL_INIT_DONE = false;
     protected static int CONTROLLER_ID;
     private static int soundId;
