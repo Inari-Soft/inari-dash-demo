@@ -2,6 +2,7 @@ package com.inari.dash.game.cave;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.inari.commons.lang.aspect.AspectSetBuilder;
 import com.inari.dash.game.GameData;
 import com.inari.dash.game.GameSystem;
 import com.inari.dash.game.cave.CaveSystem.CaveSoundKey;
@@ -117,10 +118,10 @@ public final class CaveController extends Controller {
             if ( !exitUnit.has( UnitAspect.ACTIVE ) ) {
                 boolean enough = caveData.getDiamondsToCollect() == caveData.getDiamondsCollected();
                 if ( enough ) {
-                    context.notify( WorkflowEvent.createDoStateChangeEvent( Exit.getStateChangeName() ) );
+                    exitUnit.setAspects( AspectSetBuilder.create( UnitAspect.ACTIVE, UnitAspect.WALKABLE ) );
+                    context.notify( WorkflowEvent.createDoStateChangeEvent( Exit.EXIT_NAME, Exit.getStateChangeName() ) );
                     context.notify( new ActionEvent( UnitActionType.FLASH.index(), exitEntityId ) );
                     context.notify( new AudioEvent( CaveSoundKey.CRACK.name(), Type.PLAY_SOUND ) );
-                    exitUnit.setAspect( UnitAspect.ACTIVE );
                 }
             }
             
@@ -180,7 +181,7 @@ public final class CaveController extends Controller {
     }
 
     private void exitPlay() {
-        context.notify( WorkflowEvent.createDoStateChangeEvent( StateChangeName.EXIT_PLAY.name() ) );
+        context.notify( WorkflowEvent.createDoStateChangeEvent( GameSystem.GAME_WORKFLOW_NAME, StateChangeName.EXIT_PLAY.name() ) );
     }
 
     

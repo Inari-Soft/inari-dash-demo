@@ -14,7 +14,6 @@ import com.inari.firefly.asset.AnimatedSpriteData;
 import com.inari.firefly.entity.EEntity;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.graphics.tile.ETile;
-import com.inari.firefly.state.State;
 import com.inari.firefly.state.StateChange;
 import com.inari.firefly.state.StateSystem;
 import com.inari.firefly.state.Workflow;
@@ -40,26 +39,14 @@ public final class Exit extends UnitHandle {
         int workflowId = stateSystem.getWorkflowBuilder()
             .set( Workflow.NAME, EXIT_NAME )
             .set( Workflow.START_STATE_NAME, ExitState.EXIT_CLOSED.name() )
-        .build();
-        int closedStateId = stateSystem.getStateBuilder()
-            .set( State.NAME, ExitState.EXIT_CLOSED.name() )
-            .set( State.WORKFLOW_ID, workflowId )
-        .build();
-        int openStateId = stateSystem.getStateBuilder()
-            .set( State.NAME, ExitState.EXIT_OPEN.name() )
-            .set( State.WORKFLOW_ID, workflowId )
-        .build();
-        stateSystem.getStateChangeBuilder()
-            .set( StateChange.NAME, getStateChangeName() )
-            .set( StateChange.FORM_STATE_ID, closedStateId )
-            .set( StateChange.TO_STATE_ID, openStateId )
-            .set( StateChange.WORKFLOW_ID, workflowId )
-        .build();
-        stateSystem.activateWorkflow( workflowId );
+            .add( Workflow.STATES, ExitState.EXIT_CLOSED.name() )
+            .add( Workflow.STATES, ExitState.EXIT_OPEN.name() )
+            .add( Workflow.STATE_CHANGES, new StateChange( getStateChangeName(), ExitState.EXIT_CLOSED.name(), ExitState.EXIT_OPEN.name() ) )
+        .activate();
         
         float updateRate = caveService.getUpdateRate();
-        AnimatedSpriteData[] animationDataClosed = AnimatedSpriteData.create( closedStateId, Integer.MAX_VALUE, new Rectangle( 32, 6 * 32, 32, 32 ), 1, Direction.EAST );
-        AnimatedSpriteData[] animationDataOpen = AnimatedSpriteData.create( openStateId, 400 - (int) updateRate * 4, new Rectangle( 32, 6 * 32, 32, 32 ), 2, Direction.EAST );
+        AnimatedSpriteData[] animationDataClosed = AnimatedSpriteData.create( ExitState.EXIT_CLOSED.name(), Integer.MAX_VALUE, new Rectangle( 32, 6 * 32, 32, 32 ), 1, Direction.EAST );
+        AnimatedSpriteData[] animationDataOpen = AnimatedSpriteData.create( ExitState.EXIT_OPEN.name(), 400 - (int) updateRate * 4, new Rectangle( 32, 6 * 32, 32, 32 ), 2, Direction.EAST );
         animationAssetId = assetSystem.getAssetBuilder()
             .set( AnimatedSpriteAsset.NAME, EXIT_NAME )
             .set( AnimatedSpriteAsset.LOOPING, true )
