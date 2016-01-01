@@ -15,7 +15,6 @@ import com.inari.firefly.entity.EEntity;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.graphics.tile.ETile;
 import com.inari.firefly.state.StateChange;
-import com.inari.firefly.state.StateSystem;
 import com.inari.firefly.state.Workflow;
 import com.inari.firefly.system.FFContext;
 
@@ -29,13 +28,12 @@ public final class Exit extends UnitHandle {
     public static final String EXIT_NAME = "exit";
     
     private int exitEntityId;
-    private int animationAssetId = -1;
+    private int animationAssetId;
 
     @Override
     public final void loadCaveData( FFContext context ) {
         super.loadCaveData( context );
         
-        StateSystem stateSystem = context.getSystem( StateSystem.SYSTEM_KEY );
         int workflowId = stateSystem.getWorkflowBuilder()
             .set( Workflow.NAME, EXIT_NAME )
             .set( Workflow.START_STATE_NAME, ExitState.EXIT_CLOSED.name() )
@@ -58,16 +56,13 @@ public final class Exit extends UnitHandle {
         .activate( AnimatedSpriteAsset.class );
     }
 
-    public static final String getStateChangeName() {
-        return ExitState.EXIT_CLOSED.name() + ExitState.EXIT_OPEN.name();
-    }
-
     @Override
     public void disposeCaveData( FFContext context ) {
         super.disposeCaveData( context );
         
         entitySystem.delete( exitEntityId );
         assetSystem.deleteAsset( animationAssetId );
+        stateSystem.deleteWorkflow( EXIT_NAME );
     }
 
     @Override
@@ -83,9 +78,8 @@ public final class Exit extends UnitHandle {
 
     @Override
     public final int createOne( int xGridPos, int yGridPos ) {
-        int animatioControllerId = assetSystem.getAssetInstaceId( animationAssetId );
         exitEntityId = entitySystem.getEntityBuilder()
-            .add( EEntity.CONTROLLER_IDS, animatioControllerId )
+            .add( EEntity.CONTROLLER_IDS, assetSystem.getAssetInstaceId( animationAssetId ) )
             .set( ETransform.VIEW_ID, viewSystem.getViewId( CaveSystem.CAVE_VIEW_NAME ) )
             .set( ETile.GRID_X_POSITION, xGridPos )
             .set( ETile.GRID_Y_POSITION, yGridPos )
@@ -103,5 +97,9 @@ public final class Exit extends UnitHandle {
     @Override
     public final void dispose( FFContext context ) {
         
+    }
+    
+    public static final String getStateChangeName() {
+        return ExitState.EXIT_CLOSED.name() + ExitState.EXIT_OPEN.name();
     }
 }

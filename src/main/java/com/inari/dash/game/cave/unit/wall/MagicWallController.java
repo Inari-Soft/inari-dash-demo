@@ -4,10 +4,10 @@ import com.inari.commons.geom.Direction;
 import com.inari.dash.game.cave.unit.EUnit;
 import com.inari.dash.game.cave.unit.UnitController;
 import com.inari.dash.game.cave.unit.UnitType;
-import com.inari.dash.game.cave.unit.wall.MagicWallAnimationController.State;
 import com.inari.firefly.audio.event.AudioEvent;
 import com.inari.firefly.audio.event.AudioEvent.Type;
 import com.inari.firefly.graphics.tile.ETile;
+import com.inari.firefly.state.event.WorkflowEvent;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.external.FFTimer;
 import com.inari.firefly.system.external.FFTimer.UpdateScheduler;
@@ -18,17 +18,15 @@ public final class MagicWallController extends UnitController {
     private int activDuration;
     
     private UpdateScheduler secondTimer;
-    private MagicWallAnimationController magicWallAnimationController;
+    private FFContext context;
 
     protected MagicWallController( int id, FFContext context ) {
         super( id, context );
+        this.context = context;
         activDuration = caveService.getMagicWallTime();
         secondTimer = context.getTimer().createUpdateScheduler( 1 );
     }
     
-    void setMagicWallAnimationController( MagicWallAnimationController magicWallAnimationController ) {
-        this.magicWallAnimationController = magicWallAnimationController;
-    }
 
     @Override
     protected final void update( FFTimer timer, int entityId ) {
@@ -40,7 +38,8 @@ public final class MagicWallController extends UnitController {
             if ( secondTimer.needsUpdate() ) {
                 activTime++;
                 if ( activTime > activDuration ) {
-                    magicWallAnimationController.setMagicWallState( State.INACTIVE );
+                    context.notify( WorkflowEvent.createDoStateChangeEvent( MagicWall.MAGIC_WALL_NAME, MagicWall.StateChangeName.ACTIVE_TO_INACTIVE.name() ) );
+                    //magicWallAnimationController.setMagicWallState( State.INACTIVE );
                     context .notify( new AudioEvent( UnitType.MAGIC_WALL.handler.getSoundId(), Type.STOP_PLAYING ) ); 
                     return;
                 }
@@ -57,7 +56,8 @@ public final class MagicWallController extends UnitController {
             if ( activTime == 0 ) {
                 activTime++;
                 secondTimer.getTick();
-                magicWallAnimationController.setMagicWallState( State.ACTIVE );
+                context.notify( WorkflowEvent.createDoStateChangeEvent( MagicWall.MAGIC_WALL_NAME, MagicWall.StateChangeName.INACTIVE_TO_ACTIVE.name() ) );
+                //magicWallAnimationController.setMagicWallState( State.ACTIVE );
                 context.notify( new AudioEvent( UnitType.MAGIC_WALL.handler.getSoundId(), Type.PLAY_SOUND ) ); 
             }
 

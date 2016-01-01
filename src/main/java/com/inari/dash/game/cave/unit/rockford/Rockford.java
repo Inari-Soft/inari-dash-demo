@@ -1,39 +1,119 @@
 package com.inari.dash.game.cave.unit.rockford;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
+import com.inari.commons.geom.Direction;
 import com.inari.commons.geom.Rectangle;
 import com.inari.dash.game.cave.CaveSystem;
 import com.inari.dash.game.cave.CaveSystem.SoundChannel;
 import com.inari.dash.game.cave.unit.EUnit;
 import com.inari.dash.game.cave.unit.UnitHandle;
 import com.inari.dash.game.cave.unit.UnitType;
-import com.inari.dash.game.cave.unit.rockford.RFUnit.RFState;
 import com.inari.firefly.FFInitException;
-import com.inari.firefly.animation.sprite.SpriteAnimationBuilder;
-import com.inari.firefly.animation.sprite.SpriteAnimationBuilder.SpriteAnimationHandler;
+import com.inari.firefly.asset.AnimatedSpriteAsset;
+import com.inari.firefly.asset.AnimatedSpriteData;
 import com.inari.firefly.audio.Sound;
 import com.inari.firefly.audio.SoundAsset;
 import com.inari.firefly.control.Controller;
 import com.inari.firefly.entity.EEntity;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.EntityController;
-import com.inari.firefly.graphics.sprite.ESprite;
 import com.inari.firefly.graphics.tile.ETile;
+import com.inari.firefly.state.StateChange;
+import com.inari.firefly.state.Workflow;
 import com.inari.firefly.system.FFContext;
 
 public final class Rockford extends UnitHandle {
+
+    public enum StateEnum {
+        ENTERING( 400, new Rectangle( 32, 6 * 32, 32, 32 ), 2 ),
+        APPEARING( 300, new Rectangle( 32, 0, 32, 32 ), 3 ),                // Rockford appears in a short explosion where the blinking door was before
+        IDLE( Integer.MAX_VALUE, new Rectangle( 0, 0, 32, 32 ), 1 ),        // Rockford idle state, no move, no animation
+        BLINKING( 100, new Rectangle( 0, 32, 32, 32 ), 8 ),                 // Rockford eyes are blinking
+        FRETFUL( 100, new Rectangle( 0, 2 * 32, 32, 32 ), 8 ),              // Rockford is fretful waiting for user interaction
+        LEFT( 60, new Rectangle( 0, 4 * 32, 32, 32 ), 8 ),
+        RIGHT( 60, new Rectangle( 0, 5 * 32, 32, 32 ), 8 );
+
+        final int updateFactor;
+        final Rectangle startRegion;
+        final int frames;
+        private StateEnum( int updateFactor, Rectangle startRegion, int frames ) {
+            this.updateFactor = updateFactor;
+            this.startRegion = startRegion;
+            this.frames = frames;
+        }
+        
+        public static String[] getStates() {
+            String[] states = new String[ StateEnum.values().length ];
+            int index = 0;
+            for ( StateEnum state : StateEnum.values() ) {
+                states[ index ] = state.name();
+                index++;
+            }
+            return states;
+        }
+        
+        public static AnimatedSpriteData[] getAnimatedSpriteData( int updateRate ) {
+            List<AnimatedSpriteData> result = new ArrayList<AnimatedSpriteData>();
+            for ( StateEnum state : StateEnum.values() ) {
+                result.addAll( Arrays.asList( AnimatedSpriteData.create( state.name(), state.updateFactor - updateRate * 4, state.startRegion, state.frames, Direction.EAST ) ) );
+            }
+            return result.toArray( new AnimatedSpriteData[ result.size() ] );
+        }
+
+        public boolean is( String state ) {
+            return name().equals( state );
+        }
+    }
     
-    public static final String ROCKFORD_NAME = "rockford";
-    public static final String ROCKFORD_SPRITE_ASSET_NAME = ROCKFORD_NAME + "_sprite";
-    public static final String ROCKFORD_SPACE_SOUND_ASSEET_NAME = ROCKFORD_NAME + "_space";
-    public static final String ROCKFORD_SAND_SOUND_ASSEET_NAME = ROCKFORD_NAME + "_sand";
-    public static final String ROCKFORD_COLLECT_SOUND_ASSEET_NAME = ROCKFORD_NAME + "_collect";
+    public enum StateChangeEnum {
+        ENTERING_APPEARING( StateEnum.ENTERING, StateEnum.APPEARING ),
+        APPEARING_IDLE( StateEnum.APPEARING, StateEnum.IDLE ),
+        IDLE_BLINKING( StateEnum.IDLE, StateEnum.BLINKING ),
+        IDLE_FRETFUL( StateEnum.IDLE, StateEnum.FRETFUL ),
+        IDLE_LEFT( StateEnum.IDLE, StateEnum.LEFT ),
+        IDLE_RIGHT( StateEnum.IDLE, StateEnum.RIGHT ),
+        BLINKING_IDLE( StateEnum.BLINKING, StateEnum.IDLE ),
+        FRETFUL_IDLE( StateEnum.FRETFUL, StateEnum.IDLE ),
+        BLINKING_LEFT( StateEnum.BLINKING, StateEnum.LEFT ),
+        FRETFUL_LEFT( StateEnum.FRETFUL, StateEnum.LEFT ),
+        BLINKING_RIGHT( StateEnum.BLINKING, StateEnum.RIGHT ),
+        FRETFUL_RIGHT( StateEnum.FRETFUL, StateEnum.RIGHT ),
+        LEFT_IDLE( StateEnum.LEFT, StateEnum.IDLE ),
+        RIGHT_IDLE( StateEnum.RIGHT, StateEnum.IDLE ),
+        LEFT_RIGHT( StateEnum.LEFT, StateEnum.RIGHT ),
+        RIGHT_LEFT( StateEnum.RIGHT, StateEnum.LEFT )
+        ;
+        
+        final StateChange stateChange;
+        private StateChangeEnum( StateEnum from, StateEnum to ) {
+            stateChange = new StateChange( name(), from.name(), to.name() );
+        }
+        
+        public final static StateChange[] getStateChanges() {
+            StateChange[] stateChanges = new StateChange[ StateChangeEnum.values().length ];
+            int index = 0;
+            for ( StateChangeEnum stateChange : StateChangeEnum.values() ) {
+                stateChanges[ index ] = stateChange.stateChange;
+                index++;
+            }
+            return stateChanges;
+        }
+    }
     
-    private SpriteAnimationHandler spriteAnimationHandler;
+    public static final String NAME = "rockford";
+    public static final String ROCKFORD_SPRITE_ASSET_NAME = NAME + "_sprite";
+    public static final String ROCKFORD_SPACE_SOUND_ASSEET_NAME = NAME + "_space";
+    public static final String ROCKFORD_SAND_SOUND_ASSEET_NAME = NAME + "_sand";
+    public static final String ROCKFORD_COLLECT_SOUND_ASSEET_NAME = NAME + "_collect";
+    
     private int controllerId;
     private int rfEntityId;
     
+    private int animationAssetId;
     int spaceSoundId;
     int sandSoundId;
     int inSoundId;
@@ -88,40 +168,30 @@ public final class Rockford extends UnitHandle {
     public final void loadCaveData( FFContext context ) {
         super.loadCaveData( context );
         
-        spriteAnimationHandler = new SpriteAnimationBuilder( context )
-            .setLooping( true )
-            .setNamePrefix( ROCKFORD_NAME )
-            .setTextureAssetName( CaveSystem.GAME_UNIT_TEXTURE_NAME )
-            .setStatedAnimationType( RFSpriteAnimation.class )
-            .setState( RFState.ENTERING.ordinal() )
-            .addSpritesToAnimation( 0, new Rectangle( 32, 6 * 32, 32, 32 ), 2, true )
-            .setState( RFState.APPEARING.ordinal() )
-            .addSpritesToAnimation( 0, new Rectangle( 32, 0, 32, 32 ), 3, true )
-            .setState( RFState.IDLE.ordinal() )
-            .addSpritesToAnimation( 0, new Rectangle( 0, 0, 32, 32 ), 1, true )
-            .setState( RFState.IDLE_BLINKING.ordinal() )
-            .addSpritesToAnimation( 0, new Rectangle( 0, 32, 32, 32 ), 8, true )
-            .setState( RFState.IDLE_FRETFUL.ordinal() )
-            .addSpritesToAnimation( 0, new Rectangle( 0, 2 * 32, 32, 32 ), 8, true )
-            .setState( RFState.LEFT.ordinal() )
-            .addSpritesToAnimation( 0, new Rectangle( 0, 4 * 32, 32, 32 ), 8, true )
-            .setState( RFState.RIGHT.ordinal() )
-            .addSpritesToAnimation( 0, new Rectangle( 0, 5 * 32, 32, 32 ), 8, true )
-        .build();
-        
         float updateRate = caveService.getUpdateRate();
+        
+        int workflowId = stateSystem.getWorkflowBuilder()
+            .set( Workflow.NAME, NAME )
+            .set( Workflow.START_STATE_NAME, StateEnum.ENTERING.name() )
+            .set( Workflow.STATES, StateEnum.getStates() )
+            .set( Workflow.STATE_CHANGES, StateChangeEnum.getStateChanges() )
+        .activate();
+        
         controllerId = controllerSystem.getControllerBuilder()
-            .set( EntityController.NAME, ROCKFORD_NAME )
+            .set( EntityController.NAME, NAME )
             .set( Controller.UPDATE_RESOLUTION, updateRate )
         .build( RFController.class );
+
+        animationAssetId = assetSystem.getAssetBuilder()
+            .set( AnimatedSpriteAsset.NAME, NAME )
+            .set( AnimatedSpriteAsset.LOOPING, true )
+            .set( AnimatedSpriteAsset.UPDATE_RESOLUTION, updateRate )
+            .set( AnimatedSpriteAsset.TEXTURE_ASSET_ID, assetSystem.getAssetId( CaveSystem.GAME_UNIT_TEXTURE_NAME ) )
+            .set( AnimatedSpriteAsset.WORKFLOW_ID, workflowId )
+            .set( AnimatedSpriteAsset.ANIMATED_SPRITE_DATA, StateEnum.getAnimatedSpriteData( (int) updateRate ) )
+        .activate( AnimatedSpriteAsset.class );
+
         
-        spriteAnimationHandler.setFrameTime( RFState.ENTERING.ordinal(), 400 - (int) updateRate * 4 );
-        spriteAnimationHandler.setFrameTime( RFState.APPEARING.ordinal(), 300 - (int) updateRate * 4 );
-        spriteAnimationHandler.setFrameTime( RFState.IDLE.ordinal(), Integer.MAX_VALUE );
-        spriteAnimationHandler.setFrameTime( RFState.IDLE_BLINKING.ordinal(), 100 - (int) updateRate * 4 );
-        spriteAnimationHandler.setFrameTime( RFState.IDLE_FRETFUL.ordinal(), 100 - (int) updateRate * 4 );
-        spriteAnimationHandler.setFrameTime( RFState.LEFT.ordinal(), 60 - (int) updateRate * 4 );
-        spriteAnimationHandler.setFrameTime( RFState.RIGHT.ordinal(), 60 - (int) updateRate * 4 );
     }
     
     
@@ -148,13 +218,11 @@ public final class Rockford extends UnitHandle {
     public final int createOne( int xGridPos, int yGridPos ) {
         rfEntityId = entitySystem.getEntityBuilder()
             .add( EEntity.CONTROLLER_IDS, controllerId )
-            .add( EEntity.CONTROLLER_IDS, spriteAnimationHandler.getControllerId() )
+            .add( EEntity.CONTROLLER_IDS, assetSystem.getAssetInstaceId( animationAssetId ) )
             .set( ETransform.VIEW_ID, viewSystem.getViewId( CaveSystem.CAVE_VIEW_NAME ) )
-            .set( ESprite.SPRITE_ID, spriteAnimationHandler.getStartSpriteId() )
             .set( ETile.GRID_X_POSITION, xGridPos )
             .set( ETile.GRID_Y_POSITION, yGridPos )
             .set( EUnit.UNIT_TYPE, type() )
-            .set( RFUnit.STATE, RFState.ENTERING )
         .activate();
         return rfEntityId;
     }
@@ -166,7 +234,7 @@ public final class Rockford extends UnitHandle {
 
     @Override
     public final void dispose( FFContext context ) {
-        spriteAnimationHandler.dispose( context );
+        
         RFController rfController = (RFController) controllerSystem.getController( controllerId );
         if ( rfController != null ) {
             soundSystem.deleteSound( spaceSoundId );
@@ -175,6 +243,8 @@ public final class Rockford extends UnitHandle {
         }
         controllerSystem.deleteController( controllerId );
         entitySystem.delete( rfEntityId );
+        assetSystem.deleteAsset( animationAssetId );
+        stateSystem.deleteWorkflow( NAME );
     }
 
 }

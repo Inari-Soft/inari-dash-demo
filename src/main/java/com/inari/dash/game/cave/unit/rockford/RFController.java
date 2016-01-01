@@ -10,11 +10,14 @@ import com.inari.dash.game.cave.unit.UnitAspect;
 import com.inari.dash.game.cave.unit.UnitController;
 import com.inari.dash.game.cave.unit.UnitType;
 import com.inari.dash.game.cave.unit.action.UnitActionType;
-import com.inari.dash.game.cave.unit.rockford.RFUnit.RFState;
+import com.inari.dash.game.cave.unit.rockford.Rockford.StateChangeEnum;
+import com.inari.dash.game.cave.unit.rockford.Rockford.StateEnum;
 import com.inari.firefly.action.event.ActionEvent;
 import com.inari.firefly.audio.event.AudioEvent;
 import com.inari.firefly.audio.event.AudioEvent.Type;
 import com.inari.firefly.graphics.tile.ETile;
+import com.inari.firefly.state.StateSystem;
+import com.inari.firefly.state.event.WorkflowEvent;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FireFly;
 import com.inari.firefly.system.external.FFInput;
@@ -29,6 +32,7 @@ public final class RFController extends UnitController {
     private static final int IDLE_FRETFUL_DURATION = 20;
     
     private final FFInput input;
+    private final StateSystem stateSystem;
 
     private Position currentPos = new Position();
     private Position nextPos = new Position();
@@ -36,6 +40,7 @@ public final class RFController extends UnitController {
     protected RFController( int id, FFContext context ) {
         super( id, context );
         input = context.getInput();
+        stateSystem = context.getSystem( StateSystem.SYSTEM_KEY );
     }
 
     @Override
@@ -46,22 +51,21 @@ public final class RFController extends UnitController {
             return;
         }
         
-        RFUnit rockford = context.getEntityComponent( entityId, RFUnit.TYPE_KEY );
         EUnit unit = context.getEntityComponent( entityId, EUnit.TYPE_KEY );
-        RFState state = rockford.getState();
+        String state = stateSystem.getCurrentState( Rockford.NAME );
         
-        if ( state == RFState.APPEARING || state == RFState.ENTERING ) {
+        if ( StateEnum.APPEARING.is( state ) || StateEnum.ENTERING.is( state ) ) {
             unit.incrementAnimationCount();
             int animationCount = unit.getAnimationCount();
-            if ( state == RFState.ENTERING && animationCount > ENTERING_ANIMATION_DURATION ) {
-                rockford.setState( RFState.APPEARING );
+            if ( StateEnum.ENTERING.is( state ) && animationCount > ENTERING_ANIMATION_DURATION ) {
                 unit.resetAnimationCount();
+                context.notify( WorkflowEvent.createDoStateChangeEvent( Rockford.NAME, StateChangeEnum.ENTERING_APPEARING.name() ) );
                 context.notify( new AudioEvent( rfHandle.inSoundId, Type.PLAY_SOUND ) );
                 return;
             }
-            if ( state == RFState.APPEARING && animationCount > APPEARING_ANIMATION_DURATION ) {
-                rockford.setState( RFState.IDLE );
+            if ( StateEnum.APPEARING.is( state ) && animationCount > APPEARING_ANIMATION_DURATION ) {
                 unit.resetAnimationCount();
+                context.notify( WorkflowEvent.createDoStateChangeEvent( Rockford.NAME, StateChangeEnum.APPEARING_IDLE.name() ) );
                 unit.setAspects( AspectSetBuilder.create( UnitAspect.ALIVE, UnitAspect.DESTRUCTIBLE  ) );
                 return;
             }
@@ -91,30 +95,32 @@ public final class RFController extends UnitController {
         }
         
         if ( unit.getMovement() == Direction.NONE ) {
-            if ( state == RFState.IDLE_BLINKING || state == RFState.IDLE_FRETFUL ) {
+            if ( StateEnum.BLINKING.is( state ) || StateEnum.FRETFUL.is( state ) ) {
                 unit.incrementAnimationCount();
                 int animationCount = unit.getAnimationCount();
-                if ( state == RFState.IDLE_BLINKING && animationCount > IDLE_BLINKING_DURATION ) {
-                    rockford.setState( RFState.IDLE );
+                if ( StateEnum.BLINKING.is( state ) && animationCount > IDLE_BLINKING_DURATION ) {
+                    context.notify( WorkflowEvent.createDoStateChangeEvent( Rockford.NAME, StateChangeEnum.BLINKING_IDLE.name() ) );
                     unit.resetAnimationCount();
                     return;
                 }
-                if ( state == RFState.IDLE_FRETFUL && animationCount > IDLE_FRETFUL_DURATION ) {
-                    rockford.setState( RFState.IDLE );
+                if ( StateEnum.FRETFUL.is( state ) && animationCount > IDLE_FRETFUL_DURATION ) {
+                    context.notify( WorkflowEvent.createDoStateChangeEvent( Rockford.NAME, StateChangeEnum.FRETFUL_IDLE.name() ) );
                     unit.resetAnimationCount();
                     return;
                 }
                 return;
+            } else if ( !StateEnum.IDLE.is( state ) ) {
+                context.notify( WorkflowEvent.createDoStateChangeEventTo( Rockford.NAME, StateEnum.IDLE.name() ) );
             }
             if ( FireFly.RANDOM.nextInt( 100 ) < 5 ) {
-                rockford.setState( RFState.IDLE_BLINKING );
+                context.notify( WorkflowEvent.createDoStateChangeEvent( Rockford.NAME, StateChangeEnum.IDLE_BLINKING.name() ) );
                 return;
             }
             if ( FireFly.RANDOM.nextInt( 100 ) < 3 ) {
-                rockford.setState( RFState.IDLE_FRETFUL );
+                context.notify( WorkflowEvent.createDoStateChangeEvent( Rockford.NAME, StateChangeEnum.IDLE_FRETFUL.name() ) );
                 return;
             }
-            rockford.setState( RFState.IDLE );
+            
             return;
         }
         
@@ -126,10 +132,10 @@ public final class RFController extends UnitController {
         Direction move = unit.getMovement();
         boolean grabbing = input.isPressed( ButtonType.FIRE_1 );
         
-        if ( move == Direction.WEST || move == Direction.NORTH ) {
-            rockford.setState( RFState.LEFT );
-        } else if ( move == Direction.EAST || move == Direction.SOUTH ) {
-            rockford.setState( RFState.RIGHT );
+        if ( ( move == Direction.WEST || move == Direction.NORTH ) && !StateEnum.LEFT.is( state ) ) {
+            context.notify( WorkflowEvent.createDoStateChangeEventTo( Rockford.NAME, StateEnum.LEFT.name() ) );
+        } else if ( ( move == Direction.EAST || move == Direction.SOUTH ) && !StateEnum.RIGHT.is( state ) ) {
+            context.notify( WorkflowEvent.createDoStateChangeEventTo( Rockford.NAME, StateEnum.RIGHT.name() ) );
         }
         
         GeomUtils.movePositionOnDirection( nextPos, move, 1, true );

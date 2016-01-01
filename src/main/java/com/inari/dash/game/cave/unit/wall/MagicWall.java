@@ -2,6 +2,7 @@ package com.inari.dash.game.cave.unit.wall;
 
 import java.util.Map;
 
+import com.inari.commons.geom.Direction;
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.aspect.AspectSetBuilder;
 import com.inari.dash.game.cave.CaveSystem;
@@ -10,11 +11,9 @@ import com.inari.dash.game.cave.unit.EUnit;
 import com.inari.dash.game.cave.unit.UnitAspect;
 import com.inari.dash.game.cave.unit.UnitHandle;
 import com.inari.dash.game.cave.unit.UnitType;
-import com.inari.dash.game.cave.unit.wall.MagicWallAnimationController.State;
 import com.inari.firefly.FFInitException;
-import com.inari.firefly.animation.AnimationSystem;
-import com.inari.firefly.animation.sprite.SpriteAnimationBuilder;
-import com.inari.firefly.animation.sprite.SpriteAnimationBuilder.SpriteAnimationHandler;
+import com.inari.firefly.asset.AnimatedSpriteAsset;
+import com.inari.firefly.asset.AnimatedSpriteData;
 import com.inari.firefly.audio.Sound;
 import com.inari.firefly.audio.SoundAsset;
 import com.inari.firefly.audio.event.AudioEvent;
@@ -23,15 +22,26 @@ import com.inari.firefly.entity.EEntity;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.EntityController;
 import com.inari.firefly.entity.EntityPrefab;
-import com.inari.firefly.graphics.sprite.ESprite;
 import com.inari.firefly.graphics.tile.ETile;
+import com.inari.firefly.state.StateChange;
+import com.inari.firefly.state.Workflow;
 import com.inari.firefly.system.FFContext;
 
 public final class MagicWall extends UnitHandle {
     
+    public enum StateName {
+        INACTIVE,
+        ACTIVE
+    }
+    
+    public enum StateChangeName {
+        INACTIVE_TO_ACTIVE,
+        ACTIVE_TO_INACTIVE
+    }
+    
     public static final String MAGIC_WALL_NAME = "magicWall";
 
-    private SpriteAnimationHandler spriteAnimationHandler;
+    private int animationAssetId;
     private int prefabId;
     private int controllerId;
     private int soundId;
@@ -60,33 +70,38 @@ public final class MagicWall extends UnitHandle {
     public final void loadCaveData( FFContext context ) {
         super.loadCaveData( context );
         
-        spriteAnimationHandler = new SpriteAnimationBuilder( context )
-            .setLooping( true )
-            .setNamePrefix( MAGIC_WALL_NAME )
-            .setTextureAssetName( CaveSystem.GAME_UNIT_TEXTURE_NAME )
-            .setStatedAnimationType( MagicWallAnimationController.class )
-            .setState( State.INACTIVE.ordinal() )
-            .addSpritesToAnimation( 0, new Rectangle( 3 * 32, 6 * 32, 32, 32 ), 1, true )
-            .setState( State.ACTIVE.ordinal() )
-            .addSpritesToAnimation( 0, new Rectangle( 4 * 32, 6 * 32, 32, 32 ), 4, true )
-        .build();
+        int workflowId = stateSystem.getWorkflowBuilder()
+            .set( Workflow.NAME, MAGIC_WALL_NAME )
+            .set( Workflow.START_STATE_NAME, StateName.INACTIVE.name() )
+            .add( Workflow.STATES, StateName.INACTIVE.name() )
+            .add( Workflow.STATES, StateName.ACTIVE.name() )
+            .add( Workflow.STATE_CHANGES, new StateChange( StateChangeName.INACTIVE_TO_ACTIVE.name(), StateName.INACTIVE.name(), StateName.ACTIVE.name() ) )
+            .add( Workflow.STATE_CHANGES, new StateChange( StateChangeName.ACTIVE_TO_INACTIVE.name(), StateName.ACTIVE.name(), StateName.INACTIVE.name() ) )
+        .activate();
+        
+        float updateRate = caveService.getUpdateRate();
+        AnimatedSpriteData[] animationDataInactive = AnimatedSpriteData.create( StateName.INACTIVE.name(), Integer.MAX_VALUE, new Rectangle( 3 * 32, 6 * 32, 32, 32 ), 1, Direction.EAST );
+        AnimatedSpriteData[] animationDataActive = AnimatedSpriteData.create( StateName.ACTIVE.name(), 100 - (int) updateRate * 4, new Rectangle( 4 * 32, 6 * 32, 32, 32 ), 4, Direction.EAST );
+        animationAssetId = assetSystem.getAssetBuilder()
+            .set( AnimatedSpriteAsset.NAME, MAGIC_WALL_NAME )
+            .set( AnimatedSpriteAsset.LOOPING, true )
+            .set( AnimatedSpriteAsset.UPDATE_RESOLUTION, updateRate )
+            .set( AnimatedSpriteAsset.TEXTURE_ASSET_ID, assetSystem.getAssetId( CaveSystem.GAME_UNIT_TEXTURE_NAME ) )
+            .set( AnimatedSpriteAsset.WORKFLOW_ID, workflowId )
+            .add( AnimatedSpriteAsset.ANIMATED_SPRITE_DATA, animationDataInactive )
+            .add( AnimatedSpriteAsset.ANIMATED_SPRITE_DATA, animationDataActive )
+        .activate( AnimatedSpriteAsset.class );
         
         controllerId = controllerSystem.getControllerBuilder()
             .set( EntityController.NAME, MAGIC_WALL_NAME )
+            .set( EntityController.UPDATE_RESOLUTION, updateRate )
         .build( MagicWallController.class );
-        MagicWallController controller = controllerSystem.getControllerAs( 
-            controllerId,
-            MagicWallController.class
-        );
-        float updateRate = caveService.getUpdateRate();
-        controller.setUpdateResolution( updateRate );
         
         prefabId = prefabSystem.getEntityPrefabBuilder()
             .set( EntityPrefab.NAME, MAGIC_WALL_NAME )
             .add( EEntity.CONTROLLER_IDS, controllerId )
-            .add( EEntity.CONTROLLER_IDS, spriteAnimationHandler.getControllerId() )
+            .add( EEntity.CONTROLLER_IDS, assetSystem.getAssetInstaceId( animationAssetId ) )
             .set( ETransform.VIEW_ID, viewSystem.getViewId( CaveSystem.CAVE_VIEW_NAME ) )
-            .set( ESprite.SPRITE_ID, spriteAnimationHandler.getStartSpriteId() )
             .set( ETile.MULTI_POSITION, false )
             .set( EUnit.UNIT_TYPE, type() )
             .set( EUnit.ASPECTS, AspectSetBuilder.create( 
@@ -94,13 +109,6 @@ public final class MagicWall extends UnitHandle {
             ) )
         .build();
         prefabSystem.cacheComponents( prefabId, 50 );
-        
-        AnimationSystem animationSystem = context.getSystem( AnimationSystem.SYSTEM_KEY );
-        MagicWallAnimationController animController = (MagicWallAnimationController) animationSystem.getAnimation( spriteAnimationHandler.getAnimationId() );
-        controller.setMagicWallAnimationController( animController );
-        animController.setMagicWallState( State.INACTIVE );
-        spriteAnimationHandler.setFrameTime( State.INACTIVE.ordinal(), Integer.MAX_VALUE );
-        spriteAnimationHandler.setFrameTime( State.ACTIVE.ordinal(), 100 - (int) updateRate * 4 );
     }
     
     @Override
@@ -110,7 +118,8 @@ public final class MagicWall extends UnitHandle {
         controllerSystem.deleteController( controllerId );
         controllerId = -1;
         prefabSystem.deletePrefab( prefabId );
-        spriteAnimationHandler.dispose( context );
+        assetSystem.deleteAsset( animationAssetId );
+        stateSystem.deleteWorkflow( MAGIC_WALL_NAME );
         context.notify( new AudioEvent( soundId, Type.STOP_PLAYING ) );
     }
 

@@ -10,6 +10,7 @@ import com.inari.firefly.audio.AudioSystem;
 import com.inari.firefly.control.ControllerSystem;
 import com.inari.firefly.entity.EntityPrefabSystem;
 import com.inari.firefly.entity.EntitySystem;
+import com.inari.firefly.state.StateSystem;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FFContextInitiable;
 import com.inari.firefly.system.view.ViewSystem;
@@ -25,6 +26,7 @@ public abstract class UnitHandle implements FFContextInitiable, Disposable {
     protected ViewSystem viewSystem;
     protected AudioSystem soundSystem;
     protected ControllerSystem controllerSystem;
+    protected StateSystem stateSystem;
     
     @Override
     public void init( FFContext context ) throws FFInitException {
@@ -35,6 +37,7 @@ public abstract class UnitHandle implements FFContextInitiable, Disposable {
         prefabSystem = context.getSystem( EntityPrefabSystem.SYSTEM_KEY );
         soundSystem = context.getSystem( AudioSystem.SYSTEM_KEY );
         controllerSystem = context.getSystem( ControllerSystem.SYSTEM_KEY );
+        stateSystem = context.getSystem( StateSystem.SYSTEM_KEY );
         
         initialized = true;
     }

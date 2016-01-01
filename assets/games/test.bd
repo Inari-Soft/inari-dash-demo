@@ -21,11 +21,12 @@ Colors=Black Black Orange Brown Cyan
 
 [map]
 WWWWWWWWWWWWWWW    
-W   WWWWWW  . X    
-W       aW  . WWWWW
-W   WWWWWW  .BW   W
-W        .  ..  x W
-Wol       PdddWWWWW
-WWWWWWWWWWWWWWW    
+Wr. WWWWWW  . X    
+Wd      aW  . WWWWW
+W.  WWWWWW  .BW   W
+WM       .  ..  x W
+W..       PdddWWWWW
+W WWWWWWWWWWWWW    
+WWW                
 [/map]
 [/cave]
