@@ -22,7 +22,7 @@ public final class EUnit extends EntityComponent {
     public static final AttributeKey<Boolean> HIT = new AttributeKey<Boolean>( "hit", Boolean.class, EUnit.class );
     public static final AttributeKey<UnitType> EXPLOSION_TYPE = new AttributeKey<UnitType>( "explosionType", UnitType.class, EUnit.class );
     public static final AttributeKey<UnitType> CHANGE_TO = new AttributeKey<UnitType>( "changeTo", UnitType.class, EUnit.class );
-    public static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] { 
+    private static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] { 
         UNIT_TYPE,
         MOVEMENT,
         ASPECTS,
