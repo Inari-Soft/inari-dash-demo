@@ -11,7 +11,6 @@ import com.inari.dash.game.cave.unit.UnitHandle;
 import com.inari.dash.game.cave.unit.UnitType;
 import com.inari.firefly.FFInitException;
 import com.inari.firefly.entity.ETransform;
-import com.inari.firefly.graphics.sprite.ESprite;
 import com.inari.firefly.graphics.sprite.SpriteAsset;
 import com.inari.firefly.graphics.tile.ETile;
 import com.inari.firefly.system.FFContext;
@@ -42,7 +41,7 @@ public final class SolidWall extends UnitHandle {
         solidWallEntityId = entitySystem.getEntityBuilder()
             .set( ETransform.VIEW_ID, viewSystem.getViewId( CaveSystem.CAVE_VIEW_NAME ) )
             .set( ETile.MULTI_POSITION, true )
-            .set( ESprite.SPRITE_ID, assetSystem.getAssetInstanceId( SOLID_WALL_NAME ) )
+            .set( ETile.SPRITE_ID, assetSystem.getAssetInstanceId( SOLID_WALL_NAME ) )
             .set( EUnit.UNIT_TYPE, type() )
             .set( EUnit.ASPECTS, AspectSetBuilder.create() )
         .activate();

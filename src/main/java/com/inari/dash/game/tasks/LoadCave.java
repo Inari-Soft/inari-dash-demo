@@ -52,13 +52,16 @@ public final class LoadCave extends Task {
         
         // create init scene assets
         AssetSystem assetSystem = context.getSystem( AssetSystem.SYSTEM_KEY );
-        for ( int i = 0; i < 3; i++ ) {
-            int offset = 4 * i;
-            context.getComponentBuilder( Asset.TYPE_KEY )
-                .set( SpriteAsset.NAME, CaveSystem.INTRO_TILE_SPRITE_NAME + i )
-                .set( SpriteAsset.TEXTURE_ASSET_ID, assetSystem.getAssetId( CaveSystem.GAME_UNIT_TEXTURE_NAME ) )
-                .set( SpriteAsset.TEXTURE_REGION, new Rectangle( 32 + offset, ( 6 * 32 ) + offset, 16, 16 ) )
-            .build( SpriteAsset.class );
+        
+        if ( !assetSystem.hasAsset( CaveSystem.INTRO_TILE_SPRITE_NAME + 0 ) ) {
+            for ( int i = 0; i < 3; i++ ) {
+                int offset = 4 * i;
+                context.getComponentBuilder( Asset.TYPE_KEY )
+                    .set( SpriteAsset.NAME, CaveSystem.INTRO_TILE_SPRITE_NAME + i )
+                    .set( SpriteAsset.TEXTURE_ASSET_ID, assetSystem.getAssetId( CaveSystem.GAME_UNIT_TEXTURE_NAME ) )
+                    .set( SpriteAsset.TEXTURE_REGION, new Rectangle( 32 + offset, ( 6 * 32 ) + offset, 16, 16 ) )
+                .build( SpriteAsset.class );
+            }
         }
 
         // create tileGrid and cave entities

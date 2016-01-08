@@ -12,8 +12,8 @@ import com.inari.dash.game.cave.unit.UnitAspect;
 import com.inari.dash.game.cave.unit.UnitHandle;
 import com.inari.dash.game.cave.unit.UnitType;
 import com.inari.firefly.FFInitException;
-import com.inari.firefly.asset.AnimatedSpriteAsset;
 import com.inari.firefly.asset.AnimatedSpriteData;
+import com.inari.firefly.asset.AnimatedTileAsset;
 import com.inari.firefly.audio.Sound;
 import com.inari.firefly.audio.SoundAsset;
 import com.inari.firefly.audio.event.AudioEvent;
@@ -83,14 +83,14 @@ public final class MagicWall extends UnitHandle {
         AnimatedSpriteData[] animationDataInactive = AnimatedSpriteData.create( StateName.INACTIVE.name(), Integer.MAX_VALUE, new Rectangle( 3 * 32, 6 * 32, 32, 32 ), 1, Direction.EAST );
         AnimatedSpriteData[] animationDataActive = AnimatedSpriteData.create( StateName.ACTIVE.name(), 100 - (int) updateRate * 4, new Rectangle( 4 * 32, 6 * 32, 32, 32 ), 4, Direction.EAST );
         animationAssetId = assetSystem.getAssetBuilder()
-            .set( AnimatedSpriteAsset.NAME, MAGIC_WALL_NAME )
-            .set( AnimatedSpriteAsset.LOOPING, true )
-            .set( AnimatedSpriteAsset.UPDATE_RESOLUTION, updateRate )
-            .set( AnimatedSpriteAsset.TEXTURE_ASSET_ID, assetSystem.getAssetId( CaveSystem.GAME_UNIT_TEXTURE_NAME ) )
-            .set( AnimatedSpriteAsset.WORKFLOW_ID, workflowId )
-            .add( AnimatedSpriteAsset.ANIMATED_SPRITE_DATA, animationDataInactive )
-            .add( AnimatedSpriteAsset.ANIMATED_SPRITE_DATA, animationDataActive )
-        .activate( AnimatedSpriteAsset.class );
+            .set( AnimatedTileAsset.NAME, MAGIC_WALL_NAME )
+            .set( AnimatedTileAsset.LOOPING, true )
+            .set( AnimatedTileAsset.UPDATE_RESOLUTION, updateRate )
+            .set( AnimatedTileAsset.TEXTURE_ASSET_ID, assetSystem.getAssetId( CaveSystem.GAME_UNIT_TEXTURE_NAME ) )
+            .set( AnimatedTileAsset.WORKFLOW_ID, workflowId )
+            .add( AnimatedTileAsset.ANIMATED_SPRITE_DATA, animationDataInactive )
+            .add( AnimatedTileAsset.ANIMATED_SPRITE_DATA, animationDataActive )
+        .activate( AnimatedTileAsset.class );
         
         controllerId = controllerSystem.getControllerBuilder()
             .set( EntityController.NAME, MAGIC_WALL_NAME )

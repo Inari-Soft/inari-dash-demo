@@ -4,8 +4,8 @@ import com.inari.commons.geom.Rectangle;
 import com.inari.dash.game.cave.CaveSystem;
 import com.inari.dash.game.cave.unit.UnitType;
 import com.inari.firefly.asset.AssetSystem;
-import com.inari.firefly.graphics.sprite.ESprite;
 import com.inari.firefly.graphics.sprite.SpriteAsset;
+import com.inari.firefly.graphics.tile.ETile;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.UpdateEvent;
 import com.inari.firefly.system.UpdateEventListener;
@@ -46,17 +46,17 @@ public final class FlashAction extends UnitAction {
         public void update( UpdateEvent event ) {
             int spaceEntityId = UnitType.SPACE.handler.getEntityId();
             if ( tick == 0 ) {
-                ESprite spaceSprite = entitySystem.getComponent( spaceEntityId, ESprite.TYPE_KEY );
-                spaceSpriteId = spaceSprite.getSpriteId();
-                spaceSprite.setSpriteId( flashSpriteId );
+                ETile spaceTile = entitySystem.getComponent( spaceEntityId, ETile.TYPE_KEY );
+                spaceSpriteId = spaceTile.getSpriteId();
+                spaceTile.setSpriteId( flashSpriteId );
 
             } 
             
             tick++;
 
             if ( tick > 6 ) {
-                ESprite spaceSprite = entitySystem.getComponent( spaceEntityId, ESprite.TYPE_KEY );
-                spaceSprite.setSpriteId( spaceSpriteId );
+                ETile spaceTile = entitySystem.getComponent( spaceEntityId, ETile.TYPE_KEY );
+                spaceTile.setSpriteId( spaceSpriteId );
                 // self remove
                 AssetSystem assetSystem = context.getSystem( AssetSystem.SYSTEM_KEY );
                 assetSystem.deleteAsset( FLASH_SPRITE_ASSET_NAME );

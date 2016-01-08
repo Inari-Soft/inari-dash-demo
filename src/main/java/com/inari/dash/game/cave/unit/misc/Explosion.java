@@ -9,8 +9,8 @@ import com.inari.dash.game.cave.CaveSystem;
 import com.inari.dash.game.cave.unit.EUnit;
 import com.inari.dash.game.cave.unit.UnitType;
 import com.inari.firefly.FFInitException;
-import com.inari.firefly.asset.AnimatedSpriteAsset;
 import com.inari.firefly.asset.AnimatedSpriteData;
+import com.inari.firefly.asset.AnimatedTileAsset;
 import com.inari.firefly.entity.EEntity;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.EntityPrefab;
@@ -39,12 +39,12 @@ public final class Explosion extends AbstractExplosionHandle {
         float updateRate = caveService.getUpdateRate();
         AnimatedSpriteData[] animationData = AnimatedSpriteData.create( 300 - (int) updateRate * 4, new Rectangle( 32, 0, 32, 32 ), 3, Direction.EAST );
         animationAssetId = assetSystem.getAssetBuilder()
-            .set( AnimatedSpriteAsset.NAME, EXPLOSION_NAME )
-            .set( AnimatedSpriteAsset.LOOPING, true )
-            .set( AnimatedSpriteAsset.UPDATE_RESOLUTION, updateRate )
-            .set( AnimatedSpriteAsset.TEXTURE_ASSET_ID, assetSystem.getAssetId( CaveSystem.GAME_UNIT_TEXTURE_NAME ) )
-            .set( AnimatedSpriteAsset.ANIMATED_SPRITE_DATA, animationData )
-        .activate( AnimatedSpriteAsset.class );
+            .set( AnimatedTileAsset.NAME, EXPLOSION_NAME )
+            .set( AnimatedTileAsset.LOOPING, true )
+            .set( AnimatedTileAsset.UPDATE_RESOLUTION, updateRate )
+            .set( AnimatedTileAsset.TEXTURE_ASSET_ID, assetSystem.getAssetId( CaveSystem.GAME_UNIT_TEXTURE_NAME ) )
+            .set( AnimatedTileAsset.ANIMATED_SPRITE_DATA, animationData )
+        .activate( AnimatedTileAsset.class );
         int animatioControllerId = assetSystem.getAssetInstaceId( animationAssetId );
         
         prefabId = prefabSystem.getEntityPrefabBuilder()

@@ -17,7 +17,6 @@ import com.inari.firefly.entity.EEntity;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.EntityController;
 import com.inari.firefly.entity.EntityPrefab;
-import com.inari.firefly.graphics.sprite.ESprite;
 import com.inari.firefly.graphics.sprite.SpriteAsset;
 import com.inari.firefly.graphics.tile.ETile;
 import com.inari.firefly.system.FFContext;
@@ -71,7 +70,7 @@ public final class Rock extends UnitHandle {
             .add( EEntity.CONTROLLER_IDS, controllerId )
             .set( EntityPrefab.NAME, ROCK_NAME )
             .set( ETransform.VIEW_ID, viewSystem.getViewId( CaveSystem.CAVE_VIEW_NAME ) )
-            .set( ESprite.SPRITE_ID, assetSystem.getAssetInstanceId( ROCK_SPRITE_ASSET_NAME ) )
+            .set( ETile.SPRITE_ID, assetSystem.getAssetInstanceId( ROCK_SPRITE_ASSET_NAME ) )
             .set( ETile.MULTI_POSITION, false )
             .set( EUnit.UNIT_TYPE, type() )
             .set( EUnit.CHANGE_TO, UnitType.DIAMOND )

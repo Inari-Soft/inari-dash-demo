@@ -13,7 +13,6 @@ import com.inari.firefly.control.Controller;
 import com.inari.firefly.entity.EEntity;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.EntityController;
-import com.inari.firefly.graphics.sprite.ESprite;
 import com.inari.firefly.graphics.tile.ETile;
 import com.inari.firefly.system.FFContext;
 
@@ -39,7 +38,7 @@ public final class ExpandingWall extends UnitHandle {
             .set( ETransform.VIEW_ID, viewSystem.getViewId( CaveSystem.CAVE_VIEW_NAME ) )
             .add( EEntity.CONTROLLER_IDS, controllerId )
             .set( ETile.MULTI_POSITION, true )
-            .set( ESprite.SPRITE_ID, assetSystem.getAssetInstanceId( BrickWall.BRICK_WALL_NAME ) )
+            .set( ETile.SPRITE_ID, assetSystem.getAssetInstanceId( BrickWall.BRICK_WALL_NAME ) )
             .set( EUnit.UNIT_TYPE, type() )
             .set( EUnit.ASPECTS, AspectSetBuilder.create( 
                 UnitAspect.ASLOPE, 
