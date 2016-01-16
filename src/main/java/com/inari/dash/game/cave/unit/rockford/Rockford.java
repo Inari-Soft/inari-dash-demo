@@ -174,8 +174,8 @@ public final class Rockford extends UnitHandle {
         workflowId = stateSystem.getWorkflowBuilder()
             .set( Workflow.NAME, NAME )
             .set( Workflow.START_STATE_NAME, StateEnum.ENTERING.name() )
-            .set( Workflow.STATES, StateEnum.getStates() )
-            .set( Workflow.STATE_CHANGES, StateChangeEnum.getStateChanges() )
+            .add( Workflow.STATES, StateEnum.getStates() )
+            .add( Workflow.STATE_CHANGES, StateChangeEnum.getStateChanges() )
         .activate();
         
         controllerId = controllerSystem.getControllerBuilder()
@@ -189,7 +189,7 @@ public final class Rockford extends UnitHandle {
             .set( AnimatedTileAsset.UPDATE_RESOLUTION, updateRate )
             .set( AnimatedTileAsset.TEXTURE_ASSET_ID, assetSystem.getAssetId( CaveSystem.GAME_UNIT_TEXTURE_NAME ) )
             .set( AnimatedTileAsset.WORKFLOW_ID, workflowId )
-            .set( AnimatedTileAsset.ANIMATED_SPRITE_DATA, StateEnum.getAnimatedSpriteData( (int) updateRate ) )
+            .add( AnimatedTileAsset.ANIMATED_SPRITE_DATA, StateEnum.getAnimatedSpriteData( (int) updateRate ) )
         .activate( AnimatedTileAsset.class );
 
         

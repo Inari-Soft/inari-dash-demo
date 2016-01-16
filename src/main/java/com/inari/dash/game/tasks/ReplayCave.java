@@ -3,8 +3,8 @@ package com.inari.dash.game.tasks;
 import com.inari.dash.game.tasks.InitGameWorkflow.TaskName;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.task.Task;
-import com.inari.firefly.task.event.TaskEvent;
-import com.inari.firefly.task.event.TaskEvent.Type;
+import com.inari.firefly.task.TaskEvent;
+import com.inari.firefly.task.TaskEvent.Type;
 
 public final class ReplayCave extends Task {
 

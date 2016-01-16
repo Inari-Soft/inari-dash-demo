@@ -18,9 +18,9 @@ import com.inari.firefly.FFInitException;
 import com.inari.firefly.action.Action;
 import com.inari.firefly.asset.Asset;
 import com.inari.firefly.asset.AssetSystem;
+import com.inari.firefly.audio.AudioEvent;
 import com.inari.firefly.audio.Sound;
 import com.inari.firefly.audio.SoundAsset;
-import com.inari.firefly.audio.event.AudioEvent;
 import com.inari.firefly.control.Controller;
 import com.inari.firefly.controller.view.CameraPivot;
 import com.inari.firefly.controller.view.SimpleCameraController;
@@ -30,8 +30,8 @@ import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.view.View;
 import com.inari.firefly.system.view.ViewSystem;
 import com.inari.firefly.task.Task;
-import com.inari.firefly.task.event.TaskEvent;
-import com.inari.firefly.task.event.TaskEvent.Type;
+import com.inari.firefly.task.TaskEvent;
+import com.inari.firefly.task.TaskEvent.Type;
 
 public final class LoadPlay extends Task {
 

@@ -15,8 +15,8 @@ import com.inari.firefly.libgdx.GdxFirefly;
 import com.inari.firefly.scene.SceneSystem;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.task.Task;
-import com.inari.firefly.task.event.TaskEvent;
-import com.inari.firefly.task.event.TaskEvent.Type;
+import com.inari.firefly.task.TaskEvent;
+import com.inari.firefly.task.TaskEvent.Type;
 
 public class InariDash extends GdxFFApplicationAdapter {
 

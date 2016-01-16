@@ -19,7 +19,7 @@ import com.inari.firefly.audio.SoundAsset;
 import com.inari.firefly.entity.EEntity;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.EntityController;
-import com.inari.firefly.entity.EntityPrefab;
+import com.inari.firefly.entity.prefab.EntityPrefab;
 import com.inari.firefly.graphics.tile.ETile;
 import com.inari.firefly.system.FFContext;
 
@@ -68,7 +68,7 @@ public final class Diamond extends UnitHandle {
             .set( AnimatedTileAsset.LOOPING, true )
             .set( AnimatedTileAsset.UPDATE_RESOLUTION, updateRate )
             .set( AnimatedTileAsset.TEXTURE_ASSET_ID, assetSystem.getAssetId( CaveSystem.GAME_UNIT_TEXTURE_NAME ) )
-            .set( AnimatedTileAsset.ANIMATED_SPRITE_DATA, animationData )
+            .add( AnimatedTileAsset.ANIMATED_SPRITE_DATA, animationData )
         .activate( AnimatedTileAsset.class );
         int animatioControllerId = assetSystem.getAssetInstaceId( animationAssetId );
         

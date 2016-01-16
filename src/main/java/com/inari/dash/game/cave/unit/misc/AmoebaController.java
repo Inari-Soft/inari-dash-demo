@@ -2,18 +2,18 @@ package com.inari.dash.game.cave.unit.misc;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Set;
 
 import com.inari.commons.GeomUtils;
 import com.inari.commons.geom.Direction;
 import com.inari.commons.geom.Position;
+import com.inari.commons.lang.list.DynArray;
 import com.inari.dash.game.cave.CaveSystem.AmoebaData;
 import com.inari.dash.game.cave.unit.EUnit;
 import com.inari.dash.game.cave.unit.UnitAspect;
 import com.inari.dash.game.cave.unit.UnitController;
 import com.inari.dash.game.cave.unit.UnitType;
-import com.inari.firefly.audio.event.AudioEvent;
-import com.inari.firefly.audio.event.AudioEvent.Type;
+import com.inari.firefly.audio.AudioEvent;
+import com.inari.firefly.audio.AudioEvent.Type;
 import com.inari.firefly.graphics.tile.ETile;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FireFly;
@@ -56,7 +56,7 @@ public final class AmoebaController extends UnitController {
             growthFaktor = amoebaData.amoebaFastGrowthProb;
         }
         
-        Set<Position> gridPositions = tile.getGridPositions();
+        DynArray<Position> gridPositions = tile.getGridPositions();
         
         if ( gridPositions.size() > amoebaData.growthLimit ) {
             transformTo( UnitType.ROCK, entityId, gridPositions );
@@ -109,7 +109,7 @@ public final class AmoebaController extends UnitController {
         return caveService.hasAspect( tmpPos.x, tmpPos.y, UnitAspect.ALIVE );
     }
 
-    private void transformTo( UnitType type, int entityId, Set<Position> gridPositions ) {
+    private void transformTo( UnitType type, int entityId, DynArray<Position> gridPositions ) {
         context.deactivateEntity( entityId );
         for ( Position pos : gridPositions ) {
             type.handler.createOne( pos.x, pos.y );

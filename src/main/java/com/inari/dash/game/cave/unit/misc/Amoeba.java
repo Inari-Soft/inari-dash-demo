@@ -15,10 +15,10 @@ import com.inari.dash.game.cave.unit.UnitType;
 import com.inari.firefly.FFInitException;
 import com.inari.firefly.asset.AnimatedSpriteData;
 import com.inari.firefly.asset.AnimatedTileAsset;
+import com.inari.firefly.audio.AudioEvent;
 import com.inari.firefly.audio.Sound;
 import com.inari.firefly.audio.SoundAsset;
-import com.inari.firefly.audio.event.AudioEvent;
-import com.inari.firefly.audio.event.AudioEvent.Type;
+import com.inari.firefly.audio.AudioEvent.Type;
 import com.inari.firefly.entity.EEntity;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.EntityController;
@@ -66,7 +66,7 @@ public final class Amoeba extends UnitHandle {
             .set( AnimatedTileAsset.LOOPING, true )
             .set( AnimatedTileAsset.UPDATE_RESOLUTION, updateRate )
             .set( AnimatedTileAsset.TEXTURE_ASSET_ID, assetSystem.getAssetId( CaveSystem.GAME_UNIT_TEXTURE_NAME ) )
-            .set( AnimatedTileAsset.ANIMATED_SPRITE_DATA, animationData )
+            .add( AnimatedTileAsset.ANIMATED_SPRITE_DATA, animationData )
         .activate( AnimatedTileAsset.class );
         int animatioControllerId = assetSystem.getAssetInstaceId( animationAssetId );
         
