@@ -29,7 +29,7 @@ public final class MoveAction extends UnitAction {
         tmpPos.y = tile.getGridYPos();
         
         UnitType.SPACE.handler.createOne( tmpPos.x, tmpPos.y );
-        GeomUtils.movePositionOnDirection( tmpPos, movement, 1, true );
+        GeomUtils.movePosition( tmpPos, movement, 1, true );
         int entityOnDirection = caveService.getEntityId( tmpPos.x, tmpPos.y );
         caveService.deleteUnit( entityOnDirection, tmpPos.x, tmpPos.y );
         tile.setGridXPos( tmpPos.x );

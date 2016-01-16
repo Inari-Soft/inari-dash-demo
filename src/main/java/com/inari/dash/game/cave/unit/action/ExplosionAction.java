@@ -33,21 +33,21 @@ public final class ExplosionAction extends UnitAction {
         UnitType explodeTo = unit.getChangeTo();
         
         createExplosion( explodeTo );
-        GeomUtils.movePositionOnDirection( tmpPos, Direction.NORTH, 1, true );
+        GeomUtils.movePosition( tmpPos, Direction.NORTH, 1, true );
         createExplosion( explodeTo );
-        GeomUtils.movePositionOnDirection( tmpPos, Direction.EAST, 1, true );
+        GeomUtils.movePosition( tmpPos, Direction.EAST, 1, true );
         createExplosion( explodeTo );
-        GeomUtils.movePositionOnDirection( tmpPos, Direction.SOUTH, 1, true );
+        GeomUtils.movePosition( tmpPos, Direction.SOUTH, 1, true );
         createExplosion( explodeTo );
-        GeomUtils.movePositionOnDirection( tmpPos, Direction.SOUTH, 1, true );
+        GeomUtils.movePosition( tmpPos, Direction.SOUTH, 1, true );
         createExplosion( explodeTo );
-        GeomUtils.movePositionOnDirection( tmpPos, Direction.WEST, 1, true );
+        GeomUtils.movePosition( tmpPos, Direction.WEST, 1, true );
         createExplosion( explodeTo );
-        GeomUtils.movePositionOnDirection( tmpPos, Direction.WEST, 1, true );
+        GeomUtils.movePosition( tmpPos, Direction.WEST, 1, true );
         createExplosion( explodeTo );
-        GeomUtils.movePositionOnDirection( tmpPos, Direction.NORTH, 1, true );
+        GeomUtils.movePosition( tmpPos, Direction.NORTH, 1, true );
         createExplosion( explodeTo );
-        GeomUtils.movePositionOnDirection( tmpPos, Direction.NORTH, 1, true );
+        GeomUtils.movePosition( tmpPos, Direction.NORTH, 1, true );
         createExplosion( explodeTo );
         
         context.notify( new AudioEvent( UnitType.EXPLOSION.handler.getSoundId(), AudioEvent.Type.PLAY_SOUND ) );

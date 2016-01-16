@@ -138,7 +138,7 @@ public final class RFController extends UnitController {
             context.notify( WorkflowEvent.createDoStateChangeEventTo( Rockford.NAME, StateEnum.RIGHT.name() ) );
         }
         
-        GeomUtils.movePositionOnDirection( nextPos, move, 1, true );
+        GeomUtils.movePosition( nextPos, move, 1, true );
         int nextEntityId = caveService.getEntityId( nextPos.x, nextPos.y );
         EUnit nextUnit = context.getEntityComponent( nextEntityId, EUnit.TYPE_KEY );
         UnitType nextType = nextUnit.getUnitType();
@@ -174,7 +174,7 @@ public final class RFController extends UnitController {
     
     private final void pushRock( Direction move, boolean grabbing, int rockfordId ) {
         int rockEntityId = caveService.getEntityId( nextPos.x, nextPos.y );
-        GeomUtils.movePositionOnDirection( nextPos, move, 1, true );
+        GeomUtils.movePosition( nextPos, move, 1, true );
         if ( !caveService.isOfType( nextPos.x, nextPos.y, UnitType.SPACE ) ) {
             return;
         }

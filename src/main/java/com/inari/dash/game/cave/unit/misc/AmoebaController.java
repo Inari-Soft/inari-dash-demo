@@ -99,7 +99,7 @@ public final class AmoebaController extends UnitController {
     }
 
     private boolean grow( Direction direction ) {
-        GeomUtils.movePositionOnDirection( tmpPos, direction, 1, true );
+        GeomUtils.movePosition( tmpPos, direction, 1, true );
         if ( caveService.hasAspect( tmpPos.x, tmpPos.y, UnitAspect.CONSUMABLE ) ) {
             if ( FireFly.RANDOM.nextFloat() <= growthFaktor ) {
                 tmpPosList.add( new Position( tmpPos.x, tmpPos.y ) );
