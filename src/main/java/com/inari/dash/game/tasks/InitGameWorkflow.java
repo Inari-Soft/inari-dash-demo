@@ -9,6 +9,7 @@ import com.inari.firefly.state.Workflow;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.task.Task;
 import com.inari.firefly.task.TaskSystem;
+import com.inari.firefly.task.WorkflowEventTrigger;
 
 public class InitGameWorkflow extends Task {
     
@@ -75,10 +76,31 @@ public class InitGameWorkflow extends Task {
             .build( taskName.type );
         }
         
+        taskSystem.getTaskTriggerBuilder()
+            .set( WorkflowEventTrigger.TASK_ID, taskSystem.getTaskId( TaskName.LOAD_GAME.name() ) )
+            .set( WorkflowEventTrigger.WORKFLOW_NAME, GameSystem.GAME_WORKFLOW_NAME )
+            .set( WorkflowEventTrigger.TRIGGER_TYPE, WorkflowEventTrigger.Type.ENTER_STATE )
+            .set( WorkflowEventTrigger.TRIGGER_NAME, StateName.GAME_SELECTION.name() )
+        .buildAndNext( WorkflowEventTrigger.class )
+            .set( WorkflowEventTrigger.TASK_ID, taskSystem.getTaskId( TaskName.DISPOSE_GAME.name() ) )
+            .set( WorkflowEventTrigger.WORKFLOW_NAME, GameSystem.GAME_WORKFLOW_NAME )
+            .set( WorkflowEventTrigger.TRIGGER_TYPE, WorkflowEventTrigger.Type.STATE_CHANGE )
+            .set( WorkflowEventTrigger.TRIGGER_NAME, StateChangeName.EXIT_GAME.name() )
+        .buildAndNext( WorkflowEventTrigger.class )
+            .set( WorkflowEventTrigger.TASK_ID, taskSystem.getTaskId( TaskName.LOAD_PLAY.name() ) )
+            .set( WorkflowEventTrigger.WORKFLOW_NAME, GameSystem.GAME_WORKFLOW_NAME )
+            .set( WorkflowEventTrigger.TRIGGER_TYPE, WorkflowEventTrigger.Type.STATE_CHANGE )
+            .set( WorkflowEventTrigger.TRIGGER_NAME, StateChangeName.PLAY_CAVE.name() )
+        .buildAndNext( WorkflowEventTrigger.class )
+            .set( WorkflowEventTrigger.TASK_ID, taskSystem.getTaskId( TaskName.DISPOSE_PLAY.name() ) )
+            .set( WorkflowEventTrigger.WORKFLOW_NAME, GameSystem.GAME_WORKFLOW_NAME )
+            .set( WorkflowEventTrigger.TRIGGER_TYPE, WorkflowEventTrigger.Type.STATE_CHANGE )
+            .set( WorkflowEventTrigger.TRIGGER_NAME, StateChangeName.EXIT_PLAY.name() )
+        .build( WorkflowEventTrigger.class );
+        
         stateSystem.getWorkflowBuilder()
             .set( Workflow.NAME, GameSystem.GAME_WORKFLOW_NAME )
             .set( Workflow.START_STATE_NAME, StateName.GAME_SELECTION.name() )
-            .set( Workflow.INIT_TASK_NAME, TaskName.LOAD_GAME.name() )
             .add( Workflow.STATES, StateName.GAME_SELECTION.name() )
             .add( Workflow.STATES, StateName.CAVE_PLAY.name() )
             .add( 
@@ -86,8 +108,7 @@ public class InitGameWorkflow extends Task {
                 new StateChange( 
                     StateChangeName.EXIT_GAME.name(), 
                     StateName.GAME_SELECTION.name(), 
-                    null, 
-                    TaskName.DISPOSE_GAME.name(), 
+                    null,
                     new GameExitCondition() 
                 ) 
             )
@@ -97,7 +118,6 @@ public class InitGameWorkflow extends Task {
                     StateChangeName.PLAY_CAVE.name(), 
                     StateName.GAME_SELECTION.name(), 
                     StateName.CAVE_PLAY.name(), 
-                    TaskName.LOAD_PLAY.name(), 
                     new StartGameCondition() 
                 ) 
             )
@@ -106,40 +126,10 @@ public class InitGameWorkflow extends Task {
                 new StateChange( 
                     StateChangeName.EXIT_PLAY.name(), 
                     StateName.GAME_SELECTION.name(), 
-                    StateName.GAME_SELECTION.name(), 
-                    TaskName.DISPOSE_PLAY.name()
+                    StateName.GAME_SELECTION.name()
                 ) 
             )
         .activate();
-        
-//        stateSystem.getStateBuilder()
-//            .set( State.NAME, StateName.GAME_SELECTION.name() )
-//            .set( State.WORKFLOW_ID, workflowId )
-//        .buildAndNext()
-//            .set( State.NAME, StateName.CAVE_PLAY.name() )
-//            .set( State.WORKFLOW_ID, workflowId )
-//        .build();
-//        
-//        stateSystem.getStateChangeBuilder()
-//            .set( StateChange.NAME, StateChangeName.EXIT_GAME.name() )
-//            .set( StateChange.WORKFLOW_ID, workflowId )
-//            .set( StateChange.CONDITION_TYPE_NAME, GameExitCondition.class.getName() )
-//            .set( StateChange.FORM_STATE_ID, stateSystem.getStateId( StateName.GAME_SELECTION.name() ) )
-//            .set( StateChange.TASK_ID, taskSystem.getTaskId( TaskName.DISPOSE_GAME.name() ) )
-//        .buildAndNext()
-//            .set( StateChange.NAME, StateChangeName.PLAY_CAVE.name() )
-//            .set( StateChange.WORKFLOW_ID, workflowId )
-//            .set( StateChange.CONDITION_TYPE_NAME, StartGameCondition.class.getName() )
-//            .set( StateChange.FORM_STATE_ID, stateSystem.getStateId( StateName.GAME_SELECTION.name() ) )
-//            .set( StateChange.TO_STATE_ID, stateSystem.getStateId( StateName.CAVE_PLAY.name() ) )
-//            .set( StateChange.TASK_ID, taskSystem.getTaskId( TaskName.LOAD_PLAY.name() ) )
-//        .buildAndNext()
-//            .set( StateChange.NAME, StateChangeName.EXIT_PLAY.name() )
-//            .set( StateChange.WORKFLOW_ID, workflowId )
-//            .set( StateChange.FORM_STATE_ID, stateSystem.getStateId( StateName.CAVE_PLAY.name() ) )
-//            .set( StateChange.TO_STATE_ID, stateSystem.getStateId( StateName.GAME_SELECTION.name() ) )
-//            .set( StateChange.TASK_ID, taskSystem.getTaskId( TaskName.DISPOSE_PLAY.name() ) )
-//        .build();
     }
 
 }

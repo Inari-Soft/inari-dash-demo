@@ -221,7 +221,7 @@ public final class Rockford extends UnitHandle {
     public final int createOne( int xGridPos, int yGridPos ) {
         rfEntityId = entitySystem.getEntityBuilder()
             .add( EEntity.CONTROLLER_IDS, controllerId )
-            .add( EEntity.CONTROLLER_IDS, assetSystem.getAssetInstaceId( animationAssetId ) )
+            .add( EEntity.CONTROLLER_IDS, assetSystem.getAssetInstanceId( animationAssetId ) )
             .set( ETransform.VIEW_ID, viewSystem.getViewId( CaveSystem.CAVE_VIEW_NAME ) )
             .set( ETile.GRID_X_POSITION, xGridPos )
             .set( ETile.GRID_Y_POSITION, yGridPos )

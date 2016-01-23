@@ -14,10 +14,10 @@ import com.inari.dash.game.cave.unit.UnitType;
 import com.inari.firefly.FFInitException;
 import com.inari.firefly.asset.AnimatedSpriteData;
 import com.inari.firefly.asset.AnimatedTileAsset;
-import com.inari.firefly.audio.AudioEvent;
+import com.inari.firefly.audio.AudioSystemEvent;
 import com.inari.firefly.audio.Sound;
 import com.inari.firefly.audio.SoundAsset;
-import com.inari.firefly.audio.AudioEvent.Type;
+import com.inari.firefly.audio.AudioSystemEvent.Type;
 import com.inari.firefly.entity.EEntity;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.EntityController;
@@ -100,7 +100,7 @@ public final class MagicWall extends UnitHandle {
         prefabId = prefabSystem.getEntityPrefabBuilder()
             .set( EntityPrefab.NAME, MAGIC_WALL_NAME )
             .add( EEntity.CONTROLLER_IDS, controllerId )
-            .add( EEntity.CONTROLLER_IDS, assetSystem.getAssetInstaceId( animationAssetId ) )
+            .add( EEntity.CONTROLLER_IDS, assetSystem.getAssetInstanceId( animationAssetId ) )
             .set( ETransform.VIEW_ID, viewSystem.getViewId( CaveSystem.CAVE_VIEW_NAME ) )
             .set( ETile.MULTI_POSITION, false )
             .set( EUnit.UNIT_TYPE, type() )
@@ -120,7 +120,7 @@ public final class MagicWall extends UnitHandle {
         prefabSystem.deletePrefab( prefabId );
         assetSystem.deleteAsset( animationAssetId );
         stateSystem.deleteWorkflow( MAGIC_WALL_NAME );
-        context.notify( new AudioEvent( soundId, Type.STOP_PLAYING ) );
+        context.notify( new AudioSystemEvent( soundId, Type.STOP_PLAYING ) );
     }
 
     @Override

@@ -15,10 +15,10 @@ import com.inari.dash.game.cave.unit.UnitType;
 import com.inari.firefly.FFInitException;
 import com.inari.firefly.asset.AnimatedSpriteData;
 import com.inari.firefly.asset.AnimatedTileAsset;
-import com.inari.firefly.audio.AudioEvent;
+import com.inari.firefly.audio.AudioSystemEvent;
 import com.inari.firefly.audio.Sound;
 import com.inari.firefly.audio.SoundAsset;
-import com.inari.firefly.audio.AudioEvent.Type;
+import com.inari.firefly.audio.AudioSystemEvent.Type;
 import com.inari.firefly.entity.EEntity;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.EntityController;
@@ -68,7 +68,7 @@ public final class Amoeba extends UnitHandle {
             .set( AnimatedTileAsset.TEXTURE_ASSET_ID, assetSystem.getAssetId( CaveSystem.GAME_UNIT_TEXTURE_NAME ) )
             .add( AnimatedTileAsset.ANIMATED_SPRITE_DATA, animationData )
         .activate( AnimatedTileAsset.class );
-        int animatioControllerId = assetSystem.getAssetInstaceId( animationAssetId );
+        int animatioControllerId = assetSystem.getAssetInstanceId( animationAssetId );
         
         controllerId = controllerSystem.getControllerBuilder()
             .set( EntityController.NAME, AMOEBA_NAME )
@@ -93,7 +93,7 @@ public final class Amoeba extends UnitHandle {
         controllerSystem.deleteController( controllerId );
         entitySystem.delete( amoebaEntityId );
         assetSystem.deleteAsset( animationAssetId );
-        context.notify( new AudioEvent( soundId, Type.STOP_PLAYING ) );
+        context.notify( new AudioSystemEvent( soundId, Type.STOP_PLAYING ) );
     }
 
     @Override

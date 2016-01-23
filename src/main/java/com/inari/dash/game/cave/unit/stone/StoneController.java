@@ -7,8 +7,8 @@ import com.inari.dash.game.cave.unit.UnitAspect;
 import com.inari.dash.game.cave.unit.UnitController;
 import com.inari.dash.game.cave.unit.UnitType;
 import com.inari.dash.game.cave.unit.action.UnitActionType;
-import com.inari.firefly.action.ActionEvent;
-import com.inari.firefly.audio.AudioEvent;
+import com.inari.firefly.action.ActionSystemEvent;
+import com.inari.firefly.audio.AudioSystemEvent;
 import com.inari.firefly.graphics.tile.ETile;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.external.FFTimer;
@@ -35,7 +35,7 @@ public abstract class StoneController extends UnitController {
             // ... and below is empty
             if ( caveService.isOfType( tmpPos.x, tmpPos.y, Direction.SOUTH, UnitType.SPACE ) ) {
                 // ... keep falling
-                context.notify( new ActionEvent( UnitActionType.MOVE.type(),  entityId ) );
+                context.notify( new ActionSystemEvent( UnitActionType.MOVE.type(),  entityId ) );
                 return;
             }
             
@@ -61,7 +61,7 @@ public abstract class StoneController extends UnitController {
             // start falling... or wait for next update
             unit.setMovement( Direction.SOUTH );
             playSample( update );
-            context.notify( new ActionEvent( UnitActionType.MOVE.type(),  entityId ) );
+            context.notify( new ActionSystemEvent( UnitActionType.MOVE.type(),  entityId ) );
             return;
         }
         
@@ -82,7 +82,7 @@ public abstract class StoneController extends UnitController {
             // fall to the right
             unit.setMovement( Direction.EAST );
             context.notify( 
-                new ActionEvent( UnitActionType.MOVE.type(), entityId ) 
+                new ActionSystemEvent( UnitActionType.MOVE.type(), entityId ) 
             );
             unit.setMovement( Direction.SOUTH );
             playSample( update );
@@ -96,7 +96,7 @@ public abstract class StoneController extends UnitController {
             // fall to the left
             unit.setMovement( Direction.WEST );
             context.notify( 
-                new ActionEvent( UnitActionType.MOVE.type(), entityId ) 
+                new ActionSystemEvent( UnitActionType.MOVE.type(), entityId ) 
             );
             unit.setMovement( Direction.SOUTH );
             playSample( update );
@@ -112,7 +112,7 @@ public abstract class StoneController extends UnitController {
             if ( soundId < 0 ) {
                 return;
             }
-            context.notify( new AudioEvent( soundId, AudioEvent.Type.PLAY_SOUND ) );
+            context.notify( new AudioSystemEvent( soundId, AudioSystemEvent.Type.PLAY_SOUND ) );
             currentUpdate = update;
         }
     }

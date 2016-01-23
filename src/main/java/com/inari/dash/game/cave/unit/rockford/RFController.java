@@ -12,12 +12,12 @@ import com.inari.dash.game.cave.unit.UnitType;
 import com.inari.dash.game.cave.unit.action.UnitActionType;
 import com.inari.dash.game.cave.unit.rockford.Rockford.StateChangeEnum;
 import com.inari.dash.game.cave.unit.rockford.Rockford.StateEnum;
-import com.inari.firefly.action.ActionEvent;
-import com.inari.firefly.audio.AudioEvent;
-import com.inari.firefly.audio.AudioEvent.Type;
+import com.inari.firefly.action.ActionSystemEvent;
+import com.inari.firefly.audio.AudioSystemEvent;
+import com.inari.firefly.audio.AudioSystemEvent.Type;
 import com.inari.firefly.graphics.tile.ETile;
 import com.inari.firefly.state.StateSystem;
-import com.inari.firefly.state.WorkflowEvent;
+import com.inari.firefly.state.StateSystemEvent;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FireFly;
 import com.inari.firefly.system.external.FFInput;
@@ -59,13 +59,13 @@ public final class RFController extends UnitController {
             int animationCount = unit.getAnimationCount();
             if ( StateEnum.ENTERING.is( state ) && animationCount > ENTERING_ANIMATION_DURATION ) {
                 unit.resetAnimationCount();
-                context.notify( WorkflowEvent.createDoStateChangeEvent( Rockford.NAME, StateChangeEnum.ENTERING_APPEARING.name() ) );
-                context.notify( new AudioEvent( rfHandle.inSoundId, Type.PLAY_SOUND ) );
+                context.notify( StateSystemEvent.createDoStateChangeEvent( Rockford.NAME, StateChangeEnum.ENTERING_APPEARING.name() ) );
+                context.notify( new AudioSystemEvent( rfHandle.inSoundId, Type.PLAY_SOUND ) );
                 return;
             }
             if ( StateEnum.APPEARING.is( state ) && animationCount > APPEARING_ANIMATION_DURATION ) {
                 unit.resetAnimationCount();
-                context.notify( WorkflowEvent.createDoStateChangeEvent( Rockford.NAME, StateChangeEnum.APPEARING_IDLE.name() ) );
+                context.notify( StateSystemEvent.createDoStateChangeEvent( Rockford.NAME, StateChangeEnum.APPEARING_IDLE.name() ) );
                 unit.setAspects( AspectSetBuilder.create( UnitAspect.ALIVE, UnitAspect.DESTRUCTIBLE  ) );
                 return;
             }
@@ -78,7 +78,7 @@ public final class RFController extends UnitController {
         
         if ( unit.isHit() ) {
             unit.setChangeTo( UnitType.SPACE );
-            context.notify( new ActionEvent( UnitActionType.EXPLODE.index(), entityId ) );
+            context.notify( new ActionSystemEvent( UnitActionType.EXPLODE.index(), entityId ) );
             return;
         }
         
@@ -99,25 +99,25 @@ public final class RFController extends UnitController {
                 unit.incrementAnimationCount();
                 int animationCount = unit.getAnimationCount();
                 if ( StateEnum.BLINKING.is( state ) && animationCount > IDLE_BLINKING_DURATION ) {
-                    context.notify( WorkflowEvent.createDoStateChangeEvent( Rockford.NAME, StateChangeEnum.BLINKING_IDLE.name() ) );
+                    context.notify( StateSystemEvent.createDoStateChangeEvent( Rockford.NAME, StateChangeEnum.BLINKING_IDLE.name() ) );
                     unit.resetAnimationCount();
                     return;
                 }
                 if ( StateEnum.FRETFUL.is( state ) && animationCount > IDLE_FRETFUL_DURATION ) {
-                    context.notify( WorkflowEvent.createDoStateChangeEvent( Rockford.NAME, StateChangeEnum.FRETFUL_IDLE.name() ) );
+                    context.notify( StateSystemEvent.createDoStateChangeEvent( Rockford.NAME, StateChangeEnum.FRETFUL_IDLE.name() ) );
                     unit.resetAnimationCount();
                     return;
                 }
                 return;
             } else if ( !StateEnum.IDLE.is( state ) ) {
-                context.notify( WorkflowEvent.createDoStateChangeEventTo( Rockford.NAME, StateEnum.IDLE.name() ) );
+                context.notify( StateSystemEvent.createDoStateChangeEventTo( Rockford.NAME, StateEnum.IDLE.name() ) );
             }
             if ( FireFly.RANDOM.nextInt( 100 ) < 5 ) {
-                context.notify( WorkflowEvent.createDoStateChangeEvent( Rockford.NAME, StateChangeEnum.IDLE_BLINKING.name() ) );
+                context.notify( StateSystemEvent.createDoStateChangeEvent( Rockford.NAME, StateChangeEnum.IDLE_BLINKING.name() ) );
                 return;
             }
             if ( FireFly.RANDOM.nextInt( 100 ) < 3 ) {
-                context.notify( WorkflowEvent.createDoStateChangeEvent( Rockford.NAME, StateChangeEnum.IDLE_FRETFUL.name() ) );
+                context.notify( StateSystemEvent.createDoStateChangeEvent( Rockford.NAME, StateChangeEnum.IDLE_FRETFUL.name() ) );
                 return;
             }
             
@@ -133,9 +133,9 @@ public final class RFController extends UnitController {
         boolean grabbing = input.isPressed( ButtonType.FIRE_1 );
         
         if ( ( move == Direction.WEST || move == Direction.NORTH ) && !StateEnum.LEFT.is( state ) ) {
-            context.notify( WorkflowEvent.createDoStateChangeEventTo( Rockford.NAME, StateEnum.LEFT.name() ) );
+            context.notify( StateSystemEvent.createDoStateChangeEventTo( Rockford.NAME, StateEnum.LEFT.name() ) );
         } else if ( ( move == Direction.EAST || move == Direction.SOUTH ) && !StateEnum.RIGHT.is( state ) ) {
-            context.notify( WorkflowEvent.createDoStateChangeEventTo( Rockford.NAME, StateEnum.RIGHT.name() ) );
+            context.notify( StateSystemEvent.createDoStateChangeEventTo( Rockford.NAME, StateEnum.RIGHT.name() ) );
         }
         
         GeomUtils.movePosition( nextPos, move, 1, true );
@@ -145,14 +145,14 @@ public final class RFController extends UnitController {
 
         if ( nextUnit.has( UnitAspect.WALKABLE ) ) {
            if ( nextType == UnitType.DIAMOND ) {
-               context.notify( new ActionEvent( UnitActionType.COLLECT.index(), nextEntityId ) );
-               context.notify( new AudioEvent( rfHandle.collectSoundId, Type.PLAY_SOUND ) ); 
+               context.notify( new ActionSystemEvent( UnitActionType.COLLECT.index(), nextEntityId ) );
+               context.notify( new AudioSystemEvent( rfHandle.collectSoundId, Type.PLAY_SOUND ) ); 
            } else if ( nextType == UnitType.SPACE ) {
                if ( !grabbing ) {
-                   context.notify( new AudioEvent( rfHandle.spaceSoundId, Type.PLAY_SOUND ) ); 
+                   context.notify( new AudioSystemEvent( rfHandle.spaceSoundId, Type.PLAY_SOUND ) ); 
                }
            } else {
-               context.notify( new AudioEvent( rfHandle.sandSoundId, Type.PLAY_SOUND ) ); 
+               context.notify( new AudioSystemEvent( rfHandle.sandSoundId, Type.PLAY_SOUND ) ); 
            }
            
            if ( grabbing ) {
@@ -161,7 +161,7 @@ public final class RFController extends UnitController {
                    caveService.createOne( nextPos.x, nextPos.y, UnitType.SPACE );
                }
            } else {
-               context.notify( new ActionEvent( UnitActionType.MOVE.index(), entityId ) );
+               context.notify( new ActionSystemEvent( UnitActionType.MOVE.index(), entityId ) );
            }
            return;
         }
@@ -182,12 +182,12 @@ public final class RFController extends UnitController {
         if ( FireFly.RANDOM.nextInt( 100 ) < 20 ) {
             EUnit unit = context.getEntityComponent( rockEntityId, EUnit.TYPE_KEY );
             unit.setMovement( move );
-            context.notify( new ActionEvent( UnitActionType.MOVE.index(), rockEntityId ) );
+            context.notify( new ActionSystemEvent( UnitActionType.MOVE.index(), rockEntityId ) );
             if ( !grabbing ) {
-                context.notify( new ActionEvent( UnitActionType.MOVE.index(), rockfordId ) );
+                context.notify( new ActionSystemEvent( UnitActionType.MOVE.index(), rockfordId ) );
             }
             unit.setMovement( Direction.NONE );
-            context.notify( new AudioEvent( UnitType.ROCK.handler.getSoundId(), Type.PLAY_SOUND ) ); 
+            context.notify( new AudioSystemEvent( UnitType.ROCK.handler.getSoundId(), Type.PLAY_SOUND ) ); 
         }
     }
 

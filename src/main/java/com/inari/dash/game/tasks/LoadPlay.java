@@ -18,7 +18,7 @@ import com.inari.firefly.FFInitException;
 import com.inari.firefly.action.Action;
 import com.inari.firefly.asset.Asset;
 import com.inari.firefly.asset.AssetSystem;
-import com.inari.firefly.audio.AudioEvent;
+import com.inari.firefly.audio.AudioSystemEvent;
 import com.inari.firefly.audio.Sound;
 import com.inari.firefly.audio.SoundAsset;
 import com.inari.firefly.control.Controller;
@@ -30,8 +30,8 @@ import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.view.View;
 import com.inari.firefly.system.view.ViewSystem;
 import com.inari.firefly.task.Task;
-import com.inari.firefly.task.TaskEvent;
-import com.inari.firefly.task.TaskEvent.Type;
+import com.inari.firefly.task.TaskSystemEvent;
+import com.inari.firefly.task.TaskSystemEvent.Type;
 
 public final class LoadPlay extends Task {
 
@@ -44,9 +44,9 @@ public final class LoadPlay extends Task {
         GameSystem gameService = context.getSystem( GameSystem.SYSTEM_KEY );
         
         // stop playing title song
-        context.notify( new AudioEvent( GameSystem.TITLE_SONG_SOUND_NAME, AudioEvent.Type.STOP_PLAYING ) );
+        context.notify( new AudioSystemEvent( GameSystem.TITLE_SONG_SOUND_NAME, AudioSystemEvent.Type.STOP_PLAYING ) );
         // dispose game selection screen
-        context.notify( new TaskEvent( Type.RUN_TASK, TaskName.DISPOSE_GAME_SELECTION.name() ) );
+        context.notify( new TaskSystemEvent( Type.RUN_TASK, TaskName.DISPOSE_GAME_SELECTION.name() ) );
         // get selection data
         GameInfo selectedGame = gameService.getSelectedGame();
         int selectedCave = gameService.getSelectedCave();
@@ -59,7 +59,7 @@ public final class LoadPlay extends Task {
         // load the selected cave
         initCaveAndUnits( context );
 
-        context.notify( new TaskEvent( Type.RUN_TASK, TaskName.LOAD_CAVE.name() ) );
+        context.notify( new TaskSystemEvent( Type.RUN_TASK, TaskName.LOAD_CAVE.name() ) );
     }
     
     private void initCaveAndUnits( FFContext context ) {

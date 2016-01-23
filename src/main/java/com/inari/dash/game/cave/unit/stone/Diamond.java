@@ -70,7 +70,7 @@ public final class Diamond extends UnitHandle {
             .set( AnimatedTileAsset.TEXTURE_ASSET_ID, assetSystem.getAssetId( CaveSystem.GAME_UNIT_TEXTURE_NAME ) )
             .add( AnimatedTileAsset.ANIMATED_SPRITE_DATA, animationData )
         .activate( AnimatedTileAsset.class );
-        int animatioControllerId = assetSystem.getAssetInstaceId( animationAssetId );
+        int animatioControllerId = assetSystem.getAssetInstanceId( animationAssetId );
         
         controllerId = controllerSystem.getControllerBuilder()
             .set( EntityController.NAME, DIAMOND_NAME )

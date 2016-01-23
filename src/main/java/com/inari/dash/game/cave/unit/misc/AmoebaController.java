@@ -12,8 +12,8 @@ import com.inari.dash.game.cave.unit.EUnit;
 import com.inari.dash.game.cave.unit.UnitAspect;
 import com.inari.dash.game.cave.unit.UnitController;
 import com.inari.dash.game.cave.unit.UnitType;
-import com.inari.firefly.audio.AudioEvent;
-import com.inari.firefly.audio.AudioEvent.Type;
+import com.inari.firefly.audio.AudioSystemEvent;
+import com.inari.firefly.audio.AudioSystemEvent.Type;
 import com.inari.firefly.graphics.tile.ETile;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FireFly;
@@ -43,7 +43,7 @@ public final class AmoebaController extends UnitController {
         tick++;
 
         if ( !soundPaying ) {
-            context.notify( new AudioEvent( UnitType.AMOEBA.handler.getSoundId(), Type.PLAY_SOUND ) );
+            context.notify( new AudioSystemEvent( UnitType.AMOEBA.handler.getSoundId(), Type.PLAY_SOUND ) );
             soundPaying = true;
         }
         
@@ -115,7 +115,7 @@ public final class AmoebaController extends UnitController {
             type.handler.createOne( pos.x, pos.y );
         }
         context.deleteEntity( entityId );
-        context.notify( new AudioEvent( UnitType.AMOEBA.handler.getSoundId(), Type.STOP_PLAYING ) );
+        context.notify( new AudioSystemEvent( UnitType.AMOEBA.handler.getSoundId(), Type.STOP_PLAYING ) );
     }
 
 }

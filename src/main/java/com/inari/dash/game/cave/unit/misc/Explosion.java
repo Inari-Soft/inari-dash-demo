@@ -45,7 +45,7 @@ public final class Explosion extends AbstractExplosionHandle {
             .set( AnimatedTileAsset.TEXTURE_ASSET_ID, assetSystem.getAssetId( CaveSystem.GAME_UNIT_TEXTURE_NAME ) )
             .add( AnimatedTileAsset.ANIMATED_SPRITE_DATA, animationData )
         .activate( AnimatedTileAsset.class );
-        int animatioControllerId = assetSystem.getAssetInstaceId( animationAssetId );
+        int animatioControllerId = assetSystem.getAssetInstanceId( animationAssetId );
         
         prefabId = prefabSystem.getEntityPrefabBuilder()
             .add( EEntity.CONTROLLER_IDS, CONTROLLER_ID )

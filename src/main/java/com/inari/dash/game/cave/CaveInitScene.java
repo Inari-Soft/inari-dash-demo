@@ -5,8 +5,8 @@ import java.util.BitSet;
 import com.inari.commons.geom.Position;
 import com.inari.commons.geom.Rectangle;
 import com.inari.firefly.asset.AssetSystem;
-import com.inari.firefly.audio.AudioEvent;
-import com.inari.firefly.audio.AudioEvent.Type;
+import com.inari.firefly.audio.AudioSystemEvent;
+import com.inari.firefly.audio.AudioSystemEvent.Type;
 import com.inari.firefly.graphics.sprite.ESprite;
 import com.inari.firefly.graphics.sprite.SpriteAsset;
 import com.inari.firefly.scene.Scene;
@@ -80,7 +80,7 @@ public class CaveInitScene extends Scene {
             introTiles.set( i );
         }
 
-        context.notify( new AudioEvent( CaveSystem.CaveSoundKey.COVER.name(), Type.PLAY_SOUND ) );
+        context.notify( new AudioSystemEvent( CaveSystem.CaveSoundKey.COVER.name(), Type.PLAY_SOUND ) );
     }
 
     @Override

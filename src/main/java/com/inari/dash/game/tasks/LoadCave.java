@@ -58,7 +58,7 @@ public final class LoadCave extends Task {
                 int offset = 4 * i;
                 context.getComponentBuilder( Asset.TYPE_KEY )
                     .set( SpriteAsset.NAME, CaveSystem.INTRO_TILE_SPRITE_NAME + i )
-                    .set( SpriteAsset.TEXTURE_ASSET_ID, assetSystem.getAssetId( CaveSystem.GAME_UNIT_TEXTURE_NAME ) )
+                    .set( SpriteAsset.TEXTURE_ASSET_ID, unitTextureAsset.getId() )
                     .set( SpriteAsset.TEXTURE_REGION, new Rectangle( 32 + offset, ( 6 * 32 ) + offset, 16, 16 ) )
                 .build( SpriteAsset.class );
             }

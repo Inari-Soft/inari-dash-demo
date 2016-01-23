@@ -6,13 +6,13 @@ import com.inari.dash.game.tasks.InitGameWorkflow.TaskName;
 import com.inari.firefly.asset.AssetSystem;
 import com.inari.firefly.audio.Sound;
 import com.inari.firefly.audio.SoundAsset;
-import com.inari.firefly.audio.AudioEvent;
+import com.inari.firefly.audio.AudioSystemEvent;
 import com.inari.firefly.audio.AudioSystem;
 import com.inari.firefly.graphics.text.FontAsset;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.task.Task;
-import com.inari.firefly.task.TaskEvent;
-import com.inari.firefly.task.TaskEvent.Type;
+import com.inari.firefly.task.TaskSystemEvent;
+import com.inari.firefly.task.TaskSystemEvent.Type;
 
 public final class LoadGame extends Task {
 
@@ -25,8 +25,8 @@ public final class LoadGame extends Task {
         
         loadGlobalAssets( context );
         
-        context.notify( new TaskEvent( Type.RUN_TASK, TaskName.LOAD_GAME_SELECTION.name() ) ); 
-        context.notify( new AudioEvent( GameSystem.TITLE_SONG_SOUND_NAME, AudioEvent.Type.PLAY_SOUND ) );
+        context.notify( new TaskSystemEvent( Type.RUN_TASK, TaskName.LOAD_GAME_SELECTION.name() ) ); 
+        context.notify( new AudioSystemEvent( GameSystem.TITLE_SONG_SOUND_NAME, AudioSystemEvent.Type.PLAY_SOUND ) );
     }
     
     public final void loadGlobalAssets( FFContext context ) {

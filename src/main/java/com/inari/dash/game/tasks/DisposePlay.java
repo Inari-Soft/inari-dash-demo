@@ -9,15 +9,15 @@ import com.inari.dash.game.cave.unit.action.UnitActionType;
 import com.inari.dash.game.tasks.InitGameWorkflow.TaskName;
 import com.inari.firefly.action.ActionSystem;
 import com.inari.firefly.asset.AssetSystem;
-import com.inari.firefly.audio.AudioEvent;
+import com.inari.firefly.audio.AudioSystemEvent;
 import com.inari.firefly.audio.AudioSystem;
 import com.inari.firefly.control.ControllerSystem;
 import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.view.ViewSystem;
 import com.inari.firefly.task.Task;
-import com.inari.firefly.task.TaskEvent;
-import com.inari.firefly.task.TaskEvent.Type;
+import com.inari.firefly.task.TaskSystemEvent;
+import com.inari.firefly.task.TaskSystemEvent.Type;
 
 public final class DisposePlay extends Task {
 
@@ -28,10 +28,10 @@ public final class DisposePlay extends Task {
     @Override
     public final void run( FFContext context ) {
         
-        context.notify( new TaskEvent( Type.RUN_TASK, TaskName.DISPOSE_CAVE.name() ) ); 
+        context.notify( new TaskSystemEvent( Type.RUN_TASK, TaskName.DISPOSE_CAVE.name() ) ); 
         disposeCaveData( context );
-        context.notify( new TaskEvent( Type.RUN_TASK, TaskName.LOAD_GAME_SELECTION.name() ) ); 
-        context.notify( new AudioEvent( GameSystem.TITLE_SONG_SOUND_NAME, AudioEvent.Type.PLAY_SOUND ) );
+        context.notify( new TaskSystemEvent( Type.RUN_TASK, TaskName.LOAD_GAME_SELECTION.name() ) ); 
+        context.notify( new AudioSystemEvent( GameSystem.TITLE_SONG_SOUND_NAME, AudioSystemEvent.Type.PLAY_SOUND ) );
     }
     
     private final void disposeCaveData( FFContext context ) {

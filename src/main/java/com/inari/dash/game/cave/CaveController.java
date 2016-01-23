@@ -14,21 +14,21 @@ import com.inari.dash.game.cave.unit.action.UnitActionType;
 import com.inari.dash.game.cave.unit.misc.Exit;
 import com.inari.dash.game.tasks.InitGameWorkflow.StateChangeName;
 import com.inari.dash.game.tasks.InitGameWorkflow.TaskName;
-import com.inari.firefly.action.ActionEvent;
+import com.inari.firefly.action.ActionSystemEvent;
 import com.inari.firefly.asset.AssetSystem;
-import com.inari.firefly.audio.AudioEvent;
-import com.inari.firefly.audio.AudioEvent.Type;
+import com.inari.firefly.audio.AudioSystemEvent;
+import com.inari.firefly.audio.AudioSystemEvent.Type;
 import com.inari.firefly.control.Controller;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.graphics.text.EText;
-import com.inari.firefly.scene.SceneEvent;
-import com.inari.firefly.state.WorkflowEvent;
+import com.inari.firefly.scene.SceneSystemEvent;
+import com.inari.firefly.state.StateSystemEvent;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.external.FFTimer;
 import com.inari.firefly.system.external.FFTimer.UpdateScheduler;
 import com.inari.firefly.system.view.ViewSystem;
-import com.inari.firefly.task.TaskEvent;
+import com.inari.firefly.task.TaskSystemEvent;
 
 public final class CaveController extends Controller {
     
@@ -70,7 +70,7 @@ public final class CaveController extends Controller {
         
         if ( caveService.caveState == CaveState.INIT ) {
             if ( !init ) {
-                context.notify( new SceneEvent( CaveSystem.CAVE_INIT_SCENE_NAME, SceneEvent.EventType.RUN )  );
+                context.notify( new SceneSystemEvent( CaveSystem.CAVE_INIT_SCENE_NAME, SceneSystemEvent.EventType.RUN )  );
                 initHeader( gameData );
                 init = true;
             }
@@ -78,7 +78,7 @@ public final class CaveController extends Controller {
                 initSeconds ++;
             }
             if ( initSeconds > 3 ) {
-                context.notify( new SceneEvent( CaveSystem.CAVE_INIT_SCENE_NAME, SceneEvent.EventType.STOP )  );
+                context.notify( new SceneSystemEvent( CaveSystem.CAVE_INIT_SCENE_NAME, SceneSystemEvent.EventType.STOP )  );
                 caveService.caveState = CaveState.ENTERING;
                 playHeader();
                 init = false;
@@ -102,7 +102,7 @@ public final class CaveController extends Controller {
                 int caveTime = caveData.getTime();
                 if ( caveTime < 10 && caveTime > 0 ) {
                     String soundName = "TIMEOUT" + caveTime;
-                    context.notify( new AudioEvent( CaveSoundKey.valueOf( soundName ).name(), Type.PLAY_SOUND ) );
+                    context.notify( new AudioSystemEvent( CaveSoundKey.valueOf( soundName ).name(), Type.PLAY_SOUND ) );
                 }
                 
                 if ( caveTime == 0 ) {
@@ -119,9 +119,9 @@ public final class CaveController extends Controller {
                 boolean enough = caveData.getDiamondsToCollect() == caveData.getDiamondsCollected();
                 if ( enough ) {
                     exitUnit.setAspects( AspectSetBuilder.create( UnitAspect.ACTIVE, UnitAspect.WALKABLE ) );
-                    context.notify( WorkflowEvent.createDoStateChangeEvent( Exit.EXIT_NAME, Exit.getStateChangeName() ) );
-                    context.notify( new ActionEvent( UnitActionType.FLASH.index(), exitEntityId ) );
-                    context.notify( new AudioEvent( CaveSoundKey.CRACK.name(), Type.PLAY_SOUND ) );
+                    context.notify( StateSystemEvent.createDoStateChangeEvent( Exit.EXIT_NAME, Exit.getStateChangeName() ) );
+                    context.notify( new ActionSystemEvent( UnitActionType.FLASH.index(), exitEntityId ) );
+                    context.notify( new AudioSystemEvent( CaveSoundKey.CRACK.name(), Type.PLAY_SOUND ) );
                 }
             }
             
@@ -136,7 +136,7 @@ public final class CaveController extends Controller {
             if ( initSeconds <= 0 ) {
                 EUnit playerUnit = entitySystem.getComponent( playerEntityId, EUnit.TYPE_KEY );
                 playerUnit.resetAspect( UnitAspect.ALIVE );
-                context.notify( new AudioEvent( CaveSystem.CaveSoundKey.FINISHED.name(), Type.PLAY_SOUND ) );
+                context.notify( new AudioSystemEvent( CaveSystem.CaveSoundKey.FINISHED.name(), Type.PLAY_SOUND ) );
                 initSeconds++;
             }
             int time = caveData.getTime();
@@ -144,9 +144,9 @@ public final class CaveController extends Controller {
                 caveData.tick();
                 updatePlayHeader( gameData, caveData );
             } else {
-                context.notify( new AudioEvent( CaveSystem.CaveSoundKey.FINISHED.name(), Type.STOP_PLAYING ) );
+                context.notify( new AudioSystemEvent( CaveSystem.CaveSoundKey.FINISHED.name(), Type.STOP_PLAYING ) );
                 if ( gameData.hasNextCave() ) {
-                    context.notify( new TaskEvent( TaskEvent.Type.RUN_TASK, TaskName.NEXT_CAVE.name() ) );
+                    context.notify( new TaskSystemEvent( TaskSystemEvent.Type.RUN_TASK, TaskName.NEXT_CAVE.name() ) );
                 } else {
                     exitPlay();
                 }
@@ -159,7 +159,7 @@ public final class CaveController extends Controller {
                 int lives = gameData.getLives() - 1;
                 gameData.setLives( lives );
                 if ( lives >= 1 ) {
-                    context.notify( new TaskEvent( TaskEvent.Type.RUN_TASK, TaskName.REPLAY_CAVE.name() ) );
+                    context.notify( new TaskSystemEvent( TaskSystemEvent.Type.RUN_TASK, TaskName.REPLAY_CAVE.name() ) );
                 } else {
                     gameOverHeader();
                 }
@@ -181,7 +181,7 @@ public final class CaveController extends Controller {
     }
 
     private void exitPlay() {
-        context.notify( WorkflowEvent.createDoStateChangeEvent( GameSystem.GAME_WORKFLOW_NAME, StateChangeName.EXIT_PLAY.name() ) );
+        context.notify( StateSystemEvent.createDoStateChangeEvent( GameSystem.GAME_WORKFLOW_NAME, StateChangeName.EXIT_PLAY.name() ) );
     }
 
     

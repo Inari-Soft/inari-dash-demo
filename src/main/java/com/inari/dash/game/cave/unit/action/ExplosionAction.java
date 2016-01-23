@@ -6,7 +6,7 @@ import com.inari.commons.geom.Position;
 import com.inari.dash.game.cave.unit.EUnit;
 import com.inari.dash.game.cave.unit.UnitAspect;
 import com.inari.dash.game.cave.unit.UnitType;
-import com.inari.firefly.audio.AudioEvent;
+import com.inari.firefly.audio.AudioSystemEvent;
 import com.inari.firefly.graphics.tile.ETile;
 
 
@@ -50,7 +50,7 @@ public final class ExplosionAction extends UnitAction {
         GeomUtils.movePosition( tmpPos, Direction.NORTH, 1, true );
         createExplosion( explodeTo );
         
-        context.notify( new AudioEvent( UnitType.EXPLOSION.handler.getSoundId(), AudioEvent.Type.PLAY_SOUND ) );
+        context.notify( new AudioSystemEvent( UnitType.EXPLOSION.handler.getSoundId(), AudioSystemEvent.Type.PLAY_SOUND ) );
         explosionType = UnitType.EXPLOSION;
     }
 

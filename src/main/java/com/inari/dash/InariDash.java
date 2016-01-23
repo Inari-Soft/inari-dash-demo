@@ -15,8 +15,8 @@ import com.inari.firefly.libgdx.GdxFirefly;
 import com.inari.firefly.scene.SceneSystem;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.task.Task;
-import com.inari.firefly.task.TaskEvent;
-import com.inari.firefly.task.TaskEvent.Type;
+import com.inari.firefly.task.TaskSystemEvent;
+import com.inari.firefly.task.TaskSystemEvent.Type;
 
 public class InariDash extends GdxFFApplicationAdapter {
 
@@ -58,7 +58,7 @@ public class InariDash extends GdxFFApplicationAdapter {
             .set( Task.REMOVE_AFTER_RUN, true )
             .set( Task.NAME, InitGameWorkflow.TASK_NAME )
             .build( InitGameWorkflow.class );
-        context.notify( new TaskEvent( Type.RUN_TASK, startTaskId ) );
+        context.notify( new TaskSystemEvent( Type.RUN_TASK, startTaskId ) );
     }
 
     @Override

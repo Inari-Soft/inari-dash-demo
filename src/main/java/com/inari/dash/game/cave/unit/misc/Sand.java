@@ -14,6 +14,9 @@ import com.inari.firefly.FFInitException;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.graphics.sprite.SpriteAsset;
 import com.inari.firefly.graphics.tile.ETile;
+import com.inari.firefly.graphics.tile.TileGrid;
+import com.inari.firefly.graphics.tile.TileSystemEvent;
+import com.inari.firefly.graphics.tile.TileSystemEvent.Type;
 import com.inari.firefly.system.FFContext;
 
 public final class Sand extends UnitHandle {
@@ -77,9 +80,15 @@ public final class Sand extends UnitHandle {
 
     @Override
     public final int createOne( int xGridPos, int yGridPos ) {
-        ETile tile = entitySystem.getComponent( sandEntityId, ETile.TYPE_KEY );
-        tile.getGridPositions().add( new Position( xGridPos, yGridPos ) );
-        caveService.setEntityId( sandEntityId, xGridPos, yGridPos );
+        context.notify( 
+            new TileSystemEvent( 
+                Type.MULTIPOSITION_ADD, 
+                context.getSystemComponentId( TileGrid.TYPE_KEY, CaveSystem.CAVE_TILE_GRID_NAME ),
+                sandEntityId,
+                new Position( xGridPos, yGridPos )
+            )
+        );
+        
         return sandEntityId;
     }
 

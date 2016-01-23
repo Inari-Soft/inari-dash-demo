@@ -27,9 +27,11 @@ public abstract class UnitHandle implements FFContextInitiable, Disposable {
     protected AudioSystem soundSystem;
     protected ControllerSystem controllerSystem;
     protected StateSystem stateSystem;
+    protected FFContext context;
     
     @Override
     public void init( FFContext context ) throws FFInitException {
+        this.context = context;
         entitySystem = context.getSystem( EntitySystem.SYSTEM_KEY );
         assetSystem = context.getSystem( AssetSystem.SYSTEM_KEY );
         caveService = context.getSystem( CaveSystem.SYSTEM_KEY );

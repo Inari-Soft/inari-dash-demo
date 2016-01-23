@@ -80,7 +80,7 @@ public final class Exit extends UnitHandle {
     @Override
     public final int createOne( int xGridPos, int yGridPos ) {
         exitEntityId = entitySystem.getEntityBuilder()
-            .add( EEntity.CONTROLLER_IDS, assetSystem.getAssetInstaceId( animationAssetId ) )
+            .add( EEntity.CONTROLLER_IDS, assetSystem.getAssetInstanceId( animationAssetId ) )
             .set( ETransform.VIEW_ID, viewSystem.getViewId( CaveSystem.CAVE_VIEW_NAME ) )
             .set( ETile.GRID_X_POSITION, xGridPos )
             .set( ETile.GRID_Y_POSITION, yGridPos )
