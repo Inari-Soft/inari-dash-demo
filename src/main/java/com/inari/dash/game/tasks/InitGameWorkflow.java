@@ -3,6 +3,7 @@ package com.inari.dash.game.tasks;
 import com.inari.dash.game.GameExitCondition;
 import com.inari.dash.game.GameSystem;
 import com.inari.dash.game.StartGameCondition;
+import com.inari.firefly.component.build.ComponentBuilder;
 import com.inari.firefly.state.StateChange;
 import com.inari.firefly.state.StateSystem;
 import com.inari.firefly.state.Workflow;
@@ -16,27 +17,47 @@ public class InitGameWorkflow extends Task {
     public static final String TASK_NAME = "InitGameWorkflow";
     
     public enum TaskName {
-        LOAD_GAME( LoadGame.class, true ),
+        LOAD_GAME( 
+            LoadGame.class, 
+            true,
+            new WorkflowEventTrigger( GameSystem.GAME_WORKFLOW_NAME, WorkflowEventTrigger.Type.ENTER_STATE, StateName.GAME_SELECTION.name() )
+        ),
         LOAD_GAME_SELECTION( LoadGameSelection.class ),
-        LOAD_PLAY( LoadPlay.class ),
+        LOAD_PLAY( 
+            LoadPlay.class,
+            false,
+            new WorkflowEventTrigger( GameSystem.GAME_WORKFLOW_NAME, WorkflowEventTrigger.Type.STATE_CHANGE, StateChangeName.PLAY_CAVE.name() )
+        ),
         LOAD_CAVE( LoadCave.class ),
         NEXT_CAVE( NextCave.class ),
         REPLAY_CAVE( ReplayCave.class ),
         DISPOSE_CAVE( DisposeCave.class ),
-        DISPOSE_PLAY( DisposePlay.class ),
+        DISPOSE_PLAY( 
+            DisposePlay.class,
+            false,
+            new WorkflowEventTrigger( GameSystem.GAME_WORKFLOW_NAME, WorkflowEventTrigger.Type.STATE_CHANGE, StateChangeName.EXIT_PLAY.name() )
+        ),
         DISPOSE_GAME_SELECTION( DisposeGameSelection.class ),
-        DISPOSE_GAME( DisposeGame.class, true );
+        DISPOSE_GAME( 
+            DisposeGame.class, 
+            true,
+            new WorkflowEventTrigger( GameSystem.GAME_WORKFLOW_NAME, WorkflowEventTrigger.Type.STATE_CHANGE, StateChangeName.EXIT_GAME.name() )
+        );
         
-        public boolean removeAfterRun = false;
+        public final boolean removeAfterRun;
         public final Class<? extends Task> type;
+        public final WorkflowEventTrigger trigger;
         
         private TaskName( Class<? extends Task> type ) {
             this.type = type;
+            this.removeAfterRun = false;
+            trigger = null;
         }
         
-        private TaskName( Class<? extends Task> type, boolean removeAfterRun ) {
+        private TaskName( Class<? extends Task> type, boolean removeAfterRun, WorkflowEventTrigger trigger ) {
             this.type = type;
             this.removeAfterRun = removeAfterRun;
+            this.trigger = trigger;
         }
     }
     
@@ -70,33 +91,15 @@ public class InitGameWorkflow extends Task {
         TaskSystem taskSystem = context.getSystem( TaskSystem.SYSTEM_KEY );
         
         for ( TaskName taskName : TaskName.values() ) {
-            taskSystem.getTaskBuilder()
+            ComponentBuilder taskBuilder = taskSystem.getTaskBuilder()
                 .set( Task.NAME, taskName.name() )
-                .set( Task.REMOVE_AFTER_RUN, taskName.removeAfterRun )
-            .build( taskName.type );
+                .set( Task.REMOVE_AFTER_RUN, taskName.removeAfterRun );
+            
+            if ( taskName.trigger != null ) {
+                taskBuilder.add( Task.TRIGGERS, taskName.trigger );
+            }
+            taskBuilder.build( taskName.type );
         }
-        
-        taskSystem.getTaskTriggerBuilder()
-            .set( WorkflowEventTrigger.TASK_ID, taskSystem.getTaskId( TaskName.LOAD_GAME.name() ) )
-            .set( WorkflowEventTrigger.WORKFLOW_NAME, GameSystem.GAME_WORKFLOW_NAME )
-            .set( WorkflowEventTrigger.TRIGGER_TYPE, WorkflowEventTrigger.Type.ENTER_STATE )
-            .set( WorkflowEventTrigger.TRIGGER_NAME, StateName.GAME_SELECTION.name() )
-        .buildAndNext( WorkflowEventTrigger.class )
-            .set( WorkflowEventTrigger.TASK_ID, taskSystem.getTaskId( TaskName.DISPOSE_GAME.name() ) )
-            .set( WorkflowEventTrigger.WORKFLOW_NAME, GameSystem.GAME_WORKFLOW_NAME )
-            .set( WorkflowEventTrigger.TRIGGER_TYPE, WorkflowEventTrigger.Type.STATE_CHANGE )
-            .set( WorkflowEventTrigger.TRIGGER_NAME, StateChangeName.EXIT_GAME.name() )
-        .buildAndNext( WorkflowEventTrigger.class )
-            .set( WorkflowEventTrigger.TASK_ID, taskSystem.getTaskId( TaskName.LOAD_PLAY.name() ) )
-            .set( WorkflowEventTrigger.WORKFLOW_NAME, GameSystem.GAME_WORKFLOW_NAME )
-            .set( WorkflowEventTrigger.TRIGGER_TYPE, WorkflowEventTrigger.Type.STATE_CHANGE )
-            .set( WorkflowEventTrigger.TRIGGER_NAME, StateChangeName.PLAY_CAVE.name() )
-        .buildAndNext( WorkflowEventTrigger.class )
-            .set( WorkflowEventTrigger.TASK_ID, taskSystem.getTaskId( TaskName.DISPOSE_PLAY.name() ) )
-            .set( WorkflowEventTrigger.WORKFLOW_NAME, GameSystem.GAME_WORKFLOW_NAME )
-            .set( WorkflowEventTrigger.TRIGGER_TYPE, WorkflowEventTrigger.Type.STATE_CHANGE )
-            .set( WorkflowEventTrigger.TRIGGER_NAME, StateChangeName.EXIT_PLAY.name() )
-        .build( WorkflowEventTrigger.class );
         
         stateSystem.getWorkflowBuilder()
             .set( Workflow.NAME, GameSystem.GAME_WORKFLOW_NAME )
