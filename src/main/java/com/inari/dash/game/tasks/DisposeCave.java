@@ -35,7 +35,7 @@ public final class DisposeCave extends Task {
             }
         }
         
-        entitySystem.deleteAll();
+        entitySystem.deleteAllActive();
         assetSystem.disposeAsset( CaveSystem.GAME_UNIT_TEXTURE_NAME );
         
         int caveViewId = viewSystem.getViewId( CaveSystem.CAVE_VIEW_NAME );
