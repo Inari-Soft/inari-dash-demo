@@ -9,6 +9,8 @@ import com.inari.dash.game.GameSystem;
 import com.inari.dash.game.tasks.InitGameWorkflow;
 import com.inari.firefly.action.ActionSystem;
 import com.inari.firefly.component.attr.AttributeKey;
+import com.inari.firefly.composite.Composite;
+import com.inari.firefly.composite.CompositeSystem;
 import com.inari.firefly.graphics.text.TextSystem;
 import com.inari.firefly.libgdx.GdxFFApplicationAdapter;
 import com.inari.firefly.libgdx.GdxFirefly;
@@ -53,6 +55,7 @@ public class InariDash extends GdxFFApplicationAdapter {
         context.loadSystem( GameSystem.SYSTEM_KEY );
         context.loadSystem( SceneSystem.SYSTEM_KEY );
         context.loadSystem( TextSystem.SYSTEM_KEY );
+        context.loadSystem( CompositeSystem.SYSTEM_KEY );
         
         int startTaskId = context.getComponentBuilder( Task.TYPE_KEY )
             .set( Task.REMOVE_AFTER_RUN, true )

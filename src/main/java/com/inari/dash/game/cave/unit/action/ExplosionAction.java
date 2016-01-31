@@ -20,7 +20,7 @@ public final class ExplosionAction extends UnitAction {
     }
 
     @Override
-    public final void performAction( int entityId ) {
+    public final void action( int entityId ) {
         ETile tile = entitySystem.getComponent( entityId, ETile.TYPE_KEY );
         EUnit unit = entitySystem.getComponent( entityId, EUnit.TYPE_KEY );
         tmpPos.x = tile.getGridXPos();

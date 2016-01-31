@@ -22,7 +22,7 @@ public final class FlashAction extends UnitAction {
     }
 
     @Override
-    public final void performAction( int entityId ) {
+    public final void action( int entityId ) {
         context.registerListener( UpdateEvent.class, new FlashAnimation( context ) );
     }
 

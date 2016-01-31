@@ -16,7 +16,7 @@ public final class MoveAction extends UnitAction {
     }
 
     @Override
-    public final void performAction( int entityId ) {
+    public final void action( int entityId ) {
         // First we get the EUnit component and its Direction
         EUnit unit = entitySystem.getComponent( entityId, EUnit.TYPE_KEY );
         Direction movement = unit.getMovement();

@@ -12,12 +12,13 @@ import com.inari.dash.game.cave.unit.UnitAspect;
 import com.inari.dash.game.cave.unit.UnitHandle;
 import com.inari.dash.game.cave.unit.UnitType;
 import com.inari.firefly.FFInitException;
-import com.inari.firefly.asset.AnimatedSpriteData;
-import com.inari.firefly.asset.AnimatedTileAsset;
 import com.inari.firefly.audio.AudioSystemEvent;
 import com.inari.firefly.audio.Sound;
 import com.inari.firefly.audio.SoundAsset;
 import com.inari.firefly.audio.AudioSystemEvent.Type;
+import com.inari.firefly.composite.Composite;
+import com.inari.firefly.composite.sprite.AnimatedSpriteData;
+import com.inari.firefly.composite.sprite.AnimatedTile;
 import com.inari.firefly.entity.EEntity;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.EntityController;
@@ -42,6 +43,7 @@ public final class MagicWall extends UnitHandle {
     public static final String MAGIC_WALL_NAME = "magicWall";
 
     private int animationAssetId;
+    private int animatioControllerId;
     private int prefabId;
     private int controllerId;
     private int soundId;
@@ -82,15 +84,18 @@ public final class MagicWall extends UnitHandle {
         float updateRate = caveService.getUpdateRate();
         AnimatedSpriteData[] animationDataInactive = AnimatedSpriteData.create( StateName.INACTIVE.name(), Integer.MAX_VALUE, new Rectangle( 3 * 32, 6 * 32, 32, 32 ), 1, Direction.EAST );
         AnimatedSpriteData[] animationDataActive = AnimatedSpriteData.create( StateName.ACTIVE.name(), 100 - (int) updateRate * 4, new Rectangle( 4 * 32, 6 * 32, 32, 32 ), 4, Direction.EAST );
-        animationAssetId = assetSystem.getAssetBuilder()
-            .set( AnimatedTileAsset.NAME, MAGIC_WALL_NAME )
-            .set( AnimatedTileAsset.LOOPING, true )
-            .set( AnimatedTileAsset.UPDATE_RESOLUTION, updateRate )
-            .set( AnimatedTileAsset.TEXTURE_ASSET_ID, assetSystem.getAssetId( CaveSystem.GAME_UNIT_TEXTURE_NAME ) )
-            .set( AnimatedTileAsset.WORKFLOW_ID, workflowId )
-            .add( AnimatedTileAsset.ANIMATED_SPRITE_DATA, animationDataInactive )
-            .add( AnimatedTileAsset.ANIMATED_SPRITE_DATA, animationDataActive )
-        .activate( AnimatedTileAsset.class );
+        animationAssetId = context.getComponentBuilder( Composite.TYPE_KEY )
+            .set( AnimatedTile.NAME, MAGIC_WALL_NAME )
+            .set( AnimatedTile.LOOPING, true )
+            .set( AnimatedTile.UPDATE_RESOLUTION, updateRate )
+            .set( AnimatedTile.TEXTURE_ASSET_ID, assetSystem.getAssetId( CaveSystem.GAME_UNIT_TEXTURE_NAME ) )
+            .set( AnimatedTile.WORKFLOW_ID, workflowId )
+            .add( AnimatedTile.ANIMATED_SPRITE_DATA, animationDataInactive )
+            .add( AnimatedTile.ANIMATED_SPRITE_DATA, animationDataActive )
+        .activate( AnimatedTile.class );
+        animatioControllerId = context
+            .getSystemComponent( Composite.TYPE_KEY, animationAssetId, AnimatedTile.class )
+            .getAnimationControllerId();
         
         controllerId = controllerSystem.getControllerBuilder()
             .set( EntityController.NAME, MAGIC_WALL_NAME )
@@ -100,7 +105,7 @@ public final class MagicWall extends UnitHandle {
         prefabId = prefabSystem.getEntityPrefabBuilder()
             .set( EntityPrefab.NAME, MAGIC_WALL_NAME )
             .add( EEntity.CONTROLLER_IDS, controllerId )
-            .add( EEntity.CONTROLLER_IDS, assetSystem.getAssetInstanceId( animationAssetId ) )
+            .add( EEntity.CONTROLLER_IDS, animatioControllerId )
             .set( ETransform.VIEW_ID, viewSystem.getViewId( CaveSystem.CAVE_VIEW_NAME ) )
             .set( ETile.MULTI_POSITION, false )
             .set( EUnit.UNIT_TYPE, type() )
@@ -118,7 +123,7 @@ public final class MagicWall extends UnitHandle {
         controllerSystem.deleteController( controllerId );
         controllerId = -1;
         prefabSystem.deletePrefab( prefabId );
-        assetSystem.deleteAsset( animationAssetId );
+        context.deleteSystemComponent( Composite.TYPE_KEY, animationAssetId );
         stateSystem.deleteWorkflow( MAGIC_WALL_NAME );
         context.notify( new AudioSystemEvent( soundId, Type.STOP_PLAYING ) );
     }

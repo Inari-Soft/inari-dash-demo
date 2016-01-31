@@ -13,12 +13,13 @@ import com.inari.dash.game.cave.unit.UnitAspect;
 import com.inari.dash.game.cave.unit.UnitHandle;
 import com.inari.dash.game.cave.unit.UnitType;
 import com.inari.firefly.FFInitException;
-import com.inari.firefly.asset.AnimatedSpriteData;
-import com.inari.firefly.asset.AnimatedTileAsset;
 import com.inari.firefly.audio.AudioSystemEvent;
 import com.inari.firefly.audio.Sound;
 import com.inari.firefly.audio.SoundAsset;
 import com.inari.firefly.audio.AudioSystemEvent.Type;
+import com.inari.firefly.composite.Composite;
+import com.inari.firefly.composite.sprite.AnimatedSpriteData;
+import com.inari.firefly.composite.sprite.AnimatedTile;
 import com.inari.firefly.entity.EEntity;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.EntityController;
@@ -61,14 +62,16 @@ public final class Amoeba extends UnitHandle {
         
         float updateRate = caveService.getUpdateRate();
         AnimatedSpriteData[] animationData = AnimatedSpriteData.create( 80 - (int) updateRate * 4, new Rectangle( 0, 8 * 32, 32, 32 ), 8, Direction.EAST );
-        animationAssetId = assetSystem.getAssetBuilder()
-            .set( AnimatedTileAsset.NAME, AMOEBA_NAME )
-            .set( AnimatedTileAsset.LOOPING, true )
-            .set( AnimatedTileAsset.UPDATE_RESOLUTION, updateRate )
-            .set( AnimatedTileAsset.TEXTURE_ASSET_ID, assetSystem.getAssetId( CaveSystem.GAME_UNIT_TEXTURE_NAME ) )
-            .add( AnimatedTileAsset.ANIMATED_SPRITE_DATA, animationData )
-        .activate( AnimatedTileAsset.class );
-        int animatioControllerId = assetSystem.getAssetInstanceId( animationAssetId );
+        animationAssetId = context.getComponentBuilder( Composite.TYPE_KEY )
+            .set( AnimatedTile.NAME, AMOEBA_NAME )
+            .set( AnimatedTile.LOOPING, true )
+            .set( AnimatedTile.UPDATE_RESOLUTION, updateRate )
+            .set( AnimatedTile.TEXTURE_ASSET_ID, assetSystem.getAssetId( CaveSystem.GAME_UNIT_TEXTURE_NAME ) )
+            .add( AnimatedTile.ANIMATED_SPRITE_DATA, animationData )
+        .activate( AnimatedTile.class );
+        int animatioControllerId = context
+            .getSystemComponent( Composite.TYPE_KEY, animationAssetId, AnimatedTile.class )
+            .getAnimationControllerId();
         
         controllerId = controllerSystem.getControllerBuilder()
             .set( EntityController.NAME, AMOEBA_NAME )
@@ -92,7 +95,7 @@ public final class Amoeba extends UnitHandle {
         super.disposeCaveData( context );
         controllerSystem.deleteController( controllerId );
         entitySystem.delete( amoebaEntityId );
-        assetSystem.deleteAsset( animationAssetId );
+        context.deleteSystemComponent( Composite.TYPE_KEY, animationAssetId );
         context.notify( new AudioSystemEvent( soundId, Type.STOP_PLAYING ) );
     }
 

@@ -13,10 +13,11 @@ import com.inari.dash.game.cave.unit.EUnit;
 import com.inari.dash.game.cave.unit.UnitHandle;
 import com.inari.dash.game.cave.unit.UnitType;
 import com.inari.firefly.FFInitException;
-import com.inari.firefly.asset.AnimatedSpriteData;
-import com.inari.firefly.asset.AnimatedTileAsset;
 import com.inari.firefly.audio.Sound;
 import com.inari.firefly.audio.SoundAsset;
+import com.inari.firefly.composite.Composite;
+import com.inari.firefly.composite.sprite.AnimatedSpriteData;
+import com.inari.firefly.composite.sprite.AnimatedTile;
 import com.inari.firefly.control.Controller;
 import com.inari.firefly.entity.EEntity;
 import com.inari.firefly.entity.ETransform;
@@ -114,11 +115,13 @@ public final class Rockford extends UnitHandle {
     private int rfEntityId;
     
     private int animationAssetId;
+    private int animatioControllerId;
     int spaceSoundId;
     int sandSoundId;
     int inSoundId;
     int collectSoundId;
     int workflowId;
+    
     
     @Override
     public final void init( FFContext context ) throws FFInitException {
@@ -183,15 +186,17 @@ public final class Rockford extends UnitHandle {
             .set( Controller.UPDATE_RESOLUTION, updateRate )
         .build( RFController.class );
 
-        animationAssetId = assetSystem.getAssetBuilder()
-            .set( AnimatedTileAsset.NAME, NAME )
-            .set( AnimatedTileAsset.LOOPING, true )
-            .set( AnimatedTileAsset.UPDATE_RESOLUTION, updateRate )
-            .set( AnimatedTileAsset.TEXTURE_ASSET_ID, assetSystem.getAssetId( CaveSystem.GAME_UNIT_TEXTURE_NAME ) )
-            .set( AnimatedTileAsset.WORKFLOW_ID, workflowId )
-            .add( AnimatedTileAsset.ANIMATED_SPRITE_DATA, StateEnum.getAnimatedSpriteData( (int) updateRate ) )
-        .activate( AnimatedTileAsset.class );
-
+        animationAssetId = context.getComponentBuilder( Composite.TYPE_KEY )
+            .set( AnimatedTile.NAME, NAME )
+            .set( AnimatedTile.LOOPING, true )
+            .set( AnimatedTile.UPDATE_RESOLUTION, updateRate )
+            .set( AnimatedTile.TEXTURE_ASSET_ID, assetSystem.getAssetId( CaveSystem.GAME_UNIT_TEXTURE_NAME ) )
+            .set( AnimatedTile.WORKFLOW_ID, workflowId )
+            .add( AnimatedTile.ANIMATED_SPRITE_DATA, StateEnum.getAnimatedSpriteData( (int) updateRate ) )
+        .activate( AnimatedTile.class );
+        animatioControllerId = context
+            .getSystemComponent( Composite.TYPE_KEY, animationAssetId, AnimatedTile.class )
+            .getAnimationControllerId();
         
     }
     
@@ -201,7 +206,7 @@ public final class Rockford extends UnitHandle {
     public void disposeCaveData( FFContext context ) {
         super.disposeCaveData( context );
         controllerSystem.deleteController( controllerId );
-        assetSystem.deleteAsset( animationAssetId );
+        context.deleteSystemComponent( Composite.TYPE_KEY, animationAssetId );
         stateSystem.deleteWorkflow( workflowId );
         rfEntityId = -1;
     }
@@ -219,9 +224,10 @@ public final class Rockford extends UnitHandle {
 
     @Override
     public final int createOne( int xGridPos, int yGridPos ) {
+        
         rfEntityId = entitySystem.getEntityBuilder()
             .add( EEntity.CONTROLLER_IDS, controllerId )
-            .add( EEntity.CONTROLLER_IDS, assetSystem.getAssetInstanceId( animationAssetId ) )
+            .add( EEntity.CONTROLLER_IDS, animatioControllerId )
             .set( ETransform.VIEW_ID, viewSystem.getViewId( CaveSystem.CAVE_VIEW_NAME ) )
             .set( ETile.GRID_X_POSITION, xGridPos )
             .set( ETile.GRID_Y_POSITION, yGridPos )
