@@ -23,7 +23,6 @@ import com.inari.firefly.graphics.tile.TileGrid;
 import com.inari.firefly.graphics.tile.TileGridSystem;
 import com.inari.firefly.libgdx.GdxFirefly;
 import com.inari.firefly.scene.Scene;
-import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.view.View;
 import com.inari.firefly.system.view.ViewSystem;
 import com.inari.firefly.task.Task;
@@ -35,7 +34,7 @@ public final class LoadCave extends Task {
     }
 
     @Override
-    public final void run( FFContext context ) {
+    public final void runTask() {
         CaveSystem caveSystem = context.getSystem( CaveSystem.SYSTEM_KEY );
         Configuration config = context.getContextComponent( Configuration.CONTEXT_KEY );
 

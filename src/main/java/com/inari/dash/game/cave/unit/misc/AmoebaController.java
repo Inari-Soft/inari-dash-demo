@@ -15,7 +15,6 @@ import com.inari.dash.game.cave.unit.UnitType;
 import com.inari.firefly.audio.AudioSystemEvent;
 import com.inari.firefly.audio.AudioSystemEvent.Type;
 import com.inari.firefly.graphics.tile.ETile;
-import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FireFly;
 import com.inari.firefly.system.external.FFTimer;
 
@@ -29,8 +28,8 @@ public final class AmoebaController extends UnitController {
     private Position tmpPos = new Position();
     private Collection<Position> tmpPosList = new ArrayList<Position>();
 
-    protected AmoebaController( int id, FFContext context ) {
-        super( id, context );
+    protected AmoebaController( int id ) {
+        super( id );
     }
 
     @Override

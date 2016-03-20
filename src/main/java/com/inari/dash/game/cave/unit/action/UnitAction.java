@@ -4,11 +4,9 @@ import com.inari.dash.game.cave.CaveSystem;
 import com.inari.firefly.FFInitException;
 import com.inari.firefly.action.Action;
 import com.inari.firefly.entity.EntitySystem;
-import com.inari.firefly.system.FFContext;
 
 public abstract class UnitAction extends Action {
     
-    protected FFContext context;
     protected CaveSystem caveService;
     protected EntitySystem entitySystem;
 
@@ -17,15 +15,9 @@ public abstract class UnitAction extends Action {
     }
     
     @Override
-    public final void init( FFContext context ) throws FFInitException {
-        this.context = context;
+    public final void init() throws FFInitException {
         entitySystem = context.getSystem( EntitySystem.SYSTEM_KEY );
         caveService = context.getSystem( CaveSystem.SYSTEM_KEY );
     }
-    
-    @Override
-    public final void dispose( FFContext context ) {
-    }
-
 
 }

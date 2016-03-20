@@ -10,15 +10,14 @@ import com.inari.dash.game.cave.unit.action.UnitActionType;
 import com.inari.firefly.action.ActionSystemEvent;
 import com.inari.firefly.audio.AudioSystemEvent;
 import com.inari.firefly.graphics.tile.ETile;
-import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.external.FFTimer;
 
 public abstract class StoneController extends UnitController {
     
     private final Position tmpPos = new Position();
 
-    protected StoneController( int id, FFContext context ) {
-        super( id, context );
+    protected StoneController( int id ) {
+        super( id );
     }
 
     @Override

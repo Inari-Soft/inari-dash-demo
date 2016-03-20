@@ -8,7 +8,6 @@ import com.inari.firefly.control.ControllerSystem;
 import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.graphics.tile.TileGridSystem;
 import com.inari.firefly.scene.SceneSystemEvent;
-import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.view.ViewSystem;
 import com.inari.firefly.task.Task;
 
@@ -19,7 +18,7 @@ public final class DisposeCave extends Task {
     }
 
     @Override
-    public final void run( FFContext context ) {
+    public final void runTask() {
         AssetSystem assetSystem = context.getSystem( AssetSystem.SYSTEM_KEY );
         TileGridSystem tileGridSystem = context.getSystem( TileGridSystem.SYSTEM_KEY );
         ControllerSystem controllerSystem = context.getSystem( ControllerSystem.SYSTEM_KEY );

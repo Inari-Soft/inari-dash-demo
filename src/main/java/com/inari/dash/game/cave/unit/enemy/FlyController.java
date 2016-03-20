@@ -7,13 +7,12 @@ import com.inari.dash.game.cave.unit.UnitController;
 import com.inari.dash.game.cave.unit.UnitType;
 import com.inari.dash.game.cave.unit.action.UnitActionType;
 import com.inari.firefly.action.ActionSystemEvent;
-import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.external.FFTimer;
 
 public abstract class FlyController extends UnitController {
 
-    protected FlyController( int id, FFContext context ) {
-        super( id, context );
+    protected FlyController( int id ) {
+        super( id );
     }
     
     @Override

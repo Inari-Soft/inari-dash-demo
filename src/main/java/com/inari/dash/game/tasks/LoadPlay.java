@@ -40,7 +40,7 @@ public final class LoadPlay extends Task {
     }
 
     @Override
-    public final void run( FFContext context ) {
+    public final void runTask() {
         GameSystem gameService = context.getSystem( GameSystem.SYSTEM_KEY );
         
         // stop playing title song

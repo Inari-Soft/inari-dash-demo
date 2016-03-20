@@ -4,10 +4,10 @@ import com.inari.dash.Configuration;
 import com.inari.dash.game.GameSystem;
 import com.inari.dash.game.tasks.InitGameWorkflow.TaskName;
 import com.inari.firefly.asset.AssetSystem;
+import com.inari.firefly.audio.AudioSystem;
+import com.inari.firefly.audio.AudioSystemEvent;
 import com.inari.firefly.audio.Sound;
 import com.inari.firefly.audio.SoundAsset;
-import com.inari.firefly.audio.AudioSystemEvent;
-import com.inari.firefly.audio.AudioSystem;
 import com.inari.firefly.graphics.text.FontAsset;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.task.Task;
@@ -21,7 +21,7 @@ public final class LoadGame extends Task {
     }
 
     @Override
-    public final void run( FFContext context ) {
+    public final void runTask() {
         
         loadGlobalAssets( context );
         

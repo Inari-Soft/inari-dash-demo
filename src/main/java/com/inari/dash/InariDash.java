@@ -9,7 +9,6 @@ import com.inari.dash.game.GameSystem;
 import com.inari.dash.game.tasks.InitGameWorkflow;
 import com.inari.firefly.action.ActionSystem;
 import com.inari.firefly.component.attr.AttributeKey;
-import com.inari.firefly.composite.Composite;
 import com.inari.firefly.composite.CompositeSystem;
 import com.inari.firefly.graphics.text.TextSystem;
 import com.inari.firefly.libgdx.GdxFFApplicationAdapter;

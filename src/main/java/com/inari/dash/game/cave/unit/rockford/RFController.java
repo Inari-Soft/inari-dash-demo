@@ -12,13 +12,13 @@ import com.inari.dash.game.cave.unit.UnitType;
 import com.inari.dash.game.cave.unit.action.UnitActionType;
 import com.inari.dash.game.cave.unit.rockford.Rockford.StateChangeEnum;
 import com.inari.dash.game.cave.unit.rockford.Rockford.StateEnum;
+import com.inari.firefly.FFInitException;
 import com.inari.firefly.action.ActionSystemEvent;
 import com.inari.firefly.audio.AudioSystemEvent;
 import com.inari.firefly.audio.AudioSystemEvent.Type;
 import com.inari.firefly.graphics.tile.ETile;
 import com.inari.firefly.state.StateSystem;
 import com.inari.firefly.state.StateSystemEvent;
-import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FireFly;
 import com.inari.firefly.system.external.FFInput;
 import com.inari.firefly.system.external.FFInput.ButtonType;
@@ -31,14 +31,20 @@ public final class RFController extends UnitController {
     private static final int IDLE_BLINKING_DURATION = 6;
     private static final int IDLE_FRETFUL_DURATION = 20;
     
-    private final FFInput input;
-    private final StateSystem stateSystem;
+    private FFInput input;
+    private StateSystem stateSystem;
 
     private Position currentPos = new Position();
     private Position nextPos = new Position();
 
-    protected RFController( int id, FFContext context ) {
-        super( id, context );
+    protected RFController( int id ) {
+        super( id );
+    }
+
+    @Override
+    public final void init() throws FFInitException {
+        super.init();
+        
         input = context.getInput();
         stateSystem = context.getSystem( StateSystem.SYSTEM_KEY );
     }

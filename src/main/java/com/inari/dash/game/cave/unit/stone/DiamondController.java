@@ -1,14 +1,13 @@
 package com.inari.dash.game.cave.unit.stone;
 
 import com.inari.dash.game.cave.unit.UnitType;
-import com.inari.firefly.system.FFContext;
 
 public final class DiamondController extends StoneController {
     
     private final Diamond diamondHandle;
 
-    protected DiamondController( int id, FFContext context ) {
-        super( id, context );
+    protected DiamondController( int id ) {
+        super( id );
         diamondHandle = (Diamond) UnitType.DIAMOND.handler;
     }
 

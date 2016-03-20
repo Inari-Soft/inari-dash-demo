@@ -10,7 +10,6 @@ import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.graphics.sprite.ESprite;
 import com.inari.firefly.graphics.text.EText;
 import com.inari.firefly.graphics.text.FontAsset;
-import com.inari.firefly.system.FFContext;
 import com.inari.firefly.task.Task;
 
 public final class LoadGameSelection extends Task {
@@ -20,7 +19,7 @@ public final class LoadGameSelection extends Task {
     }
 
     @Override
-    public final void run( FFContext context ) {
+    public final void runTask() {
         EntitySystem entitySystem = context.getSystem( EntitySystem.SYSTEM_KEY );
         AssetSystem assetSystem = context.getSystem( AssetSystem.SYSTEM_KEY );
 

@@ -13,12 +13,9 @@ import com.inari.firefly.system.UpdateEventListener;
 public final class FlashAction extends UnitAction {
     
     private static final String FLASH_SPRITE_ASSET_NAME = CaveSystem.GAME_UNIT_TEXTURE_NAME + "_flash";
-    
-    private final FFContext context;
 
-    protected FlashAction( int id, FFContext context ) {
+    protected FlashAction( int id ) {
         super( id );
-        this.context = context;
     }
 
     @Override

@@ -7,13 +7,12 @@ import com.inari.dash.game.cave.unit.UnitType;
 import com.inari.firefly.audio.AudioSystemEvent;
 import com.inari.firefly.audio.AudioSystemEvent.Type;
 import com.inari.firefly.graphics.tile.ETile;
-import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.external.FFTimer;
 
 public final class ExpandingWallController extends UnitController {
 
-    protected ExpandingWallController( int id, FFContext context ) {
-        super( id, context );
+    protected ExpandingWallController( int id ) {
+        super( id );
     }
 
     @Override

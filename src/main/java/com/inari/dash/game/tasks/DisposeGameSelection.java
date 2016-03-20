@@ -3,7 +3,6 @@ package com.inari.dash.game.tasks;
 import com.inari.dash.game.GameSystem;
 import com.inari.firefly.control.ControllerSystem;
 import com.inari.firefly.entity.EntitySystem;
-import com.inari.firefly.system.FFContext;
 import com.inari.firefly.task.Task;
 
 public final class DisposeGameSelection extends Task {
@@ -13,7 +12,7 @@ public final class DisposeGameSelection extends Task {
     }
 
     @Override
-    public void run( FFContext context ) {
+    public void runTask()  {
         EntitySystem entitySystem = context.getSystem( EntitySystem.SYSTEM_KEY );
         ControllerSystem controllerSystem = context.getSystem( ControllerSystem.SYSTEM_KEY );
         GameSystem gameSystem = context.getSystem( GameSystem.SYSTEM_KEY );

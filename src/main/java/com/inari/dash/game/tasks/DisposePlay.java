@@ -9,8 +9,8 @@ import com.inari.dash.game.cave.unit.action.UnitActionType;
 import com.inari.dash.game.tasks.InitGameWorkflow.TaskName;
 import com.inari.firefly.action.ActionSystem;
 import com.inari.firefly.asset.AssetSystem;
-import com.inari.firefly.audio.AudioSystemEvent;
 import com.inari.firefly.audio.AudioSystem;
+import com.inari.firefly.audio.AudioSystemEvent;
 import com.inari.firefly.control.ControllerSystem;
 import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.system.FFContext;
@@ -26,7 +26,7 @@ public final class DisposePlay extends Task {
     }
 
     @Override
-    public final void run( FFContext context ) {
+    public final void runTask()  {
         
         context.notify( new TaskSystemEvent( Type.RUN_TASK, TaskName.DISPOSE_CAVE.name() ) ); 
         disposeCaveData( context );

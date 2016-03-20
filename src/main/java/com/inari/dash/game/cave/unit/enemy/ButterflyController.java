@@ -2,12 +2,11 @@ package com.inari.dash.game.cave.unit.enemy;
 
 import com.inari.commons.GeomUtils;
 import com.inari.commons.geom.Direction;
-import com.inari.firefly.system.FFContext;
 
 public final class ButterflyController extends FlyController {
 
-    protected ButterflyController( int id, FFContext context ) {
-        super( id, context );
+    protected ButterflyController( int id ) {
+        super( id );
     }
 
     @Override

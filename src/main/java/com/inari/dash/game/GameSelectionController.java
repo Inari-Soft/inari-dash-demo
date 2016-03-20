@@ -1,19 +1,25 @@
 package com.inari.dash.game;
 
 import com.inari.dash.game.GameSystem.SelectionMode;
+import com.inari.firefly.FFInitException;
 import com.inari.firefly.control.Controller;
-import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.external.FFInput;
 import com.inari.firefly.system.external.FFInput.ButtonType;
 import com.inari.firefly.system.external.FFTimer;
 
 public final class GameSelectionController extends Controller {
 
-    private final GameSystem gameSystem;
-    private final FFInput input;
+    private GameSystem gameSystem;
+    private FFInput input;
 
-    protected GameSelectionController( int id, FFContext context ) {
+    protected GameSelectionController( int id ) {
         super( id );
+    }
+
+    @Override
+    public final void init() throws FFInitException {
+        super.init();
+        
         gameSystem = context.getSystem( GameSystem.SYSTEM_KEY );
         input = context.getInput();
     }
@@ -41,11 +47,6 @@ public final class GameSelectionController extends Controller {
         }
         
         gameSystem.update();
-    }
-
-    @Override
-    public final void dispose( FFContext context ) {
-        
     }
 
 }

@@ -4,15 +4,14 @@ import com.inari.dash.game.cave.unit.EUnit;
 import com.inari.dash.game.cave.unit.UnitController;
 import com.inari.dash.game.cave.unit.UnitType;
 import com.inari.firefly.graphics.tile.ETile;
-import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.external.FFTimer;
 
 public final class ExplosionController extends UnitController {
 
     private static final int ANIMATION_DURATION = 6;
 
-    protected ExplosionController( int id, FFContext context ) {
-        super( id, context );
+    protected ExplosionController( int id ) {
+        super( id );
     }
 
     @Override

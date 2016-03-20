@@ -4,11 +4,11 @@ import com.inari.commons.geom.Direction;
 import com.inari.dash.game.cave.unit.EUnit;
 import com.inari.dash.game.cave.unit.UnitController;
 import com.inari.dash.game.cave.unit.UnitType;
+import com.inari.firefly.FFInitException;
 import com.inari.firefly.audio.AudioSystemEvent;
 import com.inari.firefly.audio.AudioSystemEvent.Type;
 import com.inari.firefly.graphics.tile.ETile;
 import com.inari.firefly.state.StateSystemEvent;
-import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.external.FFTimer;
 import com.inari.firefly.system.external.FFTimer.UpdateScheduler;
 
@@ -18,15 +18,18 @@ public final class MagicWallController extends UnitController {
     private int activDuration;
     
     private UpdateScheduler secondTimer;
-    private FFContext context;
 
-    protected MagicWallController( int id, FFContext context ) {
-        super( id, context );
-        this.context = context;
+    protected MagicWallController( int id ) {
+        super( id );
+    }
+
+    @Override
+    public final void init() throws FFInitException {
+        super.init();
+        
         activDuration = caveService.getMagicWallTime();
         secondTimer = context.getTimer().createUpdateScheduler( 1 );
     }
-    
 
     @Override
     protected final void update( FFTimer timer, int entityId ) {

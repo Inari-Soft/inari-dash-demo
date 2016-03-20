@@ -14,6 +14,7 @@ import com.inari.dash.game.cave.unit.action.UnitActionType;
 import com.inari.dash.game.cave.unit.misc.Exit;
 import com.inari.dash.game.tasks.InitGameWorkflow.StateChangeName;
 import com.inari.dash.game.tasks.InitGameWorkflow.TaskName;
+import com.inari.firefly.FFInitException;
 import com.inari.firefly.action.ActionSystemEvent;
 import com.inari.firefly.asset.AssetSystem;
 import com.inari.firefly.audio.AudioSystemEvent;
@@ -24,7 +25,6 @@ import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.graphics.text.EText;
 import com.inari.firefly.scene.SceneSystemEvent;
 import com.inari.firefly.state.StateSystemEvent;
-import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.external.FFTimer;
 import com.inari.firefly.system.external.FFTimer.UpdateScheduler;
 import com.inari.firefly.system.view.ViewSystem;
@@ -32,9 +32,8 @@ import com.inari.firefly.task.TaskSystemEvent;
 
 public final class CaveController extends Controller {
     
-    private final FFContext context;
-    private final CaveSystem caveService;
-    private final EntitySystem entitySystem;
+    private CaveSystem caveService;
+    private EntitySystem entitySystem;
     
     private UpdateScheduler secondTimer;
     private int initSeconds = 0;
@@ -53,15 +52,22 @@ public final class CaveController extends Controller {
     private final int playerEntityId;
     
     
-    protected CaveController( int id, FFContext context ) {
+    protected CaveController( int id ) {
         super( id );
-        this.context = context;
-        caveService = context.getSystem( CaveSystem.SYSTEM_KEY ); 
-        entitySystem = context.getSystem( EntitySystem.SYSTEM_KEY );
-        secondTimer = context.getTimer().createUpdateScheduler( 1 );
         exitEntityId = UnitType.EXIT.getHandle().getEntityId();
         playerEntityId = UnitType.ROCKFORD.getHandle().getEntityId();
     }
+
+    @Override
+    public void init() throws FFInitException {
+        super.init();
+        
+        caveService = context.getSystem( CaveSystem.SYSTEM_KEY ); 
+        entitySystem = context.getSystem( EntitySystem.SYSTEM_KEY );
+        secondTimer = context.getTimer().createUpdateScheduler( 1 );
+    }
+
+
 
     @Override
     public final void update( FFTimer timer ) {
@@ -182,11 +188,6 @@ public final class CaveController extends Controller {
 
     private void exitPlay() {
         context.notify( StateSystemEvent.createDoStateChangeEvent( GameSystem.GAME_WORKFLOW_NAME, StateChangeName.EXIT_PLAY.name() ) );
-    }
-
-    
-    @Override
-    public final void dispose( FFContext context ) {
     }
     
     private void initHeader( GameData gameData ) {
