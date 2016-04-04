@@ -2,7 +2,7 @@ package com.inari.dash.game.cave;
 
 
 import com.inari.commons.graphics.RGBColor;
-import com.inari.firefly.filter.IColorFilter;
+import com.inari.commons.lang.convert.IntValueConverter;
 
 
 public class CaveData {
@@ -44,7 +44,7 @@ public class CaveData {
 
     private boolean intermission = false;
     private int updateRate = 10;
-    private IColorFilter colorFilter = null;
+    private IntValueConverter colorConverter = null;
     
     private int caveWidth = -1;
     private int caveHeight = -1;
@@ -245,12 +245,12 @@ public class CaveData {
         return this;
     }
 
-    public final IColorFilter getColorFilter() {
-        return colorFilter;
+    public final IntValueConverter getColorConverter() {
+        return colorConverter;
     }
 
-    public final void setColorFilter( IColorFilter colorFilter ) {
-        this.colorFilter = colorFilter;
+    public final void setColorConverter( IntValueConverter colorConverter ) {
+        this.colorConverter = colorConverter;
     }
 
     public boolean isIntermission() {

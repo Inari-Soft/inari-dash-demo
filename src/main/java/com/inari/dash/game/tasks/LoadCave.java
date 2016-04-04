@@ -1,6 +1,7 @@
 package com.inari.dash.game.tasks;
 
 import com.inari.commons.geom.Rectangle;
+import com.inari.commons.lang.convert.IntValueConverter;
 import com.inari.dash.Configuration;
 import com.inari.dash.game.GameSystem;
 import com.inari.dash.game.cave.CaveController;
@@ -14,7 +15,6 @@ import com.inari.firefly.control.Controller;
 import com.inari.firefly.controller.view.SimpleCameraController;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.EntitySystem;
-import com.inari.firefly.filter.IColorFilter;
 import com.inari.firefly.graphics.TextureAsset;
 import com.inari.firefly.graphics.sprite.SpriteAsset;
 import com.inari.firefly.graphics.text.EText;
@@ -44,9 +44,9 @@ public final class LoadCave extends Task {
 
         // load unit texture asset with cave colors
         TextureAsset unitTextureAsset = context.getSystemComponent( Asset.TYPE_KEY, CaveSystem.GAME_UNIT_TEXTURE_NAME, TextureAsset.class );
-        IColorFilter colorFilter = caveData.getColorFilter();
-        context.addProperty( CaveSystem.COLOR_FILTER_KEY, colorFilter );
-        unitTextureAsset.setDynamicAttribute( GdxFirefly.DynamicAttributes.TEXTURE_COLOR_FILTER_NAME, CaveSystem.COLOR_FILTER_KEY.id() );
+        IntValueConverter colorFilter = caveData.getColorConverter();
+        context.addProperty( CaveSystem.COLOR_CONVERTER_KEY, colorFilter );
+        unitTextureAsset.setDynamicAttribute( GdxFirefly.DynamicAttributes.TEXTURE_COLOR_CONVERTER_NAME, CaveSystem.COLOR_CONVERTER_KEY.id() );
         context.getSystem( AssetSystem.SYSTEM_KEY ).loadAsset( CaveSystem.GAME_UNIT_TEXTURE_NAME );
         
         // create init scene assets

@@ -41,7 +41,7 @@ public class InariDash extends GdxFFApplicationAdapter {
     @Override
     protected Collection<AttributeKey<?>> getDynamicAttributes() {
         Collection<AttributeKey<?>> dynamicAttributes = super.getDynamicAttributes();
-        dynamicAttributes.add( GdxFirefly.DynamicAttributes.TEXTURE_COLOR_FILTER_NAME );
+        dynamicAttributes.add( GdxFirefly.DynamicAttributes.TEXTURE_COLOR_CONVERTER_NAME );
         return dynamicAttributes;
     }
 

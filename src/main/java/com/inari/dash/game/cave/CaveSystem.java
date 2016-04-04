@@ -7,13 +7,13 @@ import com.inari.commons.geom.Direction;
 import com.inari.commons.geom.Position;
 import com.inari.commons.lang.TypedKey;
 import com.inari.commons.lang.aspect.Aspect;
+import com.inari.commons.lang.convert.IntValueConverter;
 import com.inari.commons.lang.indexed.IndexedTypeKey;
 import com.inari.dash.game.GameData;
 import com.inari.dash.game.cave.unit.EUnit;
 import com.inari.dash.game.cave.unit.UnitAspect;
 import com.inari.dash.game.cave.unit.UnitType;
 import com.inari.firefly.FFInitException;
-import com.inari.firefly.filter.IColorFilter;
 import com.inari.firefly.graphics.tile.ETile;
 import com.inari.firefly.graphics.tile.TileGrid;
 import com.inari.firefly.system.FFContext;
@@ -51,7 +51,7 @@ public class CaveSystem implements FFSystem {
     public static final String CAVE_CONTROLLER_NAME = "CaveController";
     public static final String CAVE_CAMERA_CONTROLLER_NAME = "CaveViewCamera";
     public static final String CAVE_TILE_GRID_NAME = "CaveTileGrid";
-    public static final TypedKey<IColorFilter> COLOR_FILTER_KEY = TypedKey.create( "COLOR_FILTER_KEY", IColorFilter.class );
+    public static final TypedKey<IntValueConverter> COLOR_CONVERTER_KEY = TypedKey.create( "COLOR_CONVERTER_KEY", IntValueConverter.class );
     
     public static enum CaveSoundKey {
         COVER( "original/sound/cover.wav", true ),

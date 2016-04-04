@@ -12,7 +12,7 @@ import com.inari.dash.game.GameInfo.Gametype;
 import com.inari.dash.game.GameInfo.Graphicset;
 import com.inari.dash.game.cave.CaveData;
 import com.inari.dash.game.cave.CaveData.CaveColors;
-import com.inari.firefly.filter.ColorReplaceMapFitler;
+import com.inari.firefly.converter.IntColorConverter;
 
 public class GameDataBuilder {
     
@@ -206,8 +206,8 @@ public class GameDataBuilder {
             colorMap.put( CaveColors.BaseAmoebaColor.color, CaveColors.valueOf( amoebaColor ).color );
         }
         
-        ColorReplaceMapFitler colorFilter = new ColorReplaceMapFitler( colorMap );
-        currentCaveData.setColorFilter( colorFilter );
+        IntColorConverter colorFilter = new IntColorConverter( colorMap );
+        currentCaveData.setColorConverter( colorFilter );
     }
 
     private void setCaveSize( String value ) {
