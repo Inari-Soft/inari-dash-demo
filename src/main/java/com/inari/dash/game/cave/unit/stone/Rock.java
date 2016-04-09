@@ -99,7 +99,6 @@ public final class Rock extends UnitHandle {
     public final void dispose( FFContext context ) {
         prefabSystem.deletePrefab( ROCK_NAME );
         assetSystem.disposeAsset( ROCK_SPRITE_ASSET_NAME );
-        controllerSystem.deleteController( controllerId );
     }
 
     @Override

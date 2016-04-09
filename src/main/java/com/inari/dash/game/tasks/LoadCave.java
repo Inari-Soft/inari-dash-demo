@@ -118,7 +118,7 @@ public final class LoadCave extends Task {
             .set( ETransform.VIEW_ID, context.getSystemComponentId( View.TYPE_KEY, CaveSystem.HEADER_VIEW_NAME ) )
             .set( ETransform.XPOSITION, 8 )
             .set( ETransform.YPOSITION, 8 )
-            .set( EText.FONT_ID, context.getSystem( AssetSystem.SYSTEM_KEY ).getAssetId( GameSystem.GAME_FONT_TEXTURE_NAME ) )
+            .set( EText.FONT_ASSET_NAME, GameSystem.GAME_FONT_TEXTURE_NAME )
             .set( EText.TEXT, caveSystem.getHeaderText() )
         .activate();
         
@@ -130,7 +130,7 @@ public final class LoadCave extends Task {
         // load cave init scene
         context.getComponentBuilder( Scene.TYPE_KEY )
             .set( Scene.NAME, CaveSystem.CAVE_INIT_SCENE_NAME )
-            .set( Scene.VIEW_ID, context.getSystem( ViewSystem.SYSTEM_KEY ).getViewId( CaveSystem.CAVE_VIEW_NAME ) )
+            .set( Scene.VIEW_NAME, CaveSystem.CAVE_VIEW_NAME )
             .set( Scene.RUN_ONCE, false )
             .set( Scene.UPDATE_RESOLUTION, 40 )
         .build( CaveInitScene.class );

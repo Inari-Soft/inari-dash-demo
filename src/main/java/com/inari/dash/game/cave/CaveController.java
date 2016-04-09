@@ -16,7 +16,6 @@ import com.inari.dash.game.tasks.InitGameWorkflow.StateChangeName;
 import com.inari.dash.game.tasks.InitGameWorkflow.TaskName;
 import com.inari.firefly.FFInitException;
 import com.inari.firefly.action.ActionSystemEvent;
-import com.inari.firefly.asset.AssetSystem;
 import com.inari.firefly.audio.AudioSystemEvent;
 import com.inari.firefly.audio.AudioSystemEvent.Type;
 import com.inari.firefly.control.Controller;
@@ -209,13 +208,12 @@ public final class CaveController extends Controller {
     private void gameOverHeader() {
         clearHeader();
         caveService.caveState = CaveState.GAME_OVER;
-        AssetSystem assetSystem = context.getSystem( AssetSystem.SYSTEM_KEY );
         ViewSystem viewSystem = context.getSystem( ViewSystem.SYSTEM_KEY );
         entitySystem.getEntityBuilder()
             .set( ETransform.VIEW_ID, viewSystem.getViewId( CaveSystem.HEADER_VIEW_NAME ) )
             .set( ETransform.XPOSITION, 100 )
             .set( ETransform.YPOSITION, 8 )
-            .set( EText.FONT_ID, assetSystem.getAssetId( GameSystem.GAME_FONT_TEXTURE_NAME ) )
+            .set( EText.FONT_ASSET_NAME, GameSystem.GAME_FONT_TEXTURE_NAME )
             .set( EText.TEXT_STRING, "%%% GAME OVER %%%" )
             .set( EText.TINT_COLOR, GameSystem.YELLOW_FONT_COLOR )
         .activate();

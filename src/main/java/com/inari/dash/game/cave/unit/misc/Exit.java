@@ -9,7 +9,7 @@ import com.inari.dash.game.cave.CaveSystem;
 import com.inari.dash.game.cave.unit.EUnit;
 import com.inari.dash.game.cave.unit.UnitHandle;
 import com.inari.dash.game.cave.unit.UnitType;
-import com.inari.firefly.composite.Composite;
+import com.inari.firefly.asset.Asset;
 import com.inari.firefly.composite.sprite.AnimatedSpriteData;
 import com.inari.firefly.composite.sprite.AnimatedTile;
 import com.inari.firefly.entity.EEntity;
@@ -48,7 +48,7 @@ public final class Exit extends UnitHandle {
         float updateRate = caveService.getUpdateRate();
         AnimatedSpriteData[] animationDataClosed = AnimatedSpriteData.create( ExitState.EXIT_CLOSED.name(), Integer.MAX_VALUE, new Rectangle( 32, 6 * 32, 32, 32 ), 1, Direction.EAST );
         AnimatedSpriteData[] animationDataOpen = AnimatedSpriteData.create( ExitState.EXIT_OPEN.name(), 400 - (int) updateRate * 4, new Rectangle( 32, 6 * 32, 32, 32 ), 2, Direction.EAST );
-        animationAssetId = context.getComponentBuilder( Composite.TYPE_KEY )
+        animationAssetId = context.getComponentBuilder( Asset.TYPE_KEY )
             .set( AnimatedTile.NAME, EXIT_NAME )
             .set( AnimatedTile.LOOPING, true )
             .set( AnimatedTile.UPDATE_RESOLUTION, updateRate )
@@ -58,7 +58,7 @@ public final class Exit extends UnitHandle {
             .add( AnimatedTile.ANIMATED_SPRITE_DATA, animationDataOpen )
         .activate( AnimatedTile.class );
         animatioControllerId = context
-            .getSystemComponent( Composite.TYPE_KEY, animationAssetId, AnimatedTile.class )
+            .getSystemComponent( Asset.TYPE_KEY, animationAssetId, AnimatedTile.class )
             .getAnimationControllerId();
     }
 
@@ -67,7 +67,7 @@ public final class Exit extends UnitHandle {
         super.disposeCaveData( context );
         
         entitySystem.delete( exitEntityId );
-        context.deleteSystemComponent( Composite.TYPE_KEY, animationAssetId );
+        context.deleteSystemComponent( Asset.TYPE_KEY, animationAssetId );
         stateSystem.deleteWorkflow( workflowId );
     }
 

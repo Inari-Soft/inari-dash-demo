@@ -13,9 +13,9 @@ import com.inari.dash.game.cave.unit.EUnit;
 import com.inari.dash.game.cave.unit.UnitHandle;
 import com.inari.dash.game.cave.unit.UnitType;
 import com.inari.firefly.FFInitException;
+import com.inari.firefly.asset.Asset;
 import com.inari.firefly.audio.Sound;
 import com.inari.firefly.audio.SoundAsset;
-import com.inari.firefly.composite.Composite;
 import com.inari.firefly.composite.sprite.AnimatedSpriteData;
 import com.inari.firefly.composite.sprite.AnimatedTile;
 import com.inari.firefly.control.Controller;
@@ -186,7 +186,7 @@ public final class Rockford extends UnitHandle {
             .set( Controller.UPDATE_RESOLUTION, updateRate )
         .build( RFController.class );
 
-        animationAssetId = context.getComponentBuilder( Composite.TYPE_KEY )
+        animationAssetId = context.getComponentBuilder( Asset.TYPE_KEY )
             .set( AnimatedTile.NAME, NAME )
             .set( AnimatedTile.LOOPING, true )
             .set( AnimatedTile.UPDATE_RESOLUTION, updateRate )
@@ -195,7 +195,7 @@ public final class Rockford extends UnitHandle {
             .add( AnimatedTile.ANIMATED_SPRITE_DATA, StateEnum.getAnimatedSpriteData( (int) updateRate ) )
         .activate( AnimatedTile.class );
         animatioControllerId = context
-            .getSystemComponent( Composite.TYPE_KEY, animationAssetId, AnimatedTile.class )
+            .getSystemComponent( Asset.TYPE_KEY, animationAssetId, AnimatedTile.class )
             .getAnimationControllerId();
         
     }
@@ -206,7 +206,7 @@ public final class Rockford extends UnitHandle {
     public void disposeCaveData( FFContext context ) {
         super.disposeCaveData( context );
         controllerSystem.deleteController( controllerId );
-        context.deleteSystemComponent( Composite.TYPE_KEY, animationAssetId );
+        context.deleteSystemComponent( Asset.TYPE_KEY, animationAssetId );
         stateSystem.deleteWorkflow( workflowId );
         rfEntityId = -1;
     }

@@ -12,11 +12,11 @@ import com.inari.dash.game.cave.unit.UnitAspect;
 import com.inari.dash.game.cave.unit.UnitHandle;
 import com.inari.dash.game.cave.unit.UnitType;
 import com.inari.firefly.FFInitException;
+import com.inari.firefly.asset.Asset;
 import com.inari.firefly.audio.AudioSystemEvent;
+import com.inari.firefly.audio.AudioSystemEvent.Type;
 import com.inari.firefly.audio.Sound;
 import com.inari.firefly.audio.SoundAsset;
-import com.inari.firefly.audio.AudioSystemEvent.Type;
-import com.inari.firefly.composite.Composite;
 import com.inari.firefly.composite.sprite.AnimatedSpriteData;
 import com.inari.firefly.composite.sprite.AnimatedTile;
 import com.inari.firefly.entity.EEntity;
@@ -84,7 +84,7 @@ public final class MagicWall extends UnitHandle {
         float updateRate = caveService.getUpdateRate();
         AnimatedSpriteData[] animationDataInactive = AnimatedSpriteData.create( StateName.INACTIVE.name(), Integer.MAX_VALUE, new Rectangle( 3 * 32, 6 * 32, 32, 32 ), 1, Direction.EAST );
         AnimatedSpriteData[] animationDataActive = AnimatedSpriteData.create( StateName.ACTIVE.name(), 100 - (int) updateRate * 4, new Rectangle( 4 * 32, 6 * 32, 32, 32 ), 4, Direction.EAST );
-        animationAssetId = context.getComponentBuilder( Composite.TYPE_KEY )
+        animationAssetId = context.getComponentBuilder( Asset.TYPE_KEY )
             .set( AnimatedTile.NAME, MAGIC_WALL_NAME )
             .set( AnimatedTile.LOOPING, true )
             .set( AnimatedTile.UPDATE_RESOLUTION, updateRate )
@@ -94,7 +94,7 @@ public final class MagicWall extends UnitHandle {
             .add( AnimatedTile.ANIMATED_SPRITE_DATA, animationDataActive )
         .activate( AnimatedTile.class );
         animatioControllerId = context
-            .getSystemComponent( Composite.TYPE_KEY, animationAssetId, AnimatedTile.class )
+            .getSystemComponent( Asset.TYPE_KEY, animationAssetId, AnimatedTile.class )
             .getAnimationControllerId();
         
         controllerId = controllerSystem.getControllerBuilder()
@@ -123,7 +123,7 @@ public final class MagicWall extends UnitHandle {
         controllerSystem.deleteController( controllerId );
         controllerId = -1;
         prefabSystem.deletePrefab( prefabId );
-        context.deleteSystemComponent( Composite.TYPE_KEY, animationAssetId );
+        context.deleteSystemComponent( Asset.TYPE_KEY, animationAssetId );
         stateSystem.deleteWorkflow( MAGIC_WALL_NAME );
         context.notify( new AudioSystemEvent( soundId, Type.STOP_PLAYING ) );
     }

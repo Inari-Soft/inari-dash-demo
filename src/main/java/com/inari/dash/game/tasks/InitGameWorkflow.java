@@ -7,9 +7,10 @@ import com.inari.firefly.component.build.ComponentBuilder;
 import com.inari.firefly.state.StateChange;
 import com.inari.firefly.state.StateSystem;
 import com.inari.firefly.state.Workflow;
+import com.inari.firefly.system.Condition;
 import com.inari.firefly.task.Task;
 import com.inari.firefly.task.TaskSystem;
-import com.inari.firefly.task.WorkflowEventTrigger;
+import com.inari.firefly.task.WorkflowTaskTrigger;
 
 public class InitGameWorkflow extends Task {
     
@@ -19,13 +20,21 @@ public class InitGameWorkflow extends Task {
         LOAD_GAME( 
             LoadGame.class, 
             true,
-            new WorkflowEventTrigger( GameSystem.GAME_WORKFLOW_NAME, WorkflowEventTrigger.Type.ENTER_STATE, StateName.GAME_SELECTION.name() )
+            new WorkflowTaskTrigger( 
+                GameSystem.GAME_WORKFLOW_NAME, 
+                WorkflowTaskTrigger.Type.ENTER_STATE, 
+                StateName.GAME_SELECTION.name() 
+            )
         ),
         LOAD_GAME_SELECTION( LoadGameSelection.class ),
         LOAD_PLAY( 
             LoadPlay.class,
             false,
-            new WorkflowEventTrigger( GameSystem.GAME_WORKFLOW_NAME, WorkflowEventTrigger.Type.STATE_CHANGE, StateChangeName.PLAY_CAVE.name() )
+            new WorkflowTaskTrigger( 
+                GameSystem.GAME_WORKFLOW_NAME, 
+                WorkflowTaskTrigger.Type.STATE_CHANGE, 
+                StateChangeName.PLAY_CAVE.name() 
+            )
         ),
         LOAD_CAVE( LoadCave.class ),
         NEXT_CAVE( NextCave.class ),
@@ -34,18 +43,26 @@ public class InitGameWorkflow extends Task {
         DISPOSE_PLAY( 
             DisposePlay.class,
             false,
-            new WorkflowEventTrigger( GameSystem.GAME_WORKFLOW_NAME, WorkflowEventTrigger.Type.STATE_CHANGE, StateChangeName.EXIT_PLAY.name() )
+            new WorkflowTaskTrigger( 
+                GameSystem.GAME_WORKFLOW_NAME, 
+                WorkflowTaskTrigger.Type.STATE_CHANGE, 
+                StateChangeName.EXIT_PLAY.name() 
+            )
         ),
         DISPOSE_GAME_SELECTION( DisposeGameSelection.class ),
         DISPOSE_GAME( 
             DisposeGame.class, 
             true,
-            new WorkflowEventTrigger( GameSystem.GAME_WORKFLOW_NAME, WorkflowEventTrigger.Type.STATE_CHANGE, StateChangeName.EXIT_GAME.name() )
+            new WorkflowTaskTrigger( 
+                GameSystem.GAME_WORKFLOW_NAME, 
+                WorkflowTaskTrigger.Type.STATE_CHANGE, 
+                StateChangeName.EXIT_GAME.name()
+            )
         );
         
         public final boolean removeAfterRun;
         public final Class<? extends Task> type;
-        public final WorkflowEventTrigger trigger;
+        public final WorkflowTaskTrigger trigger;
         
         private TaskName( Class<? extends Task> type ) {
             this.type = type;
@@ -53,7 +70,7 @@ public class InitGameWorkflow extends Task {
             trigger = null;
         }
         
-        private TaskName( Class<? extends Task> type, boolean removeAfterRun, WorkflowEventTrigger trigger ) {
+        private TaskName( Class<? extends Task> type, boolean removeAfterRun, WorkflowTaskTrigger trigger ) {
             this.type = type;
             this.removeAfterRun = removeAfterRun;
             this.trigger = trigger;
@@ -66,15 +83,17 @@ public class InitGameWorkflow extends Task {
     }
     
     public enum StateChangeName {
-        EXIT_GAME( StateName.GAME_SELECTION, null ),
-        PLAY_CAVE( StateName.GAME_SELECTION, StateName.CAVE_PLAY ),
-        EXIT_PLAY( StateName.CAVE_PLAY, StateName.GAME_SELECTION )
+        EXIT_GAME( StateName.GAME_SELECTION, null, new GameExitCondition() ),
+        PLAY_CAVE( StateName.GAME_SELECTION, StateName.CAVE_PLAY, new StartGameCondition() ),
+        EXIT_PLAY( StateName.CAVE_PLAY, StateName.GAME_SELECTION, null )
         ;
         public final StateName from;
         public final StateName to;
-        private StateChangeName( StateName from, StateName to ) {
+        public final Condition condition;
+        private StateChangeName( StateName from, StateName to, Condition condition ) {
             this.from = from;
             this.to = to;
+            this.condition = condition;
         }
     }
 
@@ -95,43 +114,30 @@ public class InitGameWorkflow extends Task {
                 .set( Task.REMOVE_AFTER_RUN, taskName.removeAfterRun );
             
             if ( taskName.trigger != null ) {
-                taskBuilder.add( Task.TRIGGERS, taskName.trigger );
+                taskBuilder.set( Task.TRIGGER, taskName.trigger );
             }
             taskBuilder.build( taskName.type );
         }
         
-        stateSystem.getWorkflowBuilder()
+        ComponentBuilder workflowBuilder = stateSystem.getWorkflowBuilder()
             .set( Workflow.NAME, GameSystem.GAME_WORKFLOW_NAME )
             .set( Workflow.START_STATE_NAME, StateName.GAME_SELECTION.name() )
             .add( Workflow.STATES, StateName.GAME_SELECTION.name() )
-            .add( Workflow.STATES, StateName.CAVE_PLAY.name() )
-            .add( 
+            .add( Workflow.STATES, StateName.CAVE_PLAY.name() );
+        
+        for ( StateChangeName stateChangeName : StateChangeName.values() ) {
+            workflowBuilder.add( 
                 Workflow.STATE_CHANGES, 
                 new StateChange( 
-                    StateChangeName.EXIT_GAME.name(), 
-                    StateName.GAME_SELECTION.name(), 
-                    null,
-                    new GameExitCondition() 
+                    stateChangeName.name(), 
+                    stateChangeName.from.name(),
+                    ( stateChangeName.to != null )? stateChangeName.to.name() : null,
+                    stateChangeName.condition
                 ) 
-            )
-            .add( 
-                Workflow.STATE_CHANGES, 
-                new StateChange( 
-                    StateChangeName.PLAY_CAVE.name(), 
-                    StateName.GAME_SELECTION.name(), 
-                    StateName.CAVE_PLAY.name(), 
-                    new StartGameCondition() 
-                ) 
-            )
-            .add( 
-                Workflow.STATE_CHANGES, 
-                new StateChange( 
-                    StateChangeName.EXIT_PLAY.name(), 
-                    StateName.GAME_SELECTION.name(), 
-                    StateName.GAME_SELECTION.name()
-                ) 
-            )
-        .activate();
+            );
+        }
+
+        workflowBuilder.activate();
     }
 
 }

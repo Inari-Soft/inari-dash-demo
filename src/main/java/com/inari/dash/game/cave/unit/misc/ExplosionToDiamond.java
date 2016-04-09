@@ -8,7 +8,7 @@ import com.inari.dash.game.cave.CaveSystem;
 import com.inari.dash.game.cave.unit.EUnit;
 import com.inari.dash.game.cave.unit.UnitType;
 import com.inari.firefly.FFInitException;
-import com.inari.firefly.composite.Composite;
+import com.inari.firefly.asset.Asset;
 import com.inari.firefly.composite.sprite.AnimatedSpriteData;
 import com.inari.firefly.composite.sprite.AnimatedTile;
 import com.inari.firefly.entity.EEntity;
@@ -38,7 +38,7 @@ public class ExplosionToDiamond extends AbstractExplosionHandle {
         
         float updateRate = caveService.getUpdateRate();
         AnimatedSpriteData[] animationData = AnimatedSpriteData.create( 200 - (int) updateRate * 4, new Rectangle( 2 * 32, 7 * 32, 32, 32 ), 6, Direction.EAST );
-        animationAssetId = context.getComponentBuilder( Composite.TYPE_KEY )
+        animationAssetId = context.getComponentBuilder( Asset.TYPE_KEY )
             .set( AnimatedTile.NAME, EXPLOSION_NAME )
             .set( AnimatedTile.LOOPING, true )
             .set( AnimatedTile.UPDATE_RESOLUTION, updateRate )
@@ -46,7 +46,7 @@ public class ExplosionToDiamond extends AbstractExplosionHandle {
             .add( AnimatedTile.ANIMATED_SPRITE_DATA, animationData )
         .activate( AnimatedTile.class );
         int animatioControllerId = context
-            .getSystemComponent( Composite.TYPE_KEY, animationAssetId, AnimatedTile.class )
+            .getSystemComponent( Asset.TYPE_KEY, animationAssetId, AnimatedTile.class )
             .getAnimationControllerId();
         
         prefabId = prefabSystem.getEntityPrefabBuilder()
@@ -67,7 +67,7 @@ public class ExplosionToDiamond extends AbstractExplosionHandle {
         super.disposeCaveData( context );
         
         prefabSystem.deletePrefab( prefabId );
-        context.deleteSystemComponent( Composite.TYPE_KEY, animationAssetId );
+        context.deleteSystemComponent( Asset.TYPE_KEY, animationAssetId );
     }
 
     @Override

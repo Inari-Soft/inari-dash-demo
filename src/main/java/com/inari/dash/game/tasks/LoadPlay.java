@@ -71,7 +71,7 @@ public final class LoadPlay extends Task {
         int screenHeight = context.getScreenHeight();
 
         CameraPivot playerPivot = createPlayerPivot( config.unitWidth, config.unitHeight );
-        int cameraControllerId = context.getComponentBuilder( Controller.TYPE_KEY )
+        context.getComponentBuilder( Controller.TYPE_KEY )
             .set( Controller.NAME, CaveSystem.CAVE_CAMERA_CONTROLLER_NAME )
             .set( Controller.UPDATE_RESOLUTION, 60 )
             .set( SimpleCameraController.PIVOT, playerPivot )
@@ -95,7 +95,7 @@ public final class LoadPlay extends Task {
             .set( View.LAYERING_ENABLED, false )
             .set( View.BOUNDS, new Rectangle( 20, CaveSystem.HEADER_VIEW_HEIGHT, screenWidth - 40, screenHeight - CaveSystem.HEADER_VIEW_HEIGHT - 20 ) )
             .set( View.WORLD_POSITION, new Position( 0, 0 ) )
-            .set( View.CONTROLLER_IDS, new int[]{ cameraControllerId } ) 
+            .set( View.CONTROLLER_NAME, CaveSystem.CAVE_CAMERA_CONTROLLER_NAME ) 
             .set( View.CLEAR_COLOR, new RGBColor( 0, 0, 0, 1 ) )
         .activate();
         

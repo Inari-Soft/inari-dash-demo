@@ -15,6 +15,8 @@ import com.inari.firefly.task.TaskSystemEvent;
 import com.inari.firefly.task.TaskSystemEvent.Type;
 
 public final class LoadGame extends Task {
+    
+    private boolean globalAssetsLoaded = false;
 
     public LoadGame( int id ) {
         super( id );
@@ -23,7 +25,9 @@ public final class LoadGame extends Task {
     @Override
     public final void runTask() {
         
-        loadGlobalAssets( context );
+        if ( !globalAssetsLoaded ) {
+            loadGlobalAssets( context );
+        }
         
         context.notify( new TaskSystemEvent( Type.RUN_TASK, TaskName.LOAD_GAME_SELECTION.name() ) ); 
         context.notify( new AudioSystemEvent( GameSystem.TITLE_SONG_SOUND_NAME, AudioSystemEvent.Type.PLAY_SOUND ) );
@@ -58,6 +62,8 @@ public final class LoadGame extends Task {
             .set( Sound.LOOPING, true )
             .set( Sound.NAME, GameSystem.TITLE_SONG_SOUND_NAME )
         .build();
+        
+        globalAssetsLoaded = true;
     }
 
 }
