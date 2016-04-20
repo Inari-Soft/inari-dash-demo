@@ -12,7 +12,9 @@ import com.inari.dash.game.cave.unit.UnitType;
 import com.inari.firefly.asset.Asset;
 import com.inari.firefly.asset.AssetSystem;
 import com.inari.firefly.control.Controller;
+import com.inari.firefly.control.task.Task;
 import com.inari.firefly.controller.view.SimpleCameraController;
+import com.inari.firefly.entity.EEntity;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.graphics.TextureAsset;
@@ -21,11 +23,9 @@ import com.inari.firefly.graphics.text.EText;
 import com.inari.firefly.graphics.tile.NormalFastTileGridRenderer;
 import com.inari.firefly.graphics.tile.TileGrid;
 import com.inari.firefly.graphics.tile.TileGridSystem;
+import com.inari.firefly.graphics.view.View;
 import com.inari.firefly.libgdx.GdxFirefly;
 import com.inari.firefly.scene.Scene;
-import com.inari.firefly.system.view.View;
-import com.inari.firefly.system.view.ViewSystem;
-import com.inari.firefly.task.Task;
 
 public final class LoadCave extends Task {
 
@@ -36,7 +36,7 @@ public final class LoadCave extends Task {
     @Override
     public final void runTask() {
         CaveSystem caveSystem = context.getSystem( CaveSystem.SYSTEM_KEY );
-        Configuration config = context.getContextComponent( Configuration.CONTEXT_KEY );
+        Configuration config = context.getContextComponent( Configuration.COMPONENT_NAME );
 
         caveSystem.reset();
         CaveData caveData = caveSystem.getCaveData();
@@ -57,7 +57,7 @@ public final class LoadCave extends Task {
                 int offset = 4 * i;
                 context.getComponentBuilder( Asset.TYPE_KEY )
                     .set( SpriteAsset.NAME, CaveSystem.INTRO_TILE_SPRITE_NAME + i )
-                    .set( SpriteAsset.TEXTURE_ASSET_ID, unitTextureAsset.getId() )
+                    .set( SpriteAsset.TEXTURE_ASSET_ID, unitTextureAsset.index() )
                     .set( SpriteAsset.TEXTURE_REGION, new Rectangle( 32 + offset, ( 6 * 32 ) + offset, 16, 16 ) )
                 .build( SpriteAsset.class );
             }
@@ -79,9 +79,7 @@ public final class LoadCave extends Task {
         
         // load all units
         for ( UnitType unitType : UnitType.values() ) {
-            if ( unitType.handler != null ) {
-                unitType.handler.loadCaveData( context );
-            }
+            caveSystem.getPrototype( unitType ).load( context );
         }
         
         String caveDataString = caveData.getCaveDataString();
@@ -91,9 +89,11 @@ public final class LoadCave extends Task {
                 String type = String.valueOf( caveDataString.charAt( index ) );
                 UnitType unitType = CaveSystem.BDCFF_TYPES_MAP.get( type );
                 if ( unitType != null ) {
-                    unitType.handler.createOne( type, x, y );
+                    caveSystem.createOne( x, y, type, unitType );
+                    //unitType.handler.createOne( type, x, y );
                 } else {
-                    UnitType.SOLID_WALL.handler.createOne( x, y );
+                    caveSystem.createOne( x, y, UnitType.SOLID_WALL );
+                    //UnitType.SOLID_WALL.handler.createOne( x, y );
                 }
                 index++;
             }
@@ -115,11 +115,12 @@ public final class LoadCave extends Task {
         
         // create header text entity
         context.getComponentBuilder( EntitySystem.Entity.ENTITY_TYPE_KEY )
+            .set( EEntity.ENTITY_NAME, CaveSystem.HEADER_VIEW_NAME )
             .set( ETransform.VIEW_ID, context.getSystemComponentId( View.TYPE_KEY, CaveSystem.HEADER_VIEW_NAME ) )
             .set( ETransform.XPOSITION, 8 )
             .set( ETransform.YPOSITION, 8 )
             .set( EText.FONT_ASSET_NAME, GameSystem.GAME_FONT_TEXTURE_NAME )
-            .set( EText.TEXT, caveSystem.getHeaderText() )
+            .set( EText.TEXT, "%%%%%%%%%%%%%%%%%%%%%%%%" )
         .activate();
         
         // create new CaveController

@@ -10,28 +10,31 @@ import com.inari.dash.game.GameSystem;
 import com.inari.dash.game.cave.CaveSystem;
 import com.inari.dash.game.cave.CaveSystem.CaveSoundKey;
 import com.inari.dash.game.cave.CaveSystem.SoundChannel;
+import com.inari.dash.game.cave.unit.Unit;
 import com.inari.dash.game.cave.unit.UnitType;
 import com.inari.dash.game.cave.unit.action.UnitActionType;
 import com.inari.dash.game.io.BDCFFGameDataLoader;
 import com.inari.dash.game.tasks.InitGameWorkflow.TaskName;
 import com.inari.firefly.FFInitException;
-import com.inari.firefly.action.Action;
 import com.inari.firefly.asset.Asset;
 import com.inari.firefly.asset.AssetSystem;
 import com.inari.firefly.audio.AudioSystemEvent;
 import com.inari.firefly.audio.Sound;
 import com.inari.firefly.audio.SoundAsset;
+import com.inari.firefly.component.build.ComponentBuilder;
 import com.inari.firefly.control.Controller;
+import com.inari.firefly.control.action.Action;
+import com.inari.firefly.control.task.Task;
+import com.inari.firefly.control.task.TaskSystemEvent;
+import com.inari.firefly.control.task.TaskSystemEvent.Type;
 import com.inari.firefly.controller.view.CameraPivot;
 import com.inari.firefly.controller.view.SimpleCameraController;
 import com.inari.firefly.graphics.TextureAsset;
 import com.inari.firefly.graphics.tile.ETile;
+import com.inari.firefly.graphics.view.View;
+import com.inari.firefly.graphics.view.ViewSystem;
+import com.inari.firefly.prototype.Prototype;
 import com.inari.firefly.system.FFContext;
-import com.inari.firefly.system.view.View;
-import com.inari.firefly.system.view.ViewSystem;
-import com.inari.firefly.task.Task;
-import com.inari.firefly.task.TaskSystemEvent;
-import com.inari.firefly.task.TaskSystemEvent.Type;
 
 public final class LoadPlay extends Task {
 
@@ -63,7 +66,7 @@ public final class LoadPlay extends Task {
     }
     
     private void initCaveAndUnits( FFContext context ) {
-        Configuration config = context.getContextComponent( Configuration.CONTEXT_KEY );
+        Configuration config = context.getContextComponent( Configuration.COMPONENT_NAME );
         ViewSystem viewSystem = context.getSystem( ViewSystem.SYSTEM_KEY );
         AssetSystem assetSystem = context.getSystem( AssetSystem.SYSTEM_KEY );
         
@@ -117,7 +120,7 @@ public final class LoadPlay extends Task {
                 .set( Sound.SOUND_ASSET_ID, soundAssetId )
                 .set( Sound.LOOPING, caveSoundKey.looping )
                 .set( Sound.CHANNEL, SoundChannel.CAVE.ordinal() )
-            .build( soundAssetId );
+            .build();
         }
         
         // create unit actions
@@ -129,12 +132,15 @@ public final class LoadPlay extends Task {
             }
         }
         
+        ComponentBuilder unitPrototypeBuilder = context.getComponentBuilder( Prototype.TYPE_KEY );
         // create and initialize all units
         for ( UnitType unitType : UnitType.values() ) {
-            if ( unitType.handler != null ) {
-                unitType.handler.init( context );
-                unitType.handler.initBDCFFTypesMap( CaveSystem.BDCFF_TYPES_MAP );
-            }
+            unitPrototypeBuilder
+                .set( Prototype.NAME, unitType.name() )
+            .buildAndNext( unitType.ordinal(), unitType.unitType );
+            context
+                .getSystemComponent( Prototype.TYPE_KEY, unitType.ordinal(), Unit.class )
+                .initBDCFFTypesMap( CaveSystem.BDCFF_TYPES_MAP );
         }
     }
 
@@ -149,7 +155,7 @@ public final class LoadPlay extends Task {
             @Override
             public final void init( FFContext context ) throws FFInitException {
                 caveSystem = context.getSystem( CaveSystem.SYSTEM_KEY );
-                playerTile = context.getEntityComponent( UnitType.ROCKFORD.getHandle().getEntityId(), ETile.TYPE_KEY );
+                playerTile = context.getEntityComponent( caveSystem.getPrototype( UnitType.ROCKFORD ).getEntityId(), ETile.TYPE_KEY );
             }
 
             @Override

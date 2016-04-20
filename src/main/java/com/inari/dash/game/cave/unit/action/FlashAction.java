@@ -2,10 +2,12 @@ package com.inari.dash.game.cave.unit.action;
 
 import com.inari.commons.geom.Rectangle;
 import com.inari.dash.game.cave.CaveSystem;
+import com.inari.dash.game.cave.unit.Unit;
 import com.inari.dash.game.cave.unit.UnitType;
 import com.inari.firefly.asset.AssetSystem;
 import com.inari.firefly.graphics.sprite.SpriteAsset;
 import com.inari.firefly.graphics.tile.ETile;
+import com.inari.firefly.prototype.Prototype;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.UpdateEvent;
 import com.inari.firefly.system.UpdateEventListener;
@@ -41,7 +43,7 @@ public final class FlashAction extends UnitAction {
 
         @Override
         public void update( UpdateEvent event ) {
-            int spaceEntityId = UnitType.SPACE.handler.getEntityId();
+            int spaceEntityId = context.getSystemComponent( Prototype.TYPE_KEY, UnitType.SPACE.ordinal(), Unit.class ).getEntityId();
             if ( tick == 0 ) {
                 ETile spaceTile = entitySystem.getComponent( spaceEntityId, ETile.TYPE_KEY );
                 spaceSpriteId = spaceTile.getSpriteId();

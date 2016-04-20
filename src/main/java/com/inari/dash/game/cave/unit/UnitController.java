@@ -4,6 +4,7 @@ import com.inari.dash.game.cave.CaveSystem;
 import com.inari.firefly.FFInitException;
 import com.inari.firefly.audio.AudioSystem;
 import com.inari.firefly.entity.EntityController;
+import com.inari.firefly.prototype.Prototype;
 
 public abstract class UnitController extends EntityController {
     
@@ -22,6 +23,10 @@ public abstract class UnitController extends EntityController {
         
         caveService = context.getSystem( CaveSystem.SYSTEM_KEY );
         soundSystem = context.getSystem( AudioSystem.SYSTEM_KEY ); 
+    }
+    
+    protected final Unit getUnit( UnitType type ) {
+        return context.getSystemComponent( Prototype.TYPE_KEY, type.ordinal(), Unit.class );
     }
 
 }

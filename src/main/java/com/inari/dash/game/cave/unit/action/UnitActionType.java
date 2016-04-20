@@ -2,7 +2,7 @@ package com.inari.dash.game.cave.unit.action;
 
 import com.inari.commons.lang.indexed.IndexedObject;
 import com.inari.commons.lang.indexed.Indexer;
-import com.inari.firefly.action.Action;
+import com.inari.firefly.control.action.Action;
 
 public enum UnitActionType implements IndexedObject {
     MOVE( MoveAction.class ),

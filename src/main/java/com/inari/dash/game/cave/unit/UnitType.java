@@ -18,35 +18,30 @@ import com.inari.dash.game.cave.unit.wall.SolidWall;
 
 public enum UnitType {
 
-    SPACE( new Space() ),
-    SAND( new Sand() ),
+    SPACE( Space.class ),
+    SAND( Sand.class ),
     
-    ROCK( new Rock() ),
-    DIAMOND( new Diamond() ),
+    ROCK( Rock.class ),
+    DIAMOND( Diamond.class ),
     
-    FIREFLY( new Firefly() ),
-    BUTTERFLY( new Butterfly() ),
-    AMOEBA( new Amoeba() ),
+    FIREFLY( Firefly.class ),
+    BUTTERFLY( Butterfly.class ),
+    AMOEBA( Amoeba.class ),
     
-    BRICK_WALL( new BrickWall() ),
-    SOLID_WALL( new SolidWall() ),
-    MAGIC_WALL( new MagicWall() ),
-    EXPANDING_WALL( new ExpandingWall() ),
+    BRICK_WALL( BrickWall.class ),
+    SOLID_WALL( SolidWall.class ),
+    MAGIC_WALL( MagicWall.class ),
+    EXPANDING_WALL( ExpandingWall.class ),
 
-    ROCKFORD( new Rockford() ),
-    EXIT( new Exit() ),
+    ROCKFORD( Rockford.class ),
+    EXIT( Exit.class ),
 
-    EXPLOSION_TO_DIAMOND( new ExplosionToDiamond() ),
-    EXPLOSION( new Explosion() ),
+    EXPLOSION_TO_DIAMOND( ExplosionToDiamond.class ),
+    EXPLOSION( Explosion.class ),
     ;
     
-    public final UnitHandle handler;
-    private UnitType( UnitHandle handler ) {
-        this.handler = handler;
-    }
-
-    @SuppressWarnings( "unchecked" )
-    public <T extends UnitHandle> T getHandle() {
-        return (T) handler;
+    public final Class<? extends Unit> unitType;
+    private UnitType( Class<? extends Unit> unitType ) {
+        this.unitType = unitType;
     }
 }

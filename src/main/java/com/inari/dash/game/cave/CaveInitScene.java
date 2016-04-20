@@ -9,12 +9,12 @@ import com.inari.firefly.audio.AudioSystemEvent;
 import com.inari.firefly.audio.AudioSystemEvent.Type;
 import com.inari.firefly.graphics.sprite.ESprite;
 import com.inari.firefly.graphics.sprite.SpriteAsset;
+import com.inari.firefly.graphics.view.View;
+import com.inari.firefly.graphics.view.ViewSystem;
 import com.inari.firefly.scene.Scene;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FireFly;
 import com.inari.firefly.system.external.FFTimer.UpdateScheduler;
-import com.inari.firefly.system.view.View;
-import com.inari.firefly.system.view.ViewSystem;
 
 public class CaveInitScene extends Scene {
     

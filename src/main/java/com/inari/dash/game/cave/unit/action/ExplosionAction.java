@@ -4,10 +4,12 @@ import com.inari.commons.GeomUtils;
 import com.inari.commons.geom.Direction;
 import com.inari.commons.geom.Position;
 import com.inari.dash.game.cave.unit.EUnit;
+import com.inari.dash.game.cave.unit.Unit;
 import com.inari.dash.game.cave.unit.UnitAspect;
 import com.inari.dash.game.cave.unit.UnitType;
 import com.inari.firefly.audio.AudioSystemEvent;
 import com.inari.firefly.graphics.tile.ETile;
+import com.inari.firefly.prototype.Prototype;
 
 
 public final class ExplosionAction extends UnitAction {
@@ -50,7 +52,10 @@ public final class ExplosionAction extends UnitAction {
         GeomUtils.movePosition( tmpPos, Direction.NORTH, 1, true );
         createExplosion( explodeTo );
         
-        context.notify( new AudioSystemEvent( UnitType.EXPLOSION.handler.getSoundId(), AudioSystemEvent.Type.PLAY_SOUND ) );
+        context.notify( new AudioSystemEvent( 
+            getPrototype( this.explosionType ).getSoundId(), 
+            AudioSystemEvent.Type.PLAY_SOUND ) 
+        );
         explosionType = UnitType.EXPLOSION;
     }
 
@@ -58,10 +63,17 @@ public final class ExplosionAction extends UnitAction {
         int entityId = caveService.getEntityId( tmpPos.x, tmpPos.y );
         if ( caveService.hasAspect( entityId, UnitAspect.DESTRUCTIBLE ) ) {
             caveService.deleteUnit( entityId, tmpPos.x, tmpPos.y );
-            int newEntityId = explosionType.handler.createOne( tmpPos.x, tmpPos.y );
+            int newEntityId = getPrototype( explosionType ).createOne( tmpPos.x, tmpPos.y );
             EUnit unit = entitySystem.getComponent( newEntityId, EUnit.TYPE_KEY );
             unit.setChangeTo( explodeTo );
         }
+    }
+    
+    private Unit getPrototype( UnitType unitType ) {
+        if ( unitType == null ) {
+            throw new IllegalArgumentException( "************" );
+        }
+        return context.getSystemComponent( Prototype.TYPE_KEY, unitType.ordinal(), Unit.class );
     }
 
 }

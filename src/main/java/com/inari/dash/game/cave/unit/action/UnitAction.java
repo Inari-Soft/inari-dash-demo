@@ -2,7 +2,7 @@ package com.inari.dash.game.cave.unit.action;
 
 import com.inari.dash.game.cave.CaveSystem;
 import com.inari.firefly.FFInitException;
-import com.inari.firefly.action.Action;
+import com.inari.firefly.control.action.Action;
 import com.inari.firefly.entity.EntitySystem;
 
 public abstract class UnitAction extends Action {

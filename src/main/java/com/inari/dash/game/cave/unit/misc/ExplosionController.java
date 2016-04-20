@@ -25,7 +25,7 @@ public final class ExplosionController extends UnitController {
             int ypos = tile.getGridYPos();
             UnitType explodeToType = unit.getChangeTo();
             context.deleteEntity( entityId );
-            explodeToType.handler.createOne( xpos, ypos );
+            getUnit( explodeToType ).createOne( xpos, ypos );
         }
     }
 

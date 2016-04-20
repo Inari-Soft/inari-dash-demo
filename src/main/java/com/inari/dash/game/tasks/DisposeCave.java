@@ -2,14 +2,16 @@ package com.inari.dash.game.tasks;
 
 import com.inari.commons.geom.Position;
 import com.inari.dash.game.cave.CaveSystem;
+import com.inari.dash.game.cave.unit.Unit;
 import com.inari.dash.game.cave.unit.UnitType;
 import com.inari.firefly.asset.AssetSystem;
 import com.inari.firefly.control.ControllerSystem;
+import com.inari.firefly.control.task.Task;
 import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.graphics.tile.TileGridSystem;
+import com.inari.firefly.graphics.view.ViewSystem;
+import com.inari.firefly.prototype.Prototype;
 import com.inari.firefly.scene.SceneSystemEvent;
-import com.inari.firefly.system.view.ViewSystem;
-import com.inari.firefly.task.Task;
 
 public final class DisposeCave extends Task {
 
@@ -29,9 +31,7 @@ public final class DisposeCave extends Task {
         
         // dispose all units
         for ( UnitType unitType : UnitType.values() ) {
-            if ( unitType.handler != null ) {
-                unitType.handler.disposeCaveData( context );
-            }
+            context.getSystemComponent( Prototype.TYPE_KEY, unitType.ordinal(), Unit.class ).dispose( context );
         }
         
         entitySystem.deleteAllActive();

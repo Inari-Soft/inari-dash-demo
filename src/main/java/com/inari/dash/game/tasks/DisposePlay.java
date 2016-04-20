@@ -7,17 +7,18 @@ import com.inari.dash.game.cave.CaveSystem.CaveSoundKey;
 import com.inari.dash.game.cave.unit.UnitType;
 import com.inari.dash.game.cave.unit.action.UnitActionType;
 import com.inari.dash.game.tasks.InitGameWorkflow.TaskName;
-import com.inari.firefly.action.ActionSystem;
-import com.inari.firefly.asset.AssetSystem;
-import com.inari.firefly.audio.AudioSystem;
+import com.inari.firefly.asset.Asset;
 import com.inari.firefly.audio.AudioSystemEvent;
-import com.inari.firefly.control.ControllerSystem;
+import com.inari.firefly.audio.Sound;
+import com.inari.firefly.control.Controller;
+import com.inari.firefly.control.action.Action;
+import com.inari.firefly.control.task.Task;
+import com.inari.firefly.control.task.TaskSystemEvent;
+import com.inari.firefly.control.task.TaskSystemEvent.Type;
 import com.inari.firefly.entity.EntitySystem;
+import com.inari.firefly.graphics.view.View;
+import com.inari.firefly.prototype.Prototype;
 import com.inari.firefly.system.FFContext;
-import com.inari.firefly.system.view.ViewSystem;
-import com.inari.firefly.task.Task;
-import com.inari.firefly.task.TaskSystemEvent;
-import com.inari.firefly.task.TaskSystemEvent.Type;
 
 public final class DisposePlay extends Task {
 
@@ -35,38 +36,29 @@ public final class DisposePlay extends Task {
     }
     
     private final void disposeCaveData( FFContext context ) {
-        ViewSystem viewSystem = context.getSystem( ViewSystem.SYSTEM_KEY );
-        AudioSystem soundSystem = context.getSystem( AudioSystem.SYSTEM_KEY );
-        ControllerSystem controllerSystem = context.getSystem( ControllerSystem.SYSTEM_KEY );
-        AssetSystem assetSystem = context.getSystem( AssetSystem.SYSTEM_KEY );
-        ActionSystem actionSystem = context.getSystem( ActionSystem.SYSTEM_KEY );
-        EntitySystem entitySystem = context.getSystem( EntitySystem.SYSTEM_KEY );
-        
         // dispose all units
         for ( UnitType unitType : UnitType.values() ) {
-            if ( unitType.handler != null ) {
-                unitType.handler.dispose( context );
-            }
+            context.deleteSystemComponent( Prototype.TYPE_KEY, unitType.ordinal() );
         }
         
-        entitySystem.deleteAllActive();
+        context.getSystem( EntitySystem.SYSTEM_KEY ).deleteAllActive();
 
-        viewSystem.deleteView( CaveSystem.HEADER_VIEW_NAME );
-        viewSystem.deleteView( CaveSystem.CAVE_VIEW_NAME );
+        context.deleteSystemComponent( View.TYPE_KEY, CaveSystem.HEADER_VIEW_NAME );
+        context.deleteSystemComponent( View.TYPE_KEY, CaveSystem.CAVE_VIEW_NAME );
         
         for ( CaveSoundKey caveSoundKey : CaveSoundKey.values() ) {
-            soundSystem.deleteSound( caveSoundKey.name() );
-            assetSystem.deleteAsset( caveSoundKey.name() );
+            context.deleteSystemComponent( Sound.TYPE_KEY, caveSoundKey.name() );
+            context.deleteSystemComponent( Asset.TYPE_KEY, caveSoundKey.name() );
         }
         
-        controllerSystem.deleteController( CaveSystem.CAVE_CAMERA_CONTROLLER_NAME );
-        assetSystem.deleteAsset( CaveSystem.GAME_UNIT_TEXTURE_NAME );
+        context.deleteSystemComponent( Controller.TYPE_KEY, CaveSystem.CAVE_CAMERA_CONTROLLER_NAME );
+        context.deleteSystemComponent( Asset.TYPE_KEY, CaveSystem.GAME_UNIT_TEXTURE_NAME );
         
         for ( UnitActionType actionType : UnitActionType.values() ) {
-            actionSystem.deleteAction( actionType.index() );
+            context.deleteSystemComponent( Action.TYPE_KEY, actionType.index() );
         }
         
-        context.disposeContextComponent( GameData.CONTEXT_KEY );
+        context.disposeContextComponent( GameData.COMPONENT_NAME );
         context.disposeSystem( CaveSystem.SYSTEM_KEY );
     }
 

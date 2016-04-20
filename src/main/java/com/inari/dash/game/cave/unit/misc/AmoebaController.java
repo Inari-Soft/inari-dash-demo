@@ -9,6 +9,7 @@ import com.inari.commons.geom.Position;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.dash.game.cave.CaveSystem.AmoebaData;
 import com.inari.dash.game.cave.unit.EUnit;
+import com.inari.dash.game.cave.unit.Unit;
 import com.inari.dash.game.cave.unit.UnitAspect;
 import com.inari.dash.game.cave.unit.UnitController;
 import com.inari.dash.game.cave.unit.UnitType;
@@ -34,6 +35,7 @@ public final class AmoebaController extends UnitController {
 
     @Override
     protected final void update( FFTimer timer, int entityId ) {
+        Unit amoebaUnit = getUnit( UnitType.AMOEBA );
         EUnit unit = context.getEntityComponent( entityId, EUnit.TYPE_KEY );
         if ( !unit.has( UnitAspect.ACTIVE ) ) {
             return;
@@ -42,7 +44,7 @@ public final class AmoebaController extends UnitController {
         tick++;
 
         if ( !soundPaying ) {
-            context.notify( new AudioSystemEvent( UnitType.AMOEBA.handler.getSoundId(), Type.PLAY_SOUND ) );
+            context.notify( new AudioSystemEvent( amoebaUnit.getSoundId(), Type.PLAY_SOUND ) );
             soundPaying = true;
         }
         
@@ -93,7 +95,7 @@ public final class AmoebaController extends UnitController {
         }
         
         for ( Position newPos : tmpPosList ) {
-            UnitType.AMOEBA.handler.createOne( newPos.x, newPos.y );
+            amoebaUnit.createOne( newPos.x, newPos.y );
         }
     }
 
@@ -111,10 +113,10 @@ public final class AmoebaController extends UnitController {
     private void transformTo( UnitType type, int entityId, DynArray<Position> gridPositions ) {
         context.deactivateEntity( entityId );
         for ( Position pos : gridPositions ) {
-            type.handler.createOne( pos.x, pos.y );
+            getUnit( type ).createOne( pos.x, pos.y );
         }
         context.deleteEntity( entityId );
-        context.notify( new AudioSystemEvent( UnitType.AMOEBA.handler.getSoundId(), Type.STOP_PLAYING ) );
+        context.notify( new AudioSystemEvent( getUnit( UnitType.AMOEBA ).getSoundId(), Type.STOP_PLAYING ) );
     }
 
 }

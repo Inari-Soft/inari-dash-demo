@@ -10,6 +10,6 @@ public final class RockController extends StoneController {
 
     @Override
     protected final int getSoundId() {
-        return UnitType.ROCK.handler.getSoundId();
+        return getUnit( UnitType.ROCK ).getSoundId();
     }
 }

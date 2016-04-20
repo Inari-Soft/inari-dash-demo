@@ -11,11 +11,13 @@ import com.inari.commons.lang.convert.IntValueConverter;
 import com.inari.commons.lang.indexed.IndexedTypeKey;
 import com.inari.dash.game.GameData;
 import com.inari.dash.game.cave.unit.EUnit;
+import com.inari.dash.game.cave.unit.Unit;
 import com.inari.dash.game.cave.unit.UnitAspect;
 import com.inari.dash.game.cave.unit.UnitType;
 import com.inari.firefly.FFInitException;
 import com.inari.firefly.graphics.tile.ETile;
 import com.inari.firefly.graphics.tile.TileGrid;
+import com.inari.firefly.prototype.Prototype;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FFSystem;
 
@@ -85,7 +87,6 @@ public class CaveSystem implements FFSystem {
     private CaveData caveData;
     private AmoebaData amoebaData;
     private TileGrid tileGrid = null;
-    private char[] headerText = "%%%%%%%%%%%%%%%%%%%%%%%%".toCharArray();
     
     @Override
     public final IndexedTypeKey indexedTypeKey() {
@@ -99,7 +100,7 @@ public class CaveSystem implements FFSystem {
     
     @Override
     public final void init( FFContext context ) throws FFInitException {
-        gameData = context.getContextComponent( GameData.CONTEXT_KEY );
+        gameData = context.getContextComponent( GameData.COMPONENT_NAME );
         this.context = context;
     }
 
@@ -122,10 +123,6 @@ public class CaveSystem implements FFSystem {
     
     public final GameData getGameData() {
         return gameData;
-    }
-    
-    public final char[] getHeaderText() {
-        return headerText;
     }
 
     public final int getDiamondsToCollect() {
@@ -207,6 +204,10 @@ public class CaveSystem implements FFSystem {
         } else {
             context.deleteEntity( entityId );
         }
+    }
+    
+    public final Unit getPrototype( UnitType unitType ) {
+        return context.getSystemComponent( Prototype.TYPE_KEY, unitType.ordinal(), Unit.class );
     }
     
     public final UnitType getUnitType( int x, int y ) {
@@ -291,7 +292,11 @@ public class CaveSystem implements FFSystem {
     }
     
     public final void createOne( int x, int y, UnitType unitType ) {
-        unitType.handler.createOne( x, y );
+        context.getSystemComponent( Prototype.TYPE_KEY, unitType.ordinal(), Unit.class ).createOne( x, y );
+    }
+    
+    public final void createOne( int x, int y, String type, UnitType unitType ) {
+        context.getSystemComponent( Prototype.TYPE_KEY, unitType.ordinal(), Unit.class ).createOne( x, y, type );
     }
 
     public final static class AmoebaData {
@@ -319,5 +324,6 @@ public class CaveSystem implements FFSystem {
         
         tileGrid = context.getSystemComponent( TileGrid.TYPE_KEY, CaveSystem.CAVE_TILE_GRID_NAME );
     }
+
 
 }

@@ -10,24 +10,24 @@ import com.inari.commons.geom.Rectangle;
 import com.inari.dash.game.cave.CaveSystem;
 import com.inari.dash.game.cave.CaveSystem.SoundChannel;
 import com.inari.dash.game.cave.unit.EUnit;
-import com.inari.dash.game.cave.unit.UnitHandle;
+import com.inari.dash.game.cave.unit.Unit;
 import com.inari.dash.game.cave.unit.UnitType;
-import com.inari.firefly.FFInitException;
 import com.inari.firefly.asset.Asset;
 import com.inari.firefly.audio.Sound;
 import com.inari.firefly.audio.SoundAsset;
 import com.inari.firefly.composite.sprite.AnimatedSpriteData;
 import com.inari.firefly.composite.sprite.AnimatedTile;
 import com.inari.firefly.control.Controller;
+import com.inari.firefly.control.state.StateChange;
+import com.inari.firefly.control.state.Workflow;
 import com.inari.firefly.entity.EEntity;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.EntityController;
 import com.inari.firefly.graphics.tile.ETile;
-import com.inari.firefly.state.StateChange;
-import com.inari.firefly.state.Workflow;
+import com.inari.firefly.system.Disposable;
 import com.inari.firefly.system.FFContext;
 
-public final class Rockford extends UnitHandle {
+public final class Rockford extends Unit {
 
     public enum StateEnum {
         ENTERING( 400, new Rectangle( 32, 6 * 32, 32, 32 ), 2 ),
@@ -105,112 +105,29 @@ public final class Rockford extends UnitHandle {
         }
     }
     
-    public static final String NAME = "rockford";
+    public static final String NAME = UnitType.ROCKFORD.name();
     public static final String ROCKFORD_SPRITE_ASSET_NAME = NAME + "_sprite";
-    public static final String ROCKFORD_SPACE_SOUND_ASSEET_NAME = NAME + "_space";
+    public static final String ROCKFORD_SPACE_SOUND_ASSET_NAME = NAME + "_space";
     public static final String ROCKFORD_SAND_SOUND_ASSEET_NAME = NAME + "_sand";
     public static final String ROCKFORD_COLLECT_SOUND_ASSEET_NAME = NAME + "_collect";
     
     private int controllerId;
     private int rfEntityId;
-    
-    private int animationAssetId;
     private int animatioControllerId;
+    int inSoundId;
     int spaceSoundId;
     int sandSoundId;
-    int inSoundId;
     int collectSoundId;
-    int workflowId;
     
-    
-    @Override
-    public final void init( FFContext context ) throws FFInitException {
-        super.init( context );
-
-        createSounds();
-        
-        initialized = true;
-    }
-
-    private void createSounds() {
-        int soundAssetIdSpace = assetSystem.getAssetBuilder()
-            .set( SoundAsset.NAME, ROCKFORD_SPACE_SOUND_ASSEET_NAME )
-            .set( SoundAsset.RESOURCE_NAME, "original/sound/walkSpace.wav" )
-            .set( SoundAsset.STREAMING, false )
-        .activate( SoundAsset.class );
-        int soundAssetIdSand = assetSystem.getAssetBuilder()
-            .set( SoundAsset.NAME, ROCKFORD_SAND_SOUND_ASSEET_NAME )
-            .set( SoundAsset.RESOURCE_NAME, "original/sound/walkSand.wav" )
-            .set( SoundAsset.STREAMING, false )
-        .activate( SoundAsset.class );
-        int soundAssetIdCollect = assetSystem.getAssetBuilder()
-            .set( SoundAsset.NAME, ROCKFORD_COLLECT_SOUND_ASSEET_NAME )
-            .set( SoundAsset.RESOURCE_NAME, "original/sound/collectDiamond.wav" )
-            .set( SoundAsset.STREAMING, false )
-        .activate( SoundAsset.class );
-        
-        spaceSoundId = soundSystem.getSoundBuilder()
-            .set( Sound.NAME, ROCKFORD_SPACE_SOUND_ASSEET_NAME )
-            .set( Sound.SOUND_ASSET_ID, soundAssetIdSpace )
-            .set( Sound.LOOPING, false )
-        .build();
-        sandSoundId = soundSystem.getSoundBuilder()
-            .set( Sound.NAME, ROCKFORD_SAND_SOUND_ASSEET_NAME )
-            .set( Sound.SOUND_ASSET_ID, soundAssetIdSand )
-            .set( Sound.LOOPING, false )
-        .build();
-        collectSoundId = soundSystem.getSoundBuilder()
-            .set( Sound.NAME, ROCKFORD_COLLECT_SOUND_ASSEET_NAME )
-            .set( Sound.SOUND_ASSET_ID, soundAssetIdCollect )
-            .set( Sound.LOOPING, false )
-            .set( Sound.CHANNEL, SoundChannel.COLLECT.ordinal() )
-        .build();
-        inSoundId = soundSystem.getSoundId( CaveSystem.CaveSoundKey.CRACK.name() );
+    protected Rockford( int id ) {
+        super( id );
     }
 
     @Override
-    public final void loadCaveData( FFContext context ) {
-        super.loadCaveData( context );
-        
-        float updateRate = caveService.getUpdateRate();
-        
-        workflowId = stateSystem.getWorkflowBuilder()
-            .set( Workflow.NAME, NAME )
-            .set( Workflow.START_STATE_NAME, StateEnum.ENTERING.name() )
-            .add( Workflow.STATES, StateEnum.getStates() )
-            .add( Workflow.STATE_CHANGES, StateChangeEnum.getStateChanges() )
-        .activate();
-        
-        controllerId = controllerSystem.getControllerBuilder()
-            .set( EntityController.NAME, NAME )
-            .set( Controller.UPDATE_RESOLUTION, updateRate )
-        .build( RFController.class );
-
-        animationAssetId = context.getComponentBuilder( Asset.TYPE_KEY )
-            .set( AnimatedTile.NAME, NAME )
-            .set( AnimatedTile.LOOPING, true )
-            .set( AnimatedTile.UPDATE_RESOLUTION, updateRate )
-            .set( AnimatedTile.TEXTURE_ASSET_ID, assetSystem.getAssetId( CaveSystem.GAME_UNIT_TEXTURE_NAME ) )
-            .set( AnimatedTile.WORKFLOW_ID, workflowId )
-            .add( AnimatedTile.ANIMATED_SPRITE_DATA, StateEnum.getAnimatedSpriteData( (int) updateRate ) )
-        .activate( AnimatedTile.class );
-        animatioControllerId = context
-            .getSystemComponent( Asset.TYPE_KEY, animationAssetId, AnimatedTile.class )
-            .getAnimationControllerId();
-        
+    public final int getEntityId() {
+        return rfEntityId;
     }
     
-    
-
-    @Override
-    public void disposeCaveData( FFContext context ) {
-        super.disposeCaveData( context );
-        controllerSystem.deleteController( controllerId );
-        context.deleteSystemComponent( Asset.TYPE_KEY, animationAssetId );
-        stateSystem.deleteWorkflow( workflowId );
-        rfEntityId = -1;
-    }
-
     @Override
     public final UnitType type() {
         return UnitType.ROCKFORD;
@@ -222,13 +139,63 @@ public final class Rockford extends UnitHandle {
         bdcffMap.put( "P1", type() );
     }
 
+
     @Override
-    public final int createOne( int xGridPos, int yGridPos ) {
+    public final Disposable load( FFContext context ) {
+        createSounds();
         
-        rfEntityId = entitySystem.getEntityBuilder()
+        float updateRate = getUpdateRate();
+        int workflowId = context.getComponentBuilder( Workflow.TYPE_KEY )
+            .set( Workflow.NAME, NAME )
+            .set( Workflow.START_STATE_NAME, StateEnum.ENTERING.name() )
+            .add( Workflow.STATES, StateEnum.getStates() )
+            .add( Workflow.STATE_CHANGES, StateChangeEnum.getStateChanges() )
+        .activate();
+        
+        controllerId = context.getComponentBuilder( Controller.TYPE_KEY )
+            .set( EntityController.NAME, NAME )
+            .set( Controller.UPDATE_RESOLUTION, updateRate )
+        .build( RFController.class );
+
+        int animationAssetId = context.getComponentBuilder( Asset.TYPE_KEY )
+            .set( AnimatedTile.NAME, NAME )
+            .set( AnimatedTile.LOOPING, true )
+            .set( AnimatedTile.UPDATE_RESOLUTION, updateRate )
+            .set( AnimatedTile.TEXTURE_ASSET_NAME, CaveSystem.GAME_UNIT_TEXTURE_NAME )
+            .set( AnimatedTile.WORKFLOW_ID, workflowId )
+            .add( AnimatedTile.ANIMATED_SPRITE_DATA, StateEnum.getAnimatedSpriteData( (int) updateRate ) )
+        .activate( AnimatedTile.class );
+        animatioControllerId = context
+            .getSystemComponent( Asset.TYPE_KEY, animationAssetId, AnimatedTile.class )
+            .getAnimationControllerId();
+        
+        return this;
+    }
+
+    @Override
+    public final void dispose( FFContext context ) {
+
+        context.deleteSystemComponent( Controller.TYPE_KEY, NAME );
+        context.deleteSystemComponent( Asset.TYPE_KEY, NAME );
+        context.deleteSystemComponent( Workflow.TYPE_KEY, NAME );
+        context.deleteEntity( rfEntityId );
+        rfEntityId = -1;
+        
+        context.deleteSystemComponent( Sound.TYPE_KEY, ROCKFORD_SPACE_SOUND_ASSET_NAME );
+        context.deleteSystemComponent( Sound.TYPE_KEY, ROCKFORD_SAND_SOUND_ASSEET_NAME );
+        context.deleteSystemComponent( Sound.TYPE_KEY, ROCKFORD_COLLECT_SOUND_ASSEET_NAME );
+        context.deleteSystemComponent( Asset.TYPE_KEY, ROCKFORD_SPACE_SOUND_ASSET_NAME );
+        context.deleteSystemComponent( Asset.TYPE_KEY, ROCKFORD_SAND_SOUND_ASSEET_NAME );
+        context.deleteSystemComponent( Asset.TYPE_KEY, ROCKFORD_COLLECT_SOUND_ASSEET_NAME );
+    }
+    
+    @Override
+    public final int createOne( int xGridPos, int yGridPos, String type ) {
+        
+        rfEntityId = context.getEntityBuilder()
             .add( EEntity.CONTROLLER_IDS, controllerId )
             .add( EEntity.CONTROLLER_IDS, animatioControllerId )
-            .set( ETransform.VIEW_ID, viewSystem.getViewId( CaveSystem.CAVE_VIEW_NAME ) )
+            .set( ETransform.VIEW_NAME, CaveSystem.CAVE_VIEW_NAME )
             .set( ETile.GRID_X_POSITION, xGridPos )
             .set( ETile.GRID_Y_POSITION, yGridPos )
             .set( EUnit.UNIT_TYPE, type() )
@@ -236,24 +203,41 @@ public final class Rockford extends UnitHandle {
         return rfEntityId;
     }
 
-    @Override
-    public final int getEntityId() {
-        return rfEntityId;
-    }
-
-    @Override
-    public final void dispose( FFContext context ) {
+    private void createSounds() {
+        context.getComponentBuilder( Asset.TYPE_KEY )
+            .set( SoundAsset.NAME, ROCKFORD_SPACE_SOUND_ASSET_NAME )
+            .set( SoundAsset.RESOURCE_NAME, "original/sound/walkSpace.wav" )
+            .set( SoundAsset.STREAMING, false )
+        .activate( SoundAsset.class );
+        context.getComponentBuilder( Asset.TYPE_KEY )
+            .set( SoundAsset.NAME, ROCKFORD_SAND_SOUND_ASSEET_NAME )
+            .set( SoundAsset.RESOURCE_NAME, "original/sound/walkSand.wav" )
+            .set( SoundAsset.STREAMING, false )
+        .activate( SoundAsset.class );
+        context.getComponentBuilder( Asset.TYPE_KEY )
+            .set( SoundAsset.NAME, ROCKFORD_COLLECT_SOUND_ASSEET_NAME )
+            .set( SoundAsset.RESOURCE_NAME, "original/sound/collectDiamond.wav" )
+            .set( SoundAsset.STREAMING, false )
+        .activate( SoundAsset.class );
         
-        RFController rfController = (RFController) controllerSystem.getController( controllerId );
-        if ( rfController != null ) {
-            soundSystem.deleteSound( spaceSoundId );
-            soundSystem.deleteSound( sandSoundId );
-            soundSystem.deleteSound( collectSoundId );
-        }
-        controllerSystem.deleteController( controllerId );
-        entitySystem.delete( rfEntityId );
-        assetSystem.deleteAsset( animationAssetId );
-        stateSystem.deleteWorkflow( NAME );
+        spaceSoundId = context.getComponentBuilder( Sound.TYPE_KEY )
+            .set( Sound.NAME, ROCKFORD_SPACE_SOUND_ASSET_NAME )
+            .set( Sound.SOUND_ASSET_NAME, ROCKFORD_SPACE_SOUND_ASSET_NAME )
+            .set( Sound.LOOPING, false )
+        .build();
+        sandSoundId = context.getComponentBuilder( Sound.TYPE_KEY )
+            .set( Sound.NAME, ROCKFORD_SAND_SOUND_ASSEET_NAME )
+            .set( Sound.SOUND_ASSET_NAME, ROCKFORD_SAND_SOUND_ASSEET_NAME )
+            .set( Sound.LOOPING, false )
+        .build();
+        collectSoundId = context.getComponentBuilder( Sound.TYPE_KEY )
+            .set( Sound.NAME, ROCKFORD_COLLECT_SOUND_ASSEET_NAME )
+            .set( Sound.SOUND_ASSET_NAME, ROCKFORD_COLLECT_SOUND_ASSEET_NAME )
+            .set( Sound.LOOPING, false )
+            .set( Sound.CHANNEL, SoundChannel.COLLECT.ordinal() )
+        .build();
+        
+        inSoundId = context.getSystemComponentId( Sound.TYPE_KEY, CaveSystem.CaveSoundKey.CRACK.name() );
     }
 
 }

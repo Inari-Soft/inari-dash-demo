@@ -2,13 +2,14 @@ package com.inari.dash.game.cave.unit.wall;
 
 import com.inari.commons.geom.Direction;
 import com.inari.dash.game.cave.unit.EUnit;
+import com.inari.dash.game.cave.unit.Unit;
 import com.inari.dash.game.cave.unit.UnitController;
 import com.inari.dash.game.cave.unit.UnitType;
 import com.inari.firefly.FFInitException;
 import com.inari.firefly.audio.AudioSystemEvent;
 import com.inari.firefly.audio.AudioSystemEvent.Type;
+import com.inari.firefly.control.state.StateSystemEvent;
 import com.inari.firefly.graphics.tile.ETile;
-import com.inari.firefly.state.StateSystemEvent;
 import com.inari.firefly.system.external.FFTimer;
 import com.inari.firefly.system.external.FFTimer.UpdateScheduler;
 
@@ -37,12 +38,14 @@ public final class MagicWallController extends UnitController {
             return;
         }
         
+        Unit wallUnit = getUnit( UnitType.MAGIC_WALL );
+        
         if ( activTime > 0 ) {
             if ( secondTimer.needsUpdate() ) {
                 activTime++;
                 if ( activTime > activDuration ) {
-                    context.notify( StateSystemEvent.createDoStateChangeEvent( MagicWall.MAGIC_WALL_NAME, MagicWall.StateChangeName.ACTIVE_TO_INACTIVE.name() ) );
-                    context .notify( new AudioSystemEvent( UnitType.MAGIC_WALL.handler.getSoundId(), Type.STOP_PLAYING ) ); 
+                    context.notify( StateSystemEvent.createDoStateChangeEvent( UnitType.MAGIC_WALL.name(), MagicWall.StateChangeName.ACTIVE_TO_INACTIVE.name() ) );
+                    context .notify( new AudioSystemEvent( wallUnit.getSoundId(), Type.STOP_PLAYING ) ); 
                     return;
                 }
             }
@@ -58,8 +61,8 @@ public final class MagicWallController extends UnitController {
             if ( activTime == 0 ) {
                 activTime++;
                 secondTimer.getTick();
-                context.notify( StateSystemEvent.createDoStateChangeEvent( MagicWall.MAGIC_WALL_NAME, MagicWall.StateChangeName.INACTIVE_TO_ACTIVE.name() ) );
-                context.notify( new AudioSystemEvent( UnitType.MAGIC_WALL.handler.getSoundId(), Type.PLAY_SOUND ) ); 
+                context.notify( StateSystemEvent.createDoStateChangeEvent( UnitType.MAGIC_WALL.name(), MagicWall.StateChangeName.INACTIVE_TO_ACTIVE.name() ) );
+                context.notify( new AudioSystemEvent( wallUnit.getSoundId(), Type.PLAY_SOUND ) ); 
             }
 
             int aboveEntityId = caveService.getEntityId( x, y, Direction.NORTH );

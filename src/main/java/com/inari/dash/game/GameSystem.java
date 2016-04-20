@@ -63,7 +63,7 @@ public final class GameSystem implements FFSystem {
     @Override
     public final void init( FFContext context ) throws FFInitException {
         entitySystem = context.getSystem( EntitySystem.SYSTEM_KEY );
-        configuration = context.getContextComponent( Configuration.CONTEXT_KEY );
+        configuration = context.getContextComponent( Configuration.COMPONENT_NAME );
         
         gameInfos = new GameInfos();
         gameInfos.load( context );
@@ -117,9 +117,9 @@ public final class GameSystem implements FFSystem {
             .setTintColor( ( mode == SelectionMode.EXIT )? GameSystem.YELLOW_FONT_COLOR : GameSystem.WHITE_FONT_COLOR );
         
         entitySystem.getComponent( ENTITY_NAME_GAME_SELECTION, EText.TYPE_KEY )
-            .setText( getSelectedGame().getName().toCharArray() );
+            .setText( getSelectedGame().getName() );
         entitySystem.getComponent( ENTITY_NAME_CAVE_SELECTION, EText.TYPE_KEY )
-            .setText( String.valueOf( getSelectedCave() ).toCharArray() );
+            .setText( String.valueOf( getSelectedCave() ) );
     }
 
     final void select() {

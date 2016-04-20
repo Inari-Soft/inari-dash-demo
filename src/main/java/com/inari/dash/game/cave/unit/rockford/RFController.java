@@ -13,12 +13,13 @@ import com.inari.dash.game.cave.unit.action.UnitActionType;
 import com.inari.dash.game.cave.unit.rockford.Rockford.StateChangeEnum;
 import com.inari.dash.game.cave.unit.rockford.Rockford.StateEnum;
 import com.inari.firefly.FFInitException;
-import com.inari.firefly.action.ActionSystemEvent;
 import com.inari.firefly.audio.AudioSystemEvent;
 import com.inari.firefly.audio.AudioSystemEvent.Type;
+import com.inari.firefly.control.action.ActionSystemEvent;
+import com.inari.firefly.control.state.StateSystem;
+import com.inari.firefly.control.state.StateSystemEvent;
 import com.inari.firefly.graphics.tile.ETile;
-import com.inari.firefly.state.StateSystem;
-import com.inari.firefly.state.StateSystemEvent;
+import com.inari.firefly.prototype.Prototype;
 import com.inari.firefly.system.FireFly;
 import com.inari.firefly.system.external.FFInput;
 import com.inari.firefly.system.external.FFInput.ButtonType;
@@ -51,7 +52,7 @@ public final class RFController extends UnitController {
 
     @Override
     protected final void update( FFTimer timer, int entityId ) {
-        Rockford rfHandle = UnitType.ROCKFORD.getHandle();
+        Rockford rfHandle = context.getSystemComponent( Prototype.TYPE_KEY, UnitType.ROCKFORD.name(), Rockford.class );
         CaveState caveState = caveService.getCaveState();
         if ( caveState == CaveState.WON || caveState == CaveState.INIT ) {
             return;
@@ -193,7 +194,7 @@ public final class RFController extends UnitController {
                 context.notify( new ActionSystemEvent( UnitActionType.MOVE.index(), rockfordId ) );
             }
             unit.setMovement( Direction.NONE );
-            context.notify( new AudioSystemEvent( UnitType.ROCK.handler.getSoundId(), Type.PLAY_SOUND ) ); 
+            context.notify( new AudioSystemEvent( getUnit( UnitType.ROCK ).getSoundId(), Type.PLAY_SOUND ) ); 
         }
     }
 

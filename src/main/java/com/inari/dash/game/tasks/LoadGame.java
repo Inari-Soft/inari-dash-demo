@@ -8,11 +8,11 @@ import com.inari.firefly.audio.AudioSystem;
 import com.inari.firefly.audio.AudioSystemEvent;
 import com.inari.firefly.audio.Sound;
 import com.inari.firefly.audio.SoundAsset;
+import com.inari.firefly.control.task.Task;
+import com.inari.firefly.control.task.TaskSystemEvent;
+import com.inari.firefly.control.task.TaskSystemEvent.Type;
 import com.inari.firefly.graphics.text.FontAsset;
 import com.inari.firefly.system.FFContext;
-import com.inari.firefly.task.Task;
-import com.inari.firefly.task.TaskSystemEvent;
-import com.inari.firefly.task.TaskSystemEvent.Type;
 
 public final class LoadGame extends Task {
     
@@ -36,7 +36,7 @@ public final class LoadGame extends Task {
     public final void loadGlobalAssets( FFContext context ) {
         AssetSystem assetSystem = context.getSystem( AssetSystem.SYSTEM_KEY );
         AudioSystem soundSystem = context.getSystem( AudioSystem.SYSTEM_KEY );
-        Configuration configuration = context.getContextComponent( Configuration.CONTEXT_KEY );
+        Configuration configuration = context.getContextComponent( Configuration.COMPONENT_NAME );
         
         // create and load font
         assetSystem.getAssetBuilder()
@@ -57,7 +57,7 @@ public final class LoadGame extends Task {
         
         SoundAsset soundAsset = assetSystem.getAssetAs( GameSystem.INTRO_SONG_NAME, SoundAsset.class );
         soundSystem.getSoundBuilder()
-            .set( Sound.SOUND_ASSET_ID, soundAsset.getId() )
+            .set( Sound.SOUND_ASSET_ID, soundAsset.index() )
             .set( Sound.VOLUME, 10 )
             .set( Sound.LOOPING, true )
             .set( Sound.NAME, GameSystem.TITLE_SONG_SOUND_NAME )

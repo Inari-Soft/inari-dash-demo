@@ -1,6 +1,6 @@
 package com.inari.dash.game.tasks;
 
-import com.inari.firefly.task.Task;
+import com.inari.firefly.control.task.Task;
 
 public final class DisposeGame extends Task {
 

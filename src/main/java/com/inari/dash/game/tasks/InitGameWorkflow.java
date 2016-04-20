@@ -4,13 +4,13 @@ import com.inari.dash.game.GameExitCondition;
 import com.inari.dash.game.GameSystem;
 import com.inari.dash.game.StartGameCondition;
 import com.inari.firefly.component.build.ComponentBuilder;
-import com.inari.firefly.state.StateChange;
-import com.inari.firefly.state.StateSystem;
-import com.inari.firefly.state.Workflow;
+import com.inari.firefly.control.state.StateChange;
+import com.inari.firefly.control.state.StateSystem;
+import com.inari.firefly.control.state.Workflow;
+import com.inari.firefly.control.task.Task;
+import com.inari.firefly.control.task.TaskSystem;
+import com.inari.firefly.control.task.WorkflowTaskTrigger;
 import com.inari.firefly.system.Condition;
-import com.inari.firefly.task.Task;
-import com.inari.firefly.task.TaskSystem;
-import com.inari.firefly.task.WorkflowTaskTrigger;
 
 public class InitGameWorkflow extends Task {
     

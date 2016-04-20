@@ -6,56 +6,26 @@ import com.inari.commons.geom.Position;
 import com.inari.commons.lang.aspect.AspectSetBuilder;
 import com.inari.dash.game.cave.CaveSystem;
 import com.inari.dash.game.cave.unit.EUnit;
+import com.inari.dash.game.cave.unit.Unit;
 import com.inari.dash.game.cave.unit.UnitAspect;
-import com.inari.dash.game.cave.unit.UnitHandle;
 import com.inari.dash.game.cave.unit.UnitType;
+import com.inari.firefly.audio.Sound;
 import com.inari.firefly.control.Controller;
 import com.inari.firefly.entity.EEntity;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.EntityController;
 import com.inari.firefly.graphics.tile.ETile;
+import com.inari.firefly.system.Disposable;
 import com.inari.firefly.system.FFContext;
 
-public final class ExpandingWall extends UnitHandle {
-    
+public final class ExpandingWall extends Unit {
+
     private int expandingWallEntityId;
-    private int controllerId;
-
-    @Override
-    public final void loadCaveData( FFContext context ) {
-        super.loadCaveData( context );
-        
-        Controller controller = controllerSystem.getController( 
-            controllerSystem.getControllerBuilder()
-                .set( EntityController.NAME, "ExpandingWallController" )
-            .build( ExpandingWallController.class )
-        );
-        controllerId = controller.getId();
-        float updateRate = caveService.getUpdateRate();
-        controller.setUpdateResolution( updateRate );
-        
-        expandingWallEntityId = entitySystem.getEntityBuilder()
-            .set( ETransform.VIEW_ID, viewSystem.getViewId( CaveSystem.CAVE_VIEW_NAME ) )
-            .add( EEntity.CONTROLLER_IDS, controllerId )
-            .set( ETile.MULTI_POSITION, true )
-            .set( ETile.SPRITE_ID, assetSystem.getAssetInstanceId( BrickWall.BRICK_WALL_NAME ) )
-            .set( EUnit.UNIT_TYPE, type() )
-            .set( EUnit.ASPECTS, AspectSetBuilder.create( 
-                UnitAspect.ASLOPE, 
-                UnitAspect.DESTRUCTIBLE
-            ) )
-        .activate();
+    
+    protected ExpandingWall( int id ) {
+        super( id );
     }
-
-    @Override
-    public final void disposeCaveData( FFContext context ) {
-        super.disposeCaveData( context );
-        entitySystem.delete( expandingWallEntityId );
-        expandingWallEntityId = -1;
-        controllerSystem.deleteController( controllerId );
-        controllerId = -1;
-    }
-
+    
     @Override
     public final UnitType type() {
         return UnitType.EXPANDING_WALL;
@@ -63,7 +33,7 @@ public final class ExpandingWall extends UnitHandle {
 
     @Override
     public final int getSoundId() {
-        return UnitType.ROCK.handler.getSoundId();
+        return context.getSystemComponentId( Sound.TYPE_KEY, UnitType.ROCK.name() + "_sound" );
     }
 
     @Override
@@ -72,16 +42,41 @@ public final class ExpandingWall extends UnitHandle {
     }
 
     @Override
-    public final int createOne( int xGridPos, int yGridPos ) {
-        ETile tile = entitySystem.getComponent( expandingWallEntityId, ETile.TYPE_KEY );
+    public final Disposable load( FFContext context ) {
+        context.getComponentBuilder( Controller.TYPE_KEY )
+            .set( EntityController.NAME, UnitType.EXPANDING_WALL.name() )
+            .set( EntityController.UPDATE_RESOLUTION, getUpdateRate() )
+        .build( ExpandingWallController.class );
+
+        
+        expandingWallEntityId = context.getEntityBuilder()
+            .set( ETransform.VIEW_NAME, CaveSystem.CAVE_VIEW_NAME )
+            .add( EEntity.CONTROLLER_NAMES, UnitType.EXPANDING_WALL.name() )
+            .set( ETile.MULTI_POSITION, true )
+            .set( ETile.SPRITE_ASSET_NAME, UnitType.BRICK_WALL.name() )
+            .set( EUnit.UNIT_TYPE, type() )
+            .set( EUnit.ASPECTS, AspectSetBuilder.create( 
+                UnitAspect.ASLOPE, 
+                UnitAspect.DESTRUCTIBLE
+            ) )
+        .activate();
+        
+        return this;
+    }
+
+    @Override
+    public final void dispose( FFContext context ) {
+        context.deleteSystemComponent( Controller.TYPE_KEY, UnitType.EXPANDING_WALL.name() );
+        context.deleteEntity( expandingWallEntityId );
+        expandingWallEntityId = -1;
+    }
+
+    @Override
+    public final int createOne( int xGridPos, int yGridPos, String type ) {
+        ETile tile = context.getEntityComponent( expandingWallEntityId, ETile.TYPE_KEY );
         tile.getGridPositions().add( new Position( xGridPos, yGridPos ) );
-        caveService.setEntityId( expandingWallEntityId, xGridPos, yGridPos );
+        context.getSystem( CaveSystem.SYSTEM_KEY ).setEntityId( expandingWallEntityId, xGridPos, yGridPos );
         return expandingWallEntityId;
     }
     
-    @Override
-    public final void dispose( FFContext context ) {
-        
-    }
-
 }

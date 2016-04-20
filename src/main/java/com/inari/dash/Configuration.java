@@ -1,15 +1,10 @@
 package com.inari.dash;
 
-import java.util.Set;
-
-import com.inari.commons.lang.TypedKey;
 import com.inari.firefly.component.ContextComponent;
-import com.inari.firefly.component.attr.AttributeKey;
-import com.inari.firefly.component.attr.AttributeMap;
 
 public final class Configuration extends ContextComponent {
     
-    public static final TypedKey<Configuration> CONTEXT_KEY = TypedKey.create( "InariDashConfiguration", Configuration.class );
+    public static final String COMPONENT_NAME = "InariDashConfiguration";
 
     public String titleSongResource;
     
@@ -30,6 +25,7 @@ public final class Configuration extends ContextComponent {
     public char[][] fontChars;
 
     public Configuration() {
+        super( COMPONENT_NAME );
         titleSongResource = "original/sound/intro.wav";
         unitTextureResource = "original/texture/tiles.png";
         fontTextureResource = "original/texture/font.png";
@@ -58,29 +54,6 @@ public final class Configuration extends ContextComponent {
             { '8', 'H', 'R' },
             { '9', 'I', 'S' }
         };
-    }
-
-    @Override
-    public final Set<AttributeKey<?>> attributeKeys() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public final void fromAttributes( AttributeMap attributes ) {
-        // TODO Auto-generated method stub
-        
-    }
-
-    @Override
-    public final void toAttributes( AttributeMap attributes ) {
-        // TODO Auto-generated method stub
-        
-    }
-
-    @Override
-    public final TypedKey<? extends ContextComponent> contextKey() {
-        return CONTEXT_KEY;
     }
 
 }

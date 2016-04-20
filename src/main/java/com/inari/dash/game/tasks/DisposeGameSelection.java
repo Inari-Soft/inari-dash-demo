@@ -2,8 +2,8 @@ package com.inari.dash.game.tasks;
 
 import com.inari.dash.game.GameSystem;
 import com.inari.firefly.control.ControllerSystem;
+import com.inari.firefly.control.task.Task;
 import com.inari.firefly.entity.EntitySystem;
-import com.inari.firefly.task.Task;
 
 public final class DisposeGameSelection extends Task {
 
