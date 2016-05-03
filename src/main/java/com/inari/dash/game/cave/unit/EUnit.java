@@ -6,7 +6,7 @@ import java.util.Set;
 
 import com.inari.commons.geom.Direction;
 import com.inari.commons.lang.aspect.Aspect;
-import com.inari.commons.lang.aspect.AspectBitSet;
+import com.inari.commons.lang.aspect.Aspects;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.entity.EntityComponent;
@@ -17,7 +17,7 @@ public final class EUnit extends EntityComponent {
     
     public static final AttributeKey<UnitType> UNIT_TYPE = new AttributeKey<UnitType>( "unitType", UnitType.class, EUnit.class );
     public static final AttributeKey<Direction> MOVEMENT = new AttributeKey<Direction>( "movement", Direction.class, EUnit.class );
-    public static final AttributeKey<AspectBitSet> ASPECTS = new AttributeKey<AspectBitSet>( "aspects", AspectBitSet.class, EUnit.class );
+    public static final AttributeKey<Aspects> ASPECTS = new AttributeKey<Aspects>( "aspects", Aspects.class, EUnit.class );
     public static final AttributeKey<Integer> ANIMATION_COUNT = new AttributeKey<Integer>( "animationCount", Integer.class, EUnit.class );
     public static final AttributeKey<Boolean> HIT = new AttributeKey<Boolean>( "hit", Boolean.class, EUnit.class );
     public static final AttributeKey<UnitType> EXPLOSION_TYPE = new AttributeKey<UnitType>( "explosionType", UnitType.class, EUnit.class );
@@ -34,7 +34,7 @@ public final class EUnit extends EntityComponent {
     
     private UnitType unitType;
     private Direction movement;
-    private AspectBitSet aspects;
+    private Aspects aspects;
     private int animationCount;
     private boolean hit;
     private UnitType explosionType;
@@ -71,7 +71,7 @@ public final class EUnit extends EntityComponent {
         this.movement = movement;
     }
 
-    public final AspectBitSet getAspects() {
+    public final Aspects getAspects() {
         return aspects;
     }
     
@@ -83,7 +83,7 @@ public final class EUnit extends EntityComponent {
         aspects.reset( aspect );
     }
 
-    public final void setAspects( AspectBitSet aspects ) {
+    public final void setAspects( Aspects aspects ) {
         this.aspects = aspects;
     }
     

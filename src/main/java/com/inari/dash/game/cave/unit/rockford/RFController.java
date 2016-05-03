@@ -3,7 +3,7 @@ package com.inari.dash.game.cave.unit.rockford;
 import com.inari.commons.GeomUtils;
 import com.inari.commons.geom.Direction;
 import com.inari.commons.geom.Position;
-import com.inari.commons.lang.aspect.AspectSetBuilder;
+import com.inari.commons.lang.aspect.AspectsBuilder;
 import com.inari.dash.game.cave.CaveSystem.CaveState;
 import com.inari.dash.game.cave.unit.EUnit;
 import com.inari.dash.game.cave.unit.UnitAspect;
@@ -20,7 +20,7 @@ import com.inari.firefly.control.state.StateSystem;
 import com.inari.firefly.control.state.StateSystemEvent;
 import com.inari.firefly.graphics.tile.ETile;
 import com.inari.firefly.prototype.Prototype;
-import com.inari.firefly.system.FireFly;
+import com.inari.firefly.system.FireFlyApp;
 import com.inari.firefly.system.external.FFInput;
 import com.inari.firefly.system.external.FFInput.ButtonType;
 import com.inari.firefly.system.external.FFTimer;
@@ -73,7 +73,7 @@ public final class RFController extends UnitController {
             if ( StateEnum.APPEARING.is( state ) && animationCount > APPEARING_ANIMATION_DURATION ) {
                 unit.resetAnimationCount();
                 context.notify( StateSystemEvent.createDoStateChangeEvent( Rockford.NAME, StateChangeEnum.APPEARING_IDLE.name() ) );
-                unit.setAspects( AspectSetBuilder.create( UnitAspect.ALIVE, UnitAspect.DESTRUCTIBLE  ) );
+                unit.setAspects( AspectsBuilder.create( UnitAspect.ALIVE, UnitAspect.DESTRUCTIBLE  ) );
                 return;
             }
             return;
@@ -119,11 +119,11 @@ public final class RFController extends UnitController {
             } else if ( !StateEnum.IDLE.is( state ) ) {
                 context.notify( StateSystemEvent.createDoStateChangeEventTo( Rockford.NAME, StateEnum.IDLE.name() ) );
             }
-            if ( FireFly.RANDOM.nextInt( 100 ) < 5 ) {
+            if ( FireFlyApp.RANDOM.nextInt( 100 ) < 5 ) {
                 context.notify( StateSystemEvent.createDoStateChangeEvent( Rockford.NAME, StateChangeEnum.IDLE_BLINKING.name() ) );
                 return;
             }
-            if ( FireFly.RANDOM.nextInt( 100 ) < 3 ) {
+            if ( FireFlyApp.RANDOM.nextInt( 100 ) < 3 ) {
                 context.notify( StateSystemEvent.createDoStateChangeEvent( Rockford.NAME, StateChangeEnum.IDLE_FRETFUL.name() ) );
                 return;
             }
@@ -186,7 +186,7 @@ public final class RFController extends UnitController {
             return;
         }
         
-        if ( FireFly.RANDOM.nextInt( 100 ) < 20 ) {
+        if ( FireFlyApp.RANDOM.nextInt( 100 ) < 20 ) {
             EUnit unit = context.getEntityComponent( rockEntityId, EUnit.TYPE_KEY );
             unit.setMovement( move );
             context.notify( new ActionSystemEvent( UnitActionType.MOVE.index(), rockEntityId ) );

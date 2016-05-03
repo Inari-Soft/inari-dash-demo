@@ -5,7 +5,7 @@ import java.util.Map;
 
 import com.inari.commons.geom.Direction;
 import com.inari.commons.geom.Rectangle;
-import com.inari.commons.lang.aspect.AspectSetBuilder;
+import com.inari.commons.lang.aspect.AspectsBuilder;
 import com.inari.dash.game.cave.CaveSystem;
 import com.inari.dash.game.cave.unit.EUnit;
 import com.inari.dash.game.cave.unit.Unit;
@@ -21,8 +21,8 @@ import com.inari.firefly.entity.EntityController;
 import com.inari.firefly.entity.prefab.EntityPrefab;
 import com.inari.firefly.entity.prefab.EntityPrefabSystem;
 import com.inari.firefly.graphics.tile.ETile;
-import com.inari.firefly.system.Disposable;
 import com.inari.firefly.system.FFContext;
+import com.inari.firefly.system.utils.Disposable;
 
 public final class Firefly extends Unit {
 
@@ -96,7 +96,7 @@ public final class Firefly extends Unit {
             .set( EUnit.MOVEMENT, Direction.SOUTH )
             .set( EUnit.EXPLOSION_TYPE, UnitType.EXPLOSION )
             .set( EUnit.CHANGE_TO, UnitType.SPACE )
-            .set( EUnit.ASPECTS, AspectSetBuilder.create( 
+            .set( EUnit.ASPECTS, AspectsBuilder.create( 
                 UnitAspect.DESTRUCTIBLE, 
                 UnitAspect.ENEMY,
                 UnitAspect.ALIVE

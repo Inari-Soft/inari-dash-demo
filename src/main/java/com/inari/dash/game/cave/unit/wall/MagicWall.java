@@ -4,7 +4,7 @@ import java.util.Map;
 
 import com.inari.commons.geom.Direction;
 import com.inari.commons.geom.Rectangle;
-import com.inari.commons.lang.aspect.AspectSetBuilder;
+import com.inari.commons.lang.aspect.AspectsBuilder;
 import com.inari.dash.game.cave.CaveSystem;
 import com.inari.dash.game.cave.CaveSystem.SoundChannel;
 import com.inari.dash.game.cave.unit.EUnit;
@@ -27,8 +27,8 @@ import com.inari.firefly.entity.EntityController;
 import com.inari.firefly.entity.prefab.EntityPrefab;
 import com.inari.firefly.entity.prefab.EntityPrefabSystem;
 import com.inari.firefly.graphics.tile.ETile;
-import com.inari.firefly.system.Disposable;
 import com.inari.firefly.system.FFContext;
+import com.inari.firefly.system.utils.Disposable;
 
 public final class MagicWall extends Unit {
 
@@ -128,7 +128,7 @@ public final class MagicWall extends Unit {
             .set( ETransform.VIEW_NAME, CaveSystem.CAVE_VIEW_NAME )
             .set( ETile.MULTI_POSITION, false )
             .set( EUnit.UNIT_TYPE, type() )
-            .set( EUnit.ASPECTS, AspectSetBuilder.create( 
+            .set( EUnit.ASPECTS, AspectsBuilder.create( 
                 UnitAspect.DESTRUCTIBLE
             ) )
         .build();

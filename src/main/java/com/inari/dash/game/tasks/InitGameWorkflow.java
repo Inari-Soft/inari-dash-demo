@@ -10,7 +10,7 @@ import com.inari.firefly.control.state.Workflow;
 import com.inari.firefly.control.task.Task;
 import com.inari.firefly.control.task.TaskSystem;
 import com.inari.firefly.control.task.WorkflowTaskTrigger;
-import com.inari.firefly.system.Condition;
+import com.inari.firefly.system.utils.Condition;
 
 public class InitGameWorkflow extends Task {
     

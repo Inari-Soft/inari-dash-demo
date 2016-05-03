@@ -11,9 +11,9 @@ import com.badlogic.gdx.files.FileHandle;
 import com.inari.commons.StringUtils;
 import com.inari.dash.game.GameInfo;
 import com.inari.firefly.FFInitException;
-import com.inari.firefly.system.Disposable;
 import com.inari.firefly.system.FFContext;
-import com.inari.firefly.system.Loadable;
+import com.inari.firefly.system.utils.Disposable;
+import com.inari.firefly.system.utils.Loadable;
 
 public class GameInfos implements Loadable, Disposable {
     

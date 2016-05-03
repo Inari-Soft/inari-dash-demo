@@ -16,7 +16,7 @@ import com.inari.dash.game.cave.unit.UnitType;
 import com.inari.firefly.audio.AudioSystemEvent;
 import com.inari.firefly.audio.AudioSystemEvent.Type;
 import com.inari.firefly.graphics.tile.ETile;
-import com.inari.firefly.system.FireFly;
+import com.inari.firefly.system.FireFlyApp;
 import com.inari.firefly.system.external.FFTimer;
 
 public final class AmoebaController extends UnitController {
@@ -102,7 +102,7 @@ public final class AmoebaController extends UnitController {
     private boolean grow( Direction direction ) {
         GeomUtils.movePosition( tmpPos, direction, 1, true );
         if ( caveService.hasAspect( tmpPos.x, tmpPos.y, UnitAspect.CONSUMABLE ) ) {
-            if ( FireFly.RANDOM.nextFloat() <= growthFaktor ) {
+            if ( FireFlyApp.RANDOM.nextFloat() <= growthFaktor ) {
                 tmpPosList.add( new Position( tmpPos.x, tmpPos.y ) );
             }
             return true;

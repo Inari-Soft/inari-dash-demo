@@ -13,7 +13,7 @@ import com.inari.firefly.graphics.view.View;
 import com.inari.firefly.graphics.view.ViewSystem;
 import com.inari.firefly.scene.Scene;
 import com.inari.firefly.system.FFContext;
-import com.inari.firefly.system.FireFly;
+import com.inari.firefly.system.FireFlyApp;
 import com.inari.firefly.system.external.FFTimer.UpdateScheduler;
 
 public class CaveInitScene extends Scene {
@@ -87,7 +87,7 @@ public class CaveInitScene extends Scene {
     public void update( long tick ) {
         int removed = 0;
         while ( removed < 8 && !introTiles.isEmpty() ) {
-            int nextIndex = FireFly.RANDOM.nextInt( size );
+            int nextIndex = FireFlyApp.RANDOM.nextInt( size );
             if ( introTiles.get( nextIndex ) ) {
                 introTiles.flip( nextIndex );
                 removed++;

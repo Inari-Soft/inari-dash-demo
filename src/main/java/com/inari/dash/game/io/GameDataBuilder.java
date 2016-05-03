@@ -206,8 +206,8 @@ public class GameDataBuilder {
             colorMap.put( CaveColors.BaseAmoebaColor.color, CaveColors.valueOf( amoebaColor ).color );
         }
         
-        IntColorConverter colorFilter = new IntColorConverter( colorMap );
-        currentCaveData.setColorConverter( colorFilter );
+        IntColorConverter colorFunction = new IntColorConverter( colorMap );
+        currentCaveData.setColorFunction( colorFunction );
     }
 
     private void setCaveSize( String value ) {

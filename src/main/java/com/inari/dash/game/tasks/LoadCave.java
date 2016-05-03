@@ -1,7 +1,7 @@
 package com.inari.dash.game.tasks;
 
 import com.inari.commons.geom.Rectangle;
-import com.inari.commons.lang.convert.IntValueConverter;
+import com.inari.commons.lang.functional.IntFunction;
 import com.inari.dash.Configuration;
 import com.inari.dash.game.GameSystem;
 import com.inari.dash.game.cave.CaveController;
@@ -24,7 +24,7 @@ import com.inari.firefly.graphics.tile.NormalFastTileGridRenderer;
 import com.inari.firefly.graphics.tile.TileGrid;
 import com.inari.firefly.graphics.tile.TileGridSystem;
 import com.inari.firefly.graphics.view.View;
-import com.inari.firefly.libgdx.GdxFirefly;
+import com.inari.firefly.libgdx.GdxFireflyApp;
 import com.inari.firefly.scene.Scene;
 
 public final class LoadCave extends Task {
@@ -44,9 +44,9 @@ public final class LoadCave extends Task {
 
         // load unit texture asset with cave colors
         TextureAsset unitTextureAsset = context.getSystemComponent( Asset.TYPE_KEY, CaveSystem.GAME_UNIT_TEXTURE_NAME, TextureAsset.class );
-        IntValueConverter colorFilter = caveData.getColorConverter();
-        context.addProperty( CaveSystem.COLOR_CONVERTER_KEY, colorFilter );
-        unitTextureAsset.setDynamicAttribute( GdxFirefly.DynamicAttributes.TEXTURE_COLOR_CONVERTER_NAME, CaveSystem.COLOR_CONVERTER_KEY.id() );
+        IntFunction colorFunction = caveData.getColorFunction();
+        context.addProperty( CaveSystem.COLOR_CONVERTER_KEY, colorFunction );
+        unitTextureAsset.setDynamicAttribute( GdxFireflyApp.DynamicAttributes.TEXTURE_COLOR_CONVERTER_NAME, CaveSystem.COLOR_CONVERTER_KEY.id() );
         context.getSystem( AssetSystem.SYSTEM_KEY ).loadAsset( CaveSystem.GAME_UNIT_TEXTURE_NAME );
         
         // create init scene assets

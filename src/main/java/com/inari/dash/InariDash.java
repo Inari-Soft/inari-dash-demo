@@ -14,7 +14,7 @@ import com.inari.firefly.control.task.TaskSystemEvent;
 import com.inari.firefly.control.task.TaskSystemEvent.Type;
 import com.inari.firefly.graphics.text.TextSystem;
 import com.inari.firefly.libgdx.GdxFFApplicationAdapter;
-import com.inari.firefly.libgdx.GdxFirefly;
+import com.inari.firefly.libgdx.GdxFireflyApp;
 import com.inari.firefly.prototype.PrototypeSystem;
 import com.inari.firefly.scene.SceneSystem;
 import com.inari.firefly.system.FFContext;
@@ -41,7 +41,7 @@ public class InariDash extends GdxFFApplicationAdapter {
     @Override
     protected Collection<AttributeKey<?>> getDynamicAttributes() {
         Collection<AttributeKey<?>> dynamicAttributes = super.getDynamicAttributes();
-        dynamicAttributes.add( GdxFirefly.DynamicAttributes.TEXTURE_COLOR_CONVERTER_NAME );
+        dynamicAttributes.add( GdxFireflyApp.DynamicAttributes.TEXTURE_COLOR_CONVERTER_NAME );
         return dynamicAttributes;
     }
 

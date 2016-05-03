@@ -2,7 +2,8 @@ package com.inari.dash.game.cave;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.inari.commons.lang.aspect.AspectSetBuilder;
+import com.inari.commons.geom.Rectangle;
+import com.inari.commons.lang.aspect.AspectsBuilder;
 import com.inari.dash.game.GameData;
 import com.inari.dash.game.GameSystem;
 import com.inari.dash.game.cave.CaveSystem.CaveSoundKey;
@@ -24,6 +25,7 @@ import com.inari.firefly.control.state.StateSystemEvent;
 import com.inari.firefly.control.task.TaskSystemEvent;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.EntitySystem;
+import com.inari.firefly.graphics.output.AnimatedGifOutput;
 import com.inari.firefly.graphics.text.EText;
 import com.inari.firefly.graphics.view.ViewSystem;
 import com.inari.firefly.prototype.Prototype;
@@ -53,6 +55,7 @@ public final class CaveController extends Controller {
     private int playerEntityId = -1;
     
     private StringBuffer headerTextBuffer = null;
+    private final AnimatedGifOutput animatedGifOutput = new AnimatedGifOutput();
     
     
     protected CaveController( int id ) {
@@ -115,6 +118,15 @@ public final class CaveController extends Controller {
         }
         
         if ( caveService.caveState == CaveState.PLAY ) {
+            if ( Gdx.input.isKeyPressed( Input.Keys.P ) ) {
+                
+                animatedGifOutput.setArea( new Rectangle( 100, 0, 300, 300 ) );
+                animatedGifOutput.setFrames( 30 );
+                animatedGifOutput.setFrameDelay( 100 );
+                animatedGifOutput.setFileName( "animatedGifTest.gif" );
+                animatedGifOutput.run( context );
+            }
+            
             initSeconds = 0;
             if ( secondTimer.needsUpdate() ) {
                 caveData.tick();
@@ -137,7 +149,7 @@ public final class CaveController extends Controller {
             if ( !exitUnit.has( UnitAspect.ACTIVE ) ) {
                 boolean enough = caveData.getDiamondsToCollect() == caveData.getDiamondsCollected();
                 if ( enough ) {
-                    exitUnit.setAspects( AspectSetBuilder.create( UnitAspect.ACTIVE, UnitAspect.WALKABLE ) );
+                    exitUnit.setAspects( AspectsBuilder.create( UnitAspect.ACTIVE, UnitAspect.WALKABLE ) );
                     context.notify( StateSystemEvent.createDoStateChangeEvent( UnitType.EXIT.name(), Exit.getStateChangeName() ) );
                     context.notify( new ActionSystemEvent( UnitActionType.FLASH.index(), exitEntityId ) );
                     context.notify( new AudioSystemEvent( CaveSoundKey.CRACK.name(), Type.PLAY_SOUND ) );

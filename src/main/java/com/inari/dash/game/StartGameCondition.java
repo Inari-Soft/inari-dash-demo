@@ -1,8 +1,8 @@
 package com.inari.dash.game;
 
 import com.inari.dash.game.GameSystem.SelectionMode;
-import com.inari.firefly.system.Condition;
 import com.inari.firefly.system.FFContext;
+import com.inari.firefly.system.utils.Condition;
 
 public final class StartGameCondition extends Condition {
 

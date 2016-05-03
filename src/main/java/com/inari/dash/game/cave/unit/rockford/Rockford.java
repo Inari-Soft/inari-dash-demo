@@ -24,8 +24,8 @@ import com.inari.firefly.entity.EEntity;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.EntityController;
 import com.inari.firefly.graphics.tile.ETile;
-import com.inari.firefly.system.Disposable;
 import com.inari.firefly.system.FFContext;
+import com.inari.firefly.system.utils.Disposable;
 
 public final class Rockford extends Unit {
 
