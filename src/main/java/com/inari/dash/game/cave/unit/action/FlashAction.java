@@ -22,7 +22,7 @@ public final class FlashAction extends UnitAction {
 
     @Override
     public final void action( int entityId ) {
-        context.registerListener( UpdateEvent.class, new FlashAnimation( context ) );
+        context.registerListener( UpdateEvent.TYPE_KEY, new FlashAnimation( context ) );
     }
 
     private final class FlashAnimation implements UpdateEventListener {
@@ -59,7 +59,7 @@ public final class FlashAction extends UnitAction {
                 // self remove
                 AssetSystem assetSystem = context.getSystem( AssetSystem.SYSTEM_KEY );
                 assetSystem.deleteAsset( FLASH_SPRITE_ASSET_NAME );
-                context.disposeListener( UpdateEvent.class, this );
+                context.disposeListener( UpdateEvent.TYPE_KEY, this );
             }
         }
     }
