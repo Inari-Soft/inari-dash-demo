@@ -7,6 +7,7 @@ import java.util.Set;
 import com.inari.commons.geom.Direction;
 import com.inari.commons.lang.aspect.Aspect;
 import com.inari.commons.lang.aspect.Aspects;
+import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.entity.EntityComponent;
@@ -17,7 +18,7 @@ public final class EUnit extends EntityComponent {
     
     public static final AttributeKey<UnitType> UNIT_TYPE = new AttributeKey<UnitType>( "unitType", UnitType.class, EUnit.class );
     public static final AttributeKey<Direction> MOVEMENT = new AttributeKey<Direction>( "movement", Direction.class, EUnit.class );
-    public static final AttributeKey<Aspects> ASPECTS = new AttributeKey<Aspects>( "aspects", Aspects.class, EUnit.class );
+    public static final AttributeKey<DynArray<Aspect>> ASPECTS = AttributeKey.createForDynArray( "aspects", EUnit.class );
     public static final AttributeKey<Integer> ANIMATION_COUNT = new AttributeKey<Integer>( "animationCount", Integer.class, EUnit.class );
     public static final AttributeKey<Boolean> HIT = new AttributeKey<Boolean>( "hit", Boolean.class, EUnit.class );
     public static final AttributeKey<UnitType> EXPLOSION_TYPE = new AttributeKey<UnitType>( "explosionType", UnitType.class, EUnit.class );
@@ -34,7 +35,7 @@ public final class EUnit extends EntityComponent {
     
     private UnitType unitType;
     private Direction movement;
-    private Aspects aspects;
+    private final Aspects aspects;
     private int animationCount;
     private boolean hit;
     private UnitType explosionType;
@@ -42,6 +43,7 @@ public final class EUnit extends EntityComponent {
     
     public EUnit() {
         super( TYPE_KEY );
+        aspects = Unit.UNIT_ASPECT_GROUP.createAspects();
         resetAttributes();
     }
 
@@ -49,6 +51,7 @@ public final class EUnit extends EntityComponent {
     public final void resetAttributes() {
         unitType = null;
         movement = Direction.NONE;
+        aspects.clear();
         animationCount = 0;
         hit = false;
         explosionType = null;
@@ -84,15 +87,11 @@ public final class EUnit extends EntityComponent {
     }
 
     public final void setAspects( Aspects aspects ) {
-        this.aspects = aspects;
+        this.aspects.set( aspects );
     }
     
     public final boolean has( Aspect aspect ) {
-        if ( aspects == null ) {
-            return false;
-        }
-        
-        return aspects.contains( aspect.aspectId() );
+        return aspects.contains( aspect );
     }
 
     public final int getAnimationCount() {
@@ -144,7 +143,13 @@ public final class EUnit extends EntityComponent {
     public final void fromAttributes( AttributeMap attributes ) {
         unitType = attributes.getValue( UNIT_TYPE, unitType );
         movement = attributes.getValue( MOVEMENT, movement );
-        aspects = attributes.getValue( ASPECTS, aspects );
+        if ( attributes.contains( ASPECTS ) ) {
+            DynArray<Aspect> aspects = attributes.getValue( ASPECTS );
+            this.aspects.clear();
+            for ( Aspect aspect : aspects ) {
+                setAspect( aspect );
+            }
+        }
         animationCount = attributes.getValue( ANIMATION_COUNT, animationCount );
         hit = attributes.getValue( HIT, hit );
         explosionType = attributes.getValue( EXPLOSION_TYPE, explosionType );
@@ -155,11 +160,21 @@ public final class EUnit extends EntityComponent {
     public final void toAttributes( AttributeMap attributes ) {
         attributes.put( UNIT_TYPE, unitType );
         attributes.put( MOVEMENT, movement );
-        attributes.put( ASPECTS, aspects );
+        attributes.put( ASPECTS, getAspectsAsDynArray() );
         attributes.put( ANIMATION_COUNT, animationCount );
         attributes.put( HIT, hit );
         attributes.put( EXPLOSION_TYPE, explosionType );
         attributes.put( CHANGE_TO, changeTo );
+    }
+
+    private DynArray<Aspect> getAspectsAsDynArray() {
+        DynArray<Aspect> result = new DynArray<Aspect>();
+        int i = aspects.nextSetBit( 0 );
+        while ( i >= 0 ) {
+            result.add( Unit.UNIT_ASPECT_GROUP.getAspect( i ) );
+            i = aspects.nextSetBit( i + 1 );
+        }
+        return result;
     }
 
 }

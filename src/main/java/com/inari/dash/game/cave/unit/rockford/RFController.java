@@ -3,9 +3,9 @@ package com.inari.dash.game.cave.unit.rockford;
 import com.inari.commons.GeomUtils;
 import com.inari.commons.geom.Direction;
 import com.inari.commons.geom.Position;
-import com.inari.commons.lang.aspect.AspectsBuilder;
 import com.inari.dash.game.cave.CaveSystem.CaveState;
 import com.inari.dash.game.cave.unit.EUnit;
+import com.inari.dash.game.cave.unit.Unit;
 import com.inari.dash.game.cave.unit.UnitAspect;
 import com.inari.dash.game.cave.unit.UnitController;
 import com.inari.dash.game.cave.unit.UnitType;
@@ -73,7 +73,7 @@ public final class RFController extends UnitController {
             if ( StateEnum.APPEARING.is( state ) && animationCount > APPEARING_ANIMATION_DURATION ) {
                 unit.resetAnimationCount();
                 context.notify( StateSystemEvent.createDoStateChangeEvent( Rockford.NAME, StateChangeEnum.APPEARING_IDLE.name() ) );
-                unit.setAspects( AspectsBuilder.create( UnitAspect.ALIVE, UnitAspect.DESTRUCTIBLE  ) );
+                unit.setAspects( Unit.UNIT_ASPECT_GROUP.createAspects( UnitAspect.ALIVE, UnitAspect.DESTRUCTIBLE  ) );
                 return;
             }
             return;

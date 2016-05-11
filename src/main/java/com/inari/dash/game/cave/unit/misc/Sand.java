@@ -4,7 +4,6 @@ import java.util.Map;
 
 import com.inari.commons.geom.Position;
 import com.inari.commons.geom.Rectangle;
-import com.inari.commons.lang.aspect.AspectsBuilder;
 import com.inari.dash.game.cave.CaveSystem;
 import com.inari.dash.game.cave.unit.EUnit;
 import com.inari.dash.game.cave.unit.Unit;
@@ -58,11 +57,9 @@ public final class Sand extends Unit {
             .set( ETile.MULTI_POSITION, true )
             .set( ETile.SPRITE_ASSET_NAME, UnitType.SAND.name() )
             .set( EUnit.UNIT_TYPE, type() )
-            .set( EUnit.ASPECTS, AspectsBuilder.create( 
-                UnitAspect.DESTRUCTIBLE, 
-                UnitAspect.CONSUMABLE, 
-                UnitAspect.WALKABLE ) 
-            )
+            .add( EUnit.ASPECTS, UnitAspect.DESTRUCTIBLE )
+            .add( EUnit.ASPECTS, UnitAspect.CONSUMABLE )
+            .add( EUnit.ASPECTS, UnitAspect.WALKABLE )
         .activate();
         
         tileGridId = context.getSystemComponentId( TileGrid.TYPE_KEY, CaveSystem.CAVE_TILE_GRID_NAME );

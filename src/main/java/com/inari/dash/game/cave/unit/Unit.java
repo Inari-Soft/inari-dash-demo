@@ -2,6 +2,7 @@ package com.inari.dash.game.cave.unit;
 
 import java.util.Map;
 
+import com.inari.commons.lang.aspect.AspectGroup;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.dash.game.cave.CaveSystem;
 import com.inari.firefly.component.ComponentId;
@@ -13,6 +14,8 @@ import com.inari.firefly.entity.EntitySystem.Entity;
 import com.inari.firefly.prototype.Prototype;
 
 public abstract class Unit extends Prototype {
+
+    public static final AspectGroup UNIT_ASPECT_GROUP = new AspectGroup( "UNIT_ASPECT_GROUP" );
     
     public static final AttributeKey<Integer> GRID_X = new AttributeKey<Integer>( "gridX", Integer.class, Unit.class );
     public static final AttributeKey<Integer> GRID_Y = new AttributeKey<Integer>( "gridY", Integer.class, Unit.class );

@@ -4,7 +4,6 @@ import java.util.Map;
 
 import com.inari.commons.geom.Direction;
 import com.inari.commons.geom.Rectangle;
-import com.inari.commons.lang.aspect.AspectsBuilder;
 import com.inari.dash.game.cave.CaveSystem;
 import com.inari.dash.game.cave.unit.EUnit;
 import com.inari.dash.game.cave.unit.UnitType;
@@ -66,7 +65,6 @@ public final class Explosion extends AbstractExplosionHandle {
             .set( ETransform.VIEW_NAME, CaveSystem.CAVE_VIEW_NAME )
             .set( ETile.MULTI_POSITION, false )
             .set( EUnit.UNIT_TYPE, type() )
-            .set( EUnit.ASPECTS, AspectsBuilder.create() )
         .build();
         
         return this;

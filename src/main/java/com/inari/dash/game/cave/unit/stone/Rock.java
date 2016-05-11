@@ -3,7 +3,6 @@ package com.inari.dash.game.cave.unit.stone;
 import java.util.Map;
 
 import com.inari.commons.geom.Rectangle;
-import com.inari.commons.lang.aspect.AspectsBuilder;
 import com.inari.dash.game.cave.CaveSystem;
 import com.inari.dash.game.cave.CaveSystem.SoundChannel;
 import com.inari.dash.game.cave.unit.EUnit;
@@ -85,11 +84,9 @@ public final class Rock extends Unit {
             .set( ETile.MULTI_POSITION, false )
             .set( EUnit.UNIT_TYPE, type() )
             .set( EUnit.CHANGE_TO, UnitType.DIAMOND )
-            .set( EUnit.ASPECTS, AspectsBuilder.create( 
-                UnitAspect.DESTRUCTIBLE, 
-                UnitAspect.STONE, 
-                UnitAspect.ASLOPE
-            ) )
+            .add( EUnit.ASPECTS, UnitAspect.DESTRUCTIBLE )
+            .add( EUnit.ASPECTS, UnitAspect.STONE )
+            .add( EUnit.ASPECTS, UnitAspect.ASLOPE )
         .build();
         
         return this;

@@ -5,7 +5,6 @@ import java.util.Map;
 
 import com.inari.commons.geom.Direction;
 import com.inari.commons.geom.Rectangle;
-import com.inari.commons.lang.aspect.AspectsBuilder;
 import com.inari.dash.game.cave.CaveSystem;
 import com.inari.dash.game.cave.unit.EUnit;
 import com.inari.dash.game.cave.unit.Unit;
@@ -96,11 +95,9 @@ public final class Butterfly extends Unit {
             .set( EUnit.MOVEMENT, Direction.SOUTH )
             .set( EUnit.EXPLOSION_TYPE, UnitType.EXPLOSION_TO_DIAMOND )
             .set( EUnit.CHANGE_TO, UnitType.DIAMOND )
-            .set( EUnit.ASPECTS, AspectsBuilder.create( 
-                UnitAspect.DESTRUCTIBLE, 
-                UnitAspect.ENEMY,
-                UnitAspect.ALIVE
-            ) )
+            .add( EUnit.ASPECTS, UnitAspect.DESTRUCTIBLE )
+            .add( EUnit.ASPECTS, UnitAspect.ENEMY )
+            .add( EUnit.ASPECTS, UnitAspect.ALIVE )
         .build();
         
         return this;

@@ -4,7 +4,6 @@ import java.util.Map;
 
 import com.inari.commons.geom.Position;
 import com.inari.commons.geom.Rectangle;
-import com.inari.commons.lang.aspect.AspectsBuilder;
 import com.inari.dash.game.cave.CaveSystem;
 import com.inari.dash.game.cave.unit.EUnit;
 import com.inari.dash.game.cave.unit.Unit;
@@ -48,7 +47,6 @@ public final class SolidWall extends Unit {
             .set( ETile.MULTI_POSITION, true )
             .set( ETile.SPRITE_ASSET_NAME , UnitType.SOLID_WALL.name() )
             .set( EUnit.UNIT_TYPE, type() )
-            .set( EUnit.ASPECTS, AspectsBuilder.create() )
         .activate();
         
         return this;

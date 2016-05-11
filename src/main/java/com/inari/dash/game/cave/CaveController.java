@@ -3,7 +3,6 @@ package com.inari.dash.game.cave;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.inari.commons.geom.Rectangle;
-import com.inari.commons.lang.aspect.AspectsBuilder;
 import com.inari.dash.game.GameData;
 import com.inari.dash.game.GameSystem;
 import com.inari.dash.game.cave.CaveSystem.CaveSoundKey;
@@ -149,7 +148,7 @@ public final class CaveController extends Controller {
             if ( !exitUnit.has( UnitAspect.ACTIVE ) ) {
                 boolean enough = caveData.getDiamondsToCollect() == caveData.getDiamondsCollected();
                 if ( enough ) {
-                    exitUnit.setAspects( AspectsBuilder.create( UnitAspect.ACTIVE, UnitAspect.WALKABLE ) );
+                    exitUnit.setAspects( Unit.UNIT_ASPECT_GROUP.createAspects( UnitAspect.ACTIVE, UnitAspect.WALKABLE ) );
                     context.notify( StateSystemEvent.createDoStateChangeEvent( UnitType.EXIT.name(), Exit.getStateChangeName() ) );
                     context.notify( new ActionSystemEvent( UnitActionType.FLASH.index(), exitEntityId ) );
                     context.notify( new AudioSystemEvent( CaveSoundKey.CRACK.name(), Type.PLAY_SOUND ) );

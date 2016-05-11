@@ -3,7 +3,6 @@ package com.inari.dash.game.cave.unit.wall;
 import java.util.Map;
 
 import com.inari.commons.geom.Position;
-import com.inari.commons.lang.aspect.AspectsBuilder;
 import com.inari.dash.game.cave.CaveSystem;
 import com.inari.dash.game.cave.unit.EUnit;
 import com.inari.dash.game.cave.unit.Unit;
@@ -55,10 +54,8 @@ public final class ExpandingWall extends Unit {
             .set( ETile.MULTI_POSITION, true )
             .set( ETile.SPRITE_ASSET_NAME, UnitType.BRICK_WALL.name() )
             .set( EUnit.UNIT_TYPE, type() )
-            .set( EUnit.ASPECTS, AspectsBuilder.create( 
-                UnitAspect.ASLOPE, 
-                UnitAspect.DESTRUCTIBLE
-            ) )
+            .add( EUnit.ASPECTS, UnitAspect.ASLOPE )
+            .add( EUnit.ASPECTS, UnitAspect.DESTRUCTIBLE )
         .activate();
         
         return this;
