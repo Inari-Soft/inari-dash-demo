@@ -127,7 +127,7 @@ public final class MagicWall extends Unit {
             .set( ETransform.VIEW_NAME, CaveSystem.CAVE_VIEW_NAME )
             .set( ETile.MULTI_POSITION, false )
             .set( EUnit.UNIT_TYPE, type() )
-            .add( EUnit.ASPECTS, UnitAspect.DESTRUCTIBLE )
+            .add( EEntity.ASPECTS, UnitAspect.DESTRUCTIBLE )
         .build();
         
         return this;

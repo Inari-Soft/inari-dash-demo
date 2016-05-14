@@ -7,6 +7,7 @@ import com.inari.commons.geom.Rectangle;
 import com.inari.dash.game.cave.CaveSystem;
 import com.inari.dash.game.cave.unit.EUnit;
 import com.inari.dash.game.cave.unit.Unit;
+import com.inari.dash.game.cave.unit.UnitAspect;
 import com.inari.dash.game.cave.unit.UnitType;
 import com.inari.firefly.asset.Asset;
 import com.inari.firefly.composite.sprite.AnimatedSpriteData;
@@ -97,6 +98,7 @@ public final class Exit extends Unit {
     public final int createOne( int xGridPos, int yGridPos, String type ) {
         exitEntityId = context.getEntityBuilder()
             .add( EEntity.CONTROLLER_IDS, animatioControllerId )
+            .add( EEntity.ASPECTS, UnitAspect.NONE )
             .set( ETransform.VIEW_NAME, CaveSystem.CAVE_VIEW_NAME )
             .set( ETile.GRID_X_POSITION, xGridPos )
             .set( ETile.GRID_Y_POSITION, yGridPos )

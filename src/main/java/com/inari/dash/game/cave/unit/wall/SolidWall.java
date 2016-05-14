@@ -7,8 +7,10 @@ import com.inari.commons.geom.Rectangle;
 import com.inari.dash.game.cave.CaveSystem;
 import com.inari.dash.game.cave.unit.EUnit;
 import com.inari.dash.game.cave.unit.Unit;
+import com.inari.dash.game.cave.unit.UnitAspect;
 import com.inari.dash.game.cave.unit.UnitType;
 import com.inari.firefly.asset.Asset;
+import com.inari.firefly.entity.EEntity;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.graphics.sprite.SpriteAsset;
 import com.inari.firefly.graphics.tile.ETile;
@@ -43,6 +45,7 @@ public final class SolidWall extends Unit {
         .activate( SpriteAsset.class );
         
         solidWallEntityId = context.getEntityBuilder()
+            .add( EEntity.ASPECTS, UnitAspect.NONE )
             .set( ETransform.VIEW_NAME, CaveSystem.CAVE_VIEW_NAME )
             .set( ETile.MULTI_POSITION, true )
             .set( ETile.SPRITE_ASSET_NAME , UnitType.SOLID_WALL.name() )

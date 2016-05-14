@@ -96,10 +96,10 @@ public final class Diamond extends Unit {
             .set( ETile.MULTI_POSITION, false )
             .set( EUnit.UNIT_TYPE, type() )
             .set( EUnit.CHANGE_TO, UnitType.ROCK )
-            .add( EUnit.ASPECTS, UnitAspect.DESTRUCTIBLE )
-            .add( EUnit.ASPECTS, UnitAspect.STONE )
-            .add( EUnit.ASPECTS, UnitAspect.ASLOPE )
-            .add( EUnit.ASPECTS, UnitAspect.WALKABLE )
+            .add( EEntity.ASPECTS, UnitAspect.DESTRUCTIBLE )
+            .add( EEntity.ASPECTS, UnitAspect.STONE )
+            .add( EEntity.ASPECTS, UnitAspect.ASLOPE )
+            .add( EEntity.ASPECTS, UnitAspect.WALKABLE )
         .build();
         
         return this;

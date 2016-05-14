@@ -10,6 +10,7 @@ import com.inari.dash.game.cave.unit.Unit;
 import com.inari.dash.game.cave.unit.UnitAspect;
 import com.inari.dash.game.cave.unit.UnitType;
 import com.inari.firefly.asset.Asset;
+import com.inari.firefly.entity.EEntity;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.graphics.sprite.SpriteAsset;
 import com.inari.firefly.graphics.tile.ETile;
@@ -57,9 +58,9 @@ public final class Sand extends Unit {
             .set( ETile.MULTI_POSITION, true )
             .set( ETile.SPRITE_ASSET_NAME, UnitType.SAND.name() )
             .set( EUnit.UNIT_TYPE, type() )
-            .add( EUnit.ASPECTS, UnitAspect.DESTRUCTIBLE )
-            .add( EUnit.ASPECTS, UnitAspect.CONSUMABLE )
-            .add( EUnit.ASPECTS, UnitAspect.WALKABLE )
+            .add( EEntity.ASPECTS, UnitAspect.DESTRUCTIBLE )
+            .add( EEntity.ASPECTS, UnitAspect.CONSUMABLE )
+            .add( EEntity.ASPECTS, UnitAspect.WALKABLE )
         .activate();
         
         tileGridId = context.getSystemComponentId( TileGrid.TYPE_KEY, CaveSystem.CAVE_TILE_GRID_NAME );

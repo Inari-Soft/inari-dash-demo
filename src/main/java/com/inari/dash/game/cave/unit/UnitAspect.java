@@ -2,8 +2,10 @@ package com.inari.dash.game.cave.unit;
 
 import com.inari.commons.lang.aspect.Aspect;
 import com.inari.commons.lang.aspect.AspectGroup;
+import com.inari.firefly.entity.EEntity;
 
 public enum UnitAspect implements Aspect {
+    NONE,
     ACTIVE,
     ALIVE,
     
@@ -22,7 +24,7 @@ public enum UnitAspect implements Aspect {
     private final Aspect aspect;
     
     private UnitAspect() {
-        aspect = Unit.UNIT_ASPECT_GROUP.createAspect( name() ); 
+        aspect = EEntity.ENTITY_ASPECT_GROUP.createAspect( name() ); 
     }
 
     @Override

@@ -95,9 +95,9 @@ public final class Firefly extends Unit {
             .set( EUnit.MOVEMENT, Direction.SOUTH )
             .set( EUnit.EXPLOSION_TYPE, UnitType.EXPLOSION )
             .set( EUnit.CHANGE_TO, UnitType.SPACE )
-            .add( EUnit.ASPECTS, UnitAspect.DESTRUCTIBLE )
-            .add( EUnit.ASPECTS, UnitAspect.ENEMY )
-            .add( EUnit.ASPECTS, UnitAspect.ALIVE )
+            .add( EEntity.ASPECTS, UnitAspect.DESTRUCTIBLE )
+            .add( EEntity.ASPECTS, UnitAspect.ENEMY )
+            .add( EEntity.ASPECTS, UnitAspect.ALIVE )
         .build();
         
         return this;

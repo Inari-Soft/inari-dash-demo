@@ -15,6 +15,7 @@ import com.inari.dash.game.cave.unit.Unit;
 import com.inari.dash.game.cave.unit.UnitAspect;
 import com.inari.dash.game.cave.unit.UnitType;
 import com.inari.firefly.FFInitException;
+import com.inari.firefly.entity.EEntity;
 import com.inari.firefly.graphics.tile.ETile;
 import com.inari.firefly.graphics.tile.TileGrid;
 import com.inari.firefly.prototype.Prototype;
@@ -265,8 +266,8 @@ public class CaveSystem implements FFSystem {
     }
 
     public final boolean hasAspect( int entityId, Aspect aspect ) {
-        EUnit unit = context.getEntityComponent( entityId, EUnit.TYPE_KEY );
-        return unit.has( aspect );
+        EEntity entity = context.getEntityComponent( entityId, EEntity.TYPE_KEY );
+        return entity.hasAspect( aspect );
     }
 
     public final boolean hasAspect( int x, int y, Aspect aspect ) {

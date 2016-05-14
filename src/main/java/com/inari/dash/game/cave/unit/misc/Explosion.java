@@ -6,6 +6,7 @@ import com.inari.commons.geom.Direction;
 import com.inari.commons.geom.Rectangle;
 import com.inari.dash.game.cave.CaveSystem;
 import com.inari.dash.game.cave.unit.EUnit;
+import com.inari.dash.game.cave.unit.UnitAspect;
 import com.inari.dash.game.cave.unit.UnitType;
 import com.inari.firefly.asset.Asset;
 import com.inari.firefly.composite.sprite.AnimatedSpriteData;
@@ -60,6 +61,7 @@ public final class Explosion extends AbstractExplosionHandle {
         prefabId = context.getComponentBuilder( EntityPrefab.TYPE_KEY )
             .add( EEntity.CONTROLLER_IDS, CONTROLLER_ID )
             .add( EEntity.CONTROLLER_IDS, animatioControllerId )
+            .add( EEntity.ASPECTS, UnitAspect.NONE )
             .set( EntityPrefab.NAME, UnitType.EXPLOSION.name() )
             .set( EntityPrefab.INITIAL_CREATE_NUMBER, 100 )
             .set( ETransform.VIEW_NAME, CaveSystem.CAVE_VIEW_NAME )

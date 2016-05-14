@@ -88,6 +88,9 @@ public final class Butterfly extends Unit {
             .set( EntityPrefab.NAME, UnitType.BUTTERFLY.name() )
             .add( EEntity.CONTROLLER_IDS, controllerId )
             .add( EEntity.CONTROLLER_IDS, animatioControllerId )
+            .add( EEntity.ASPECTS, UnitAspect.DESTRUCTIBLE )
+            .add( EEntity.ASPECTS, UnitAspect.ENEMY )
+            .add( EEntity.ASPECTS, UnitAspect.ALIVE )
             .set( EntityPrefab.INITIAL_CREATE_NUMBER, 200 )
             .set( ETransform.VIEW_NAME, CaveSystem.CAVE_VIEW_NAME )
             .set( ETile.MULTI_POSITION, false )
@@ -95,9 +98,6 @@ public final class Butterfly extends Unit {
             .set( EUnit.MOVEMENT, Direction.SOUTH )
             .set( EUnit.EXPLOSION_TYPE, UnitType.EXPLOSION_TO_DIAMOND )
             .set( EUnit.CHANGE_TO, UnitType.DIAMOND )
-            .add( EUnit.ASPECTS, UnitAspect.DESTRUCTIBLE )
-            .add( EUnit.ASPECTS, UnitAspect.ENEMY )
-            .add( EUnit.ASPECTS, UnitAspect.ALIVE )
         .build();
         
         return this;

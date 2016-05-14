@@ -7,7 +7,6 @@ import com.inari.dash.game.GameData;
 import com.inari.dash.game.GameSystem;
 import com.inari.dash.game.cave.CaveSystem.CaveSoundKey;
 import com.inari.dash.game.cave.CaveSystem.CaveState;
-import com.inari.dash.game.cave.unit.EUnit;
 import com.inari.dash.game.cave.unit.Unit;
 import com.inari.dash.game.cave.unit.UnitAspect;
 import com.inari.dash.game.cave.unit.UnitType;
@@ -22,6 +21,7 @@ import com.inari.firefly.control.Controller;
 import com.inari.firefly.control.action.ActionSystemEvent;
 import com.inari.firefly.control.state.StateSystemEvent;
 import com.inari.firefly.control.task.TaskSystemEvent;
+import com.inari.firefly.entity.EEntity;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.graphics.output.AnimatedGifOutput;
@@ -108,9 +108,9 @@ public final class CaveController extends Controller {
         }
         
         if ( caveService.caveState == CaveState.ENTERING ) {
-            EUnit playerUnit = entitySystem.getComponent( playerEntityId, EUnit.TYPE_KEY );
+            EEntity playerEntity = entitySystem.getComponent( playerEntityId, EEntity.TYPE_KEY );
             initSeconds = 0;
-            if ( playerUnit.has( UnitAspect.ALIVE ) ) {
+            if ( playerEntity.hasAspect( UnitAspect.ALIVE ) ) {
                 caveService.caveState = CaveState.PLAY;
             }
             return;
@@ -137,18 +137,18 @@ public final class CaveController extends Controller {
                 
                 if ( caveTime == 0 ) {
                     caveService.caveState = CaveState.LOOSE;
-                    EUnit playerUnit = entitySystem.getComponent( playerEntityId, EUnit.TYPE_KEY );
-                    playerUnit.resetAspect( UnitAspect.ALIVE );
+                    EEntity playerEntity = entitySystem.getComponent( playerEntityId, EEntity.TYPE_KEY );
+                    playerEntity.resetAspect( UnitAspect.ALIVE );
                     initSeconds = 0;
                     return;
                 }
             }
             
-            EUnit exitUnit = entitySystem.getComponent( exitEntityId, EUnit.TYPE_KEY );
-            if ( !exitUnit.has( UnitAspect.ACTIVE ) ) {
+            EEntity exitEntity = entitySystem.getComponent( exitEntityId, EEntity.TYPE_KEY );
+            if ( !exitEntity.hasAspect( UnitAspect.ACTIVE ) ) {
                 boolean enough = caveData.getDiamondsToCollect() == caveData.getDiamondsCollected();
                 if ( enough ) {
-                    exitUnit.setAspects( Unit.UNIT_ASPECT_GROUP.createAspects( UnitAspect.ACTIVE, UnitAspect.WALKABLE ) );
+                    exitEntity.setAspects( EEntity.ENTITY_ASPECT_GROUP.createAspects( UnitAspect.ACTIVE, UnitAspect.WALKABLE ) );
                     context.notify( StateSystemEvent.createDoStateChangeEvent( UnitType.EXIT.name(), Exit.getStateChangeName() ) );
                     context.notify( new ActionSystemEvent( UnitActionType.FLASH.index(), exitEntityId ) );
                     context.notify( new AudioSystemEvent( CaveSoundKey.CRACK.name(), Type.PLAY_SOUND ) );
@@ -164,8 +164,8 @@ public final class CaveController extends Controller {
         
         if ( caveService.caveState == CaveState.WON ) {
             if ( initSeconds <= 0 ) {
-                EUnit playerUnit = entitySystem.getComponent( playerEntityId, EUnit.TYPE_KEY );
-                playerUnit.resetAspect( UnitAspect.ALIVE );
+                EEntity playerEntity = entitySystem.getComponent( playerEntityId, EEntity.TYPE_KEY );
+                playerEntity.resetAspect( UnitAspect.ALIVE );
                 context.notify( new AudioSystemEvent( CaveSystem.CaveSoundKey.FINISHED.name(), Type.PLAY_SOUND ) );
                 initSeconds++;
             }

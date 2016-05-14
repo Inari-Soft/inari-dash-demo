@@ -54,8 +54,8 @@ public final class ExpandingWall extends Unit {
             .set( ETile.MULTI_POSITION, true )
             .set( ETile.SPRITE_ASSET_NAME, UnitType.BRICK_WALL.name() )
             .set( EUnit.UNIT_TYPE, type() )
-            .add( EUnit.ASPECTS, UnitAspect.ASLOPE )
-            .add( EUnit.ASPECTS, UnitAspect.DESTRUCTIBLE )
+            .add( EEntity.ASPECTS, UnitAspect.ASLOPE )
+            .add( EEntity.ASPECTS, UnitAspect.DESTRUCTIBLE )
         .activate();
         
         return this;

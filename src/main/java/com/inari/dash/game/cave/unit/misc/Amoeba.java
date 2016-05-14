@@ -96,7 +96,7 @@ public final class Amoeba extends Unit {
             .set( ETransform.VIEW_NAME, CaveSystem.CAVE_VIEW_NAME )
             .set( ETile.MULTI_POSITION, true )
             .set( EUnit.UNIT_TYPE, type() )
-            .add( EUnit.ASPECTS, UnitAspect.DESTRUCTIBLE )
+            .add( EEntity.ASPECTS, UnitAspect.DESTRUCTIBLE )
         .activate();
         
         return this;
@@ -120,8 +120,8 @@ public final class Amoeba extends Unit {
     public final int createOne( int xGridPos, int yGridPos, String type ) {
         ETile tile = context.getEntityComponent( amoebaEntityId, ETile.TYPE_KEY );
         if ( tile.getGridPositions().isEmpty() ) {
-            EUnit unit = context.getEntityComponent( amoebaEntityId, EUnit.TYPE_KEY );
-            unit.setAspect( UnitAspect.ACTIVE );
+            EEntity entity = context.getEntityComponent( amoebaEntityId, EEntity.TYPE_KEY );
+            entity.setAspect( UnitAspect.ACTIVE );
         }
         tile.getGridPositions().add( new Position( xGridPos, yGridPos ) );
         context.getSystem( CaveSystem.SYSTEM_KEY )

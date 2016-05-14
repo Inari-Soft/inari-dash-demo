@@ -5,7 +5,6 @@ import com.inari.commons.geom.Direction;
 import com.inari.commons.geom.Position;
 import com.inari.dash.game.cave.CaveSystem.CaveState;
 import com.inari.dash.game.cave.unit.EUnit;
-import com.inari.dash.game.cave.unit.Unit;
 import com.inari.dash.game.cave.unit.UnitAspect;
 import com.inari.dash.game.cave.unit.UnitController;
 import com.inari.dash.game.cave.unit.UnitType;
@@ -18,6 +17,7 @@ import com.inari.firefly.audio.AudioSystemEvent.Type;
 import com.inari.firefly.control.action.ActionSystemEvent;
 import com.inari.firefly.control.state.StateSystem;
 import com.inari.firefly.control.state.StateSystemEvent;
+import com.inari.firefly.entity.EEntity;
 import com.inari.firefly.graphics.tile.ETile;
 import com.inari.firefly.prototype.Prototype;
 import com.inari.firefly.system.FireFlyApp;
@@ -59,6 +59,7 @@ public final class RFController extends UnitController {
         }
         
         EUnit unit = context.getEntityComponent( entityId, EUnit.TYPE_KEY );
+        EEntity entity = context.getEntityComponent( entityId, EEntity.TYPE_KEY );
         String state = stateSystem.getCurrentState( Rockford.NAME );
         
         if ( StateEnum.APPEARING.is( state ) || StateEnum.ENTERING.is( state ) ) {
@@ -73,7 +74,7 @@ public final class RFController extends UnitController {
             if ( StateEnum.APPEARING.is( state ) && animationCount > APPEARING_ANIMATION_DURATION ) {
                 unit.resetAnimationCount();
                 context.notify( StateSystemEvent.createDoStateChangeEvent( Rockford.NAME, StateChangeEnum.APPEARING_IDLE.name() ) );
-                unit.setAspects( Unit.UNIT_ASPECT_GROUP.createAspects( UnitAspect.ALIVE, UnitAspect.DESTRUCTIBLE  ) );
+                entity.setAspects( EEntity.ENTITY_ASPECT_GROUP.createAspects( UnitAspect.ALIVE, UnitAspect.DESTRUCTIBLE  ) );
                 return;
             }
             return;
@@ -148,9 +149,10 @@ public final class RFController extends UnitController {
         GeomUtils.movePosition( nextPos, move, 1, true );
         int nextEntityId = caveService.getEntityId( nextPos.x, nextPos.y );
         EUnit nextUnit = context.getEntityComponent( nextEntityId, EUnit.TYPE_KEY );
+        EEntity nextEntity = context.getEntityComponent( nextEntityId, EEntity.TYPE_KEY );
         UnitType nextType = nextUnit.getUnitType();
 
-        if ( nextUnit.has( UnitAspect.WALKABLE ) ) {
+        if ( nextEntity.hasAspect( UnitAspect.WALKABLE ) ) {
            if ( nextType == UnitType.DIAMOND ) {
                context.notify( new ActionSystemEvent( UnitActionType.COLLECT.index(), nextEntityId ) );
                context.notify( new AudioSystemEvent( rfHandle.collectSoundId, Type.PLAY_SOUND ) ); 

@@ -84,9 +84,9 @@ public final class Rock extends Unit {
             .set( ETile.MULTI_POSITION, false )
             .set( EUnit.UNIT_TYPE, type() )
             .set( EUnit.CHANGE_TO, UnitType.DIAMOND )
-            .add( EUnit.ASPECTS, UnitAspect.DESTRUCTIBLE )
-            .add( EUnit.ASPECTS, UnitAspect.STONE )
-            .add( EUnit.ASPECTS, UnitAspect.ASLOPE )
+            .add( EEntity.ASPECTS, UnitAspect.DESTRUCTIBLE )
+            .add( EEntity.ASPECTS, UnitAspect.STONE )
+            .add( EEntity.ASPECTS, UnitAspect.ASLOPE )
         .build();
         
         return this;

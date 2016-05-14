@@ -8,13 +8,13 @@ import com.inari.commons.geom.Direction;
 import com.inari.commons.geom.Position;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.dash.game.cave.CaveSystem.AmoebaData;
-import com.inari.dash.game.cave.unit.EUnit;
 import com.inari.dash.game.cave.unit.Unit;
 import com.inari.dash.game.cave.unit.UnitAspect;
 import com.inari.dash.game.cave.unit.UnitController;
 import com.inari.dash.game.cave.unit.UnitType;
 import com.inari.firefly.audio.AudioSystemEvent;
 import com.inari.firefly.audio.AudioSystemEvent.Type;
+import com.inari.firefly.entity.EEntity;
 import com.inari.firefly.graphics.tile.ETile;
 import com.inari.firefly.system.FireFlyApp;
 import com.inari.firefly.system.external.FFTimer;
@@ -36,8 +36,8 @@ public final class AmoebaController extends UnitController {
     @Override
     protected final void update( FFTimer timer, int entityId ) {
         Unit amoebaUnit = getUnit( UnitType.AMOEBA );
-        EUnit unit = context.getEntityComponent( entityId, EUnit.TYPE_KEY );
-        if ( !unit.has( UnitAspect.ACTIVE ) ) {
+        EEntity entity = context.getEntityComponent( entityId, EEntity.TYPE_KEY );
+        if ( !entity.hasAspect( UnitAspect.ACTIVE ) ) {
             return;
         }
         

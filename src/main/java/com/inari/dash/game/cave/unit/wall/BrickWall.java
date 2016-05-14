@@ -10,6 +10,7 @@ import com.inari.dash.game.cave.unit.Unit;
 import com.inari.dash.game.cave.unit.UnitAspect;
 import com.inari.dash.game.cave.unit.UnitType;
 import com.inari.firefly.asset.Asset;
+import com.inari.firefly.entity.EEntity;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.graphics.sprite.SpriteAsset;
 import com.inari.firefly.graphics.tile.ETile;
@@ -47,8 +48,8 @@ public class BrickWall extends Unit {
             .set( ETile.MULTI_POSITION, true )
             .set( ETile.SPRITE_ASSET_NAME, UnitType.BRICK_WALL.name() )
             .set( EUnit.UNIT_TYPE, type() )
-            .add( EUnit.ASPECTS, UnitAspect.DESTRUCTIBLE )
-            .add( EUnit.ASPECTS, UnitAspect.ASLOPE )
+            .add( EEntity.ASPECTS, UnitAspect.DESTRUCTIBLE )
+            .add( EEntity.ASPECTS, UnitAspect.ASLOPE )
         .activate();
         
         return this;
