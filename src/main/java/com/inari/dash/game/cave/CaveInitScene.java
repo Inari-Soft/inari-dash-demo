@@ -2,7 +2,7 @@ package com.inari.dash.game.cave;
 
 import java.util.BitSet;
 
-import com.inari.commons.geom.Position;
+import com.inari.commons.geom.PositionF;
 import com.inari.commons.geom.Rectangle;
 import com.inari.firefly.asset.AssetSystem;
 import com.inari.firefly.audio.AudioSystemEvent;
@@ -105,7 +105,7 @@ public class CaveInitScene extends Scene {
 
     @Override
     public void render() {
-        Position worldPosition = caveView.getWorldPosition();
+        PositionF worldPosition = caveView.getWorldPosition();
         for ( int y = 0; y < height; y++ ) {
             for ( int x = 0; x < width; x++ ) {
                 if ( introTiles.get( x * y ) ) {

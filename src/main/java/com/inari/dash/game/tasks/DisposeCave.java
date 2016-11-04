@@ -1,6 +1,6 @@
 package com.inari.dash.game.tasks;
 
-import com.inari.commons.geom.Position;
+import com.inari.commons.geom.PositionF;
 import com.inari.dash.game.cave.CaveSystem;
 import com.inari.dash.game.cave.unit.Unit;
 import com.inari.dash.game.cave.unit.UnitType;
@@ -40,7 +40,7 @@ public final class DisposeCave extends Task {
         int caveViewId = viewSystem.getViewId( CaveSystem.CAVE_VIEW_NAME );
         tileGridSystem.deleteAllTileGrid( caveViewId );
         controllerSystem.deleteController( CaveSystem.CAVE_CONTROLLER_NAME );
-        Position worldPosition = viewSystem.getView( caveViewId ).getWorldPosition();
+        PositionF worldPosition = viewSystem.getView( caveViewId ).getWorldPosition();
         worldPosition.x = 0;
         worldPosition.y = 0;
     }

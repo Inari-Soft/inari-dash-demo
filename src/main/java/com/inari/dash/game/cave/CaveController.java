@@ -2,6 +2,7 @@ package com.inari.dash.game.cave;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.inari.commons.geom.PositionF;
 import com.inari.commons.geom.Rectangle;
 import com.inari.dash.game.GameData;
 import com.inari.dash.game.GameSystem;
@@ -236,8 +237,7 @@ public final class CaveController extends Controller {
         ViewSystem viewSystem = context.getSystem( ViewSystem.SYSTEM_KEY );
         entitySystem.getEntityBuilder()
             .set( ETransform.VIEW_ID, viewSystem.getViewId( CaveSystem.HEADER_VIEW_NAME ) )
-            .set( ETransform.XPOSITION, 100 )
-            .set( ETransform.YPOSITION, 8 )
+            .set( ETransform.POSITION, new PositionF( 100, 8 ) )
             .set( EText.FONT_ASSET_NAME, GameSystem.GAME_FONT_TEXTURE_NAME )
             .set( EText.TEXT, "%%% GAME OVER %%%" )
             .set( EText.TINT_COLOR, GameSystem.YELLOW_FONT_COLOR )

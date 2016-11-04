@@ -1,6 +1,6 @@
 package com.inari.dash.game.tasks;
 
-import com.inari.commons.geom.Position;
+import com.inari.commons.geom.PositionF;
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.graphics.RGBColor;
 import com.inari.dash.Configuration;
@@ -27,8 +27,8 @@ import com.inari.firefly.control.action.Action;
 import com.inari.firefly.control.task.Task;
 import com.inari.firefly.control.task.TaskSystemEvent;
 import com.inari.firefly.control.task.TaskSystemEvent.Type;
+import com.inari.firefly.controller.view.BorderedCameraController;
 import com.inari.firefly.controller.view.CameraPivot;
-import com.inari.firefly.controller.view.SimpleCameraController;
 import com.inari.firefly.graphics.TextureAsset;
 import com.inari.firefly.graphics.tile.ETile;
 import com.inari.firefly.graphics.view.View;
@@ -77,27 +77,27 @@ public final class LoadPlay extends Task {
         context.getComponentBuilder( Controller.TYPE_KEY )
             .set( Controller.NAME, CaveSystem.CAVE_CAMERA_CONTROLLER_NAME )
             .set( Controller.UPDATE_RESOLUTION, 60 )
-            .set( SimpleCameraController.PIVOT, playerPivot )
-            .set( SimpleCameraController.H_ON_THRESHOLD, 150 )
-            .set( SimpleCameraController.H_OFF_THRESHOLD, 250 )
-            .set( SimpleCameraController.V_ON_THRESHOLD, 150 )
-            .set( SimpleCameraController.V_OFF_THRESHOLD, 250 )
-            .set( SimpleCameraController.H_VELOCITY, 3 )
-            .set( SimpleCameraController.V_VELOCITY, 3 )
-        .build( SimpleCameraController.class );
+            .set( BorderedCameraController.PIVOT, playerPivot )
+            .set( BorderedCameraController.H_ON_THRESHOLD, 150 )
+            .set( BorderedCameraController.H_OFF_THRESHOLD, 250 )
+            .set( BorderedCameraController.V_ON_THRESHOLD, 150 )
+            .set( BorderedCameraController.V_OFF_THRESHOLD, 250 )
+            .set( BorderedCameraController.H_VELOCITY, 3 )
+            .set( BorderedCameraController.V_VELOCITY, 3 )
+        .build( BorderedCameraController.class );
         
         viewSystem.getViewBuilder()
             .set( View.NAME, CaveSystem.HEADER_VIEW_NAME )
             .set( View.LAYERING_ENABLED, false )
             .set( View.BOUNDS, new Rectangle( 0, 0, screenWidth, CaveSystem.HEADER_VIEW_HEIGHT ) )
-            .set( View.WORLD_POSITION, new Position( 0, 0 ) )
+            .set( View.WORLD_POSITION, new PositionF( 0, 0 ) )
             .set( View.CLEAR_COLOR, new RGBColor( 0, 0, 0, 1 ) )
         .activate();
         viewSystem.getViewBuilder()
             .set( View.NAME, CaveSystem.CAVE_VIEW_NAME )
             .set( View.LAYERING_ENABLED, false )
             .set( View.BOUNDS, new Rectangle( 20, CaveSystem.HEADER_VIEW_HEIGHT, screenWidth - 40, screenHeight - CaveSystem.HEADER_VIEW_HEIGHT - 20 ) )
-            .set( View.WORLD_POSITION, new Position( 0, 0 ) )
+            .set( View.WORLD_POSITION, new PositionF( 0, 0 ) )
             .set( View.CONTROLLER_NAME, CaveSystem.CAVE_CAMERA_CONTROLLER_NAME ) 
             .set( View.CLEAR_COLOR, new RGBColor( 0, 0, 0, 1 ) )
         .activate();
@@ -145,7 +145,7 @@ public final class LoadPlay extends Task {
     }
 
     public CameraPivot createPlayerPivot( final int unitWidth, final int unitHeight ) {
-        final Position tmpPos = new Position();
+        final PositionF tmpPos = new PositionF();
         
         return new CameraPivot() {
             
@@ -159,7 +159,7 @@ public final class LoadPlay extends Task {
             }
 
             @Override
-            public final Position getPivot() {
+            public final PositionF getPivot() {
                 if ( caveSystem.updateCamera() ) {
                     tmpPos.x = unitWidth * playerTile.getGridXPos();
                     tmpPos.y = unitHeight * playerTile.getGridYPos();

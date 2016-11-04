@@ -1,5 +1,6 @@
 package com.inari.dash.game.tasks;
 
+import com.inari.commons.geom.PositionF;
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.functional.IntFunction;
 import com.inari.dash.Configuration;
@@ -13,7 +14,7 @@ import com.inari.firefly.asset.Asset;
 import com.inari.firefly.asset.AssetSystem;
 import com.inari.firefly.control.Controller;
 import com.inari.firefly.control.task.Task;
-import com.inari.firefly.controller.view.SimpleCameraController;
+import com.inari.firefly.controller.view.BorderedCameraController;
 import com.inari.firefly.entity.EEntity;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.EntitySystem;
@@ -99,10 +100,10 @@ public final class LoadCave extends Task {
             }
         }
         
-        SimpleCameraController cameraController = context.getSystemComponent( 
+        BorderedCameraController cameraController = context.getSystemComponent( 
             Controller.TYPE_KEY, 
             CaveSystem.CAVE_CAMERA_CONTROLLER_NAME, 
-            SimpleCameraController.class 
+            BorderedCameraController.class 
         );
         cameraController.setSnapToBounds( 
             new Rectangle( 
@@ -117,8 +118,7 @@ public final class LoadCave extends Task {
         context.getComponentBuilder( EntitySystem.Entity.ENTITY_TYPE_KEY )
             .set( EEntity.ENTITY_NAME, CaveSystem.HEADER_VIEW_NAME )
             .set( ETransform.VIEW_ID, context.getSystemComponentId( View.TYPE_KEY, CaveSystem.HEADER_VIEW_NAME ) )
-            .set( ETransform.XPOSITION, 8 )
-            .set( ETransform.YPOSITION, 8 )
+            .set( ETransform.POSITION, new PositionF( 8, 8 ) )
             .set( EText.FONT_ASSET_NAME, GameSystem.GAME_FONT_TEXTURE_NAME )
             .set( EText.TEXT, "%%%%%%%%%%%%%%%%%%%%%%%%" )
         .activate();
