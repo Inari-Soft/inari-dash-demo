@@ -30,7 +30,6 @@ import com.inari.firefly.graphics.text.EText;
 import com.inari.firefly.graphics.view.ViewSystem;
 import com.inari.firefly.prototype.Prototype;
 import com.inari.firefly.scene.SceneSystemEvent;
-import com.inari.firefly.system.external.FFTimer;
 import com.inari.firefly.system.external.FFTimer.UpdateScheduler;
 
 public final class CaveController extends Controller {
@@ -74,7 +73,7 @@ public final class CaveController extends Controller {
     
 
     @Override
-    public final void update( FFTimer timer ) {
+    public final void update() {
         if ( exitEntityId < 0 ) {
             exitEntityId = context.getSystemComponent( Prototype.TYPE_KEY, UnitType.EXIT.ordinal(), Unit.class ).getEntityId();
         }

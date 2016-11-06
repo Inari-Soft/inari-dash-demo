@@ -9,7 +9,6 @@ import com.inari.firefly.audio.AudioSystemEvent;
 import com.inari.firefly.audio.AudioSystemEvent.Type;
 import com.inari.firefly.graphics.tile.ETile;
 import com.inari.firefly.prototype.Prototype;
-import com.inari.firefly.system.external.FFTimer;
 
 public final class ExpandingWallController extends UnitController {
     
@@ -20,7 +19,7 @@ public final class ExpandingWallController extends UnitController {
     }
 
     @Override
-    protected final void update( FFTimer timer, int entityId ) {
+    protected final void update( int entityId ) {
         ETile tile = context.getEntityComponent( entityId, ETile.TYPE_KEY );
         if ( expandingWall == null ) {
             expandingWall = context.getSystemComponent( Prototype.TYPE_KEY, UnitType.EXPANDING_WALL.ordinal(), Unit.class );

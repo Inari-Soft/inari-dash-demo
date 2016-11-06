@@ -17,7 +17,6 @@ import com.inari.firefly.audio.AudioSystemEvent.Type;
 import com.inari.firefly.entity.EEntity;
 import com.inari.firefly.graphics.tile.ETile;
 import com.inari.firefly.system.FireFlyApp;
-import com.inari.firefly.system.external.FFTimer;
 
 public final class AmoebaController extends UnitController {
     
@@ -34,7 +33,7 @@ public final class AmoebaController extends UnitController {
     }
 
     @Override
-    protected final void update( FFTimer timer, int entityId ) {
+    protected final void update( int entityId ) {
         Unit amoebaUnit = getUnit( UnitType.AMOEBA );
         EEntity entity = context.getEntityComponent( entityId, EEntity.TYPE_KEY );
         if ( !entity.hasAspect( UnitAspect.ACTIVE ) ) {

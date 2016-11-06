@@ -5,7 +5,6 @@ import com.inari.firefly.FFInitException;
 import com.inari.firefly.control.Controller;
 import com.inari.firefly.system.external.FFInput;
 import com.inari.firefly.system.external.FFInput.ButtonType;
-import com.inari.firefly.system.external.FFTimer;
 
 public final class GameSelectionController extends Controller {
 
@@ -25,7 +24,7 @@ public final class GameSelectionController extends Controller {
     }
 
     @Override
-    public final void update( FFTimer timer ) {
+    public final void update() {
         if ( input.isPressed( ButtonType.DOWN ) ) {
             gameSystem.nextSelectionMode();
         } else if ( input.isPressed( ButtonType.UP ) ) {

@@ -4,7 +4,6 @@ import com.inari.dash.game.cave.unit.EUnit;
 import com.inari.dash.game.cave.unit.UnitController;
 import com.inari.dash.game.cave.unit.UnitType;
 import com.inari.firefly.graphics.tile.ETile;
-import com.inari.firefly.system.external.FFTimer;
 
 public final class ExplosionController extends UnitController {
 
@@ -15,7 +14,7 @@ public final class ExplosionController extends UnitController {
     }
 
     @Override
-    protected final void update( FFTimer timer, int entityId ) {
+    protected final void update( int entityId ) {
         EUnit unit = context.getEntityComponent( entityId, EUnit.TYPE_KEY );
         
         unit.incrementAnimationCount();

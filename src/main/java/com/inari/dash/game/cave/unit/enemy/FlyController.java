@@ -7,7 +7,6 @@ import com.inari.dash.game.cave.unit.UnitController;
 import com.inari.dash.game.cave.unit.UnitType;
 import com.inari.dash.game.cave.unit.action.UnitActionType;
 import com.inari.firefly.control.action.ActionSystemEvent;
-import com.inari.firefly.system.external.FFTimer;
 
 public abstract class FlyController extends UnitController {
 
@@ -16,7 +15,7 @@ public abstract class FlyController extends UnitController {
     }
     
     @Override
-    protected final void update( FFTimer timer, int entityId ) {
+    protected final void update( int entityId ) {
         EUnit unit = context.getEntityComponent( entityId, EUnit.TYPE_KEY );
         
         if ( caveService.hasInSurrounding( entityId, UnitType.AMOEBA ) || 

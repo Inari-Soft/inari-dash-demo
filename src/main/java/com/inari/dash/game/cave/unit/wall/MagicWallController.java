@@ -10,7 +10,6 @@ import com.inari.firefly.audio.AudioSystemEvent;
 import com.inari.firefly.audio.AudioSystemEvent.Type;
 import com.inari.firefly.control.state.StateSystemEvent;
 import com.inari.firefly.graphics.tile.ETile;
-import com.inari.firefly.system.external.FFTimer;
 import com.inari.firefly.system.external.FFTimer.UpdateScheduler;
 
 public final class MagicWallController extends UnitController {
@@ -33,7 +32,7 @@ public final class MagicWallController extends UnitController {
     }
 
     @Override
-    protected final void update( FFTimer timer, int entityId ) {
+    protected final void update( int entityId ) {
         if ( activTime > activDuration ) {
             return;
         }

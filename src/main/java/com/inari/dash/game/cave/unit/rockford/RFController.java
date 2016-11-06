@@ -23,7 +23,6 @@ import com.inari.firefly.prototype.Prototype;
 import com.inari.firefly.system.FireFlyApp;
 import com.inari.firefly.system.external.FFInput;
 import com.inari.firefly.system.external.FFInput.ButtonType;
-import com.inari.firefly.system.external.FFTimer;
 
 public final class RFController extends UnitController {
     
@@ -51,7 +50,7 @@ public final class RFController extends UnitController {
     }
 
     @Override
-    protected final void update( FFTimer timer, int entityId ) {
+    protected final void update( int entityId ) {
         Rockford rfHandle = context.getSystemComponent( Prototype.TYPE_KEY, UnitType.ROCKFORD.name(), Rockford.class );
         CaveState caveState = caveService.getCaveState();
         if ( caveState == CaveState.WON || caveState == CaveState.INIT ) {
